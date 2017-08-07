@@ -16,18 +16,28 @@
 package com.asakusafw.workflow.executor.basic;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.asakusafw.workflow.executor.BatchExecutor;
+import com.asakusafw.workflow.executor.ExecutionConditionException;
 import com.asakusafw.workflow.executor.ExecutionContext;
 import com.asakusafw.workflow.executor.JobflowExecutor;
 import com.asakusafw.workflow.executor.TaskExecutionContext;
 import com.asakusafw.workflow.model.BatchInfo;
 import com.asakusafw.workflow.model.JobflowInfo;
+import com.asakusafw.workflow.model.attribute.ParameterInfo;
+import com.asakusafw.workflow.model.attribute.ParameterListAttribute;
 
 /**
  * A basic implementation of {@link BatchExecutor}.
@@ -72,8 +82,52 @@ public class BasicBatchExecutor implements BatchExecutor {
     public void execute(
             ExecutionContext context,
             BatchInfo batch, Map<String, String> arguments) throws IOException, InterruptedException {
+        batch.findAttribute(ParameterListAttribute.class)
+                .ifPresent(it -> validateParameters(it, arguments));
         for (JobflowInfo jobflow : Util.sort(batch.getElements())) {
             executeJobflow(context, batch, jobflow, arguments);
+        }
+    }
+
+    private static void validateParameters(
+            ParameterListAttribute parameters,
+            Map<String, String> arguments) {
+        Set<String> consumed = new HashSet<>();
+        parameters.getElements().forEach(p -> {
+            String name = p.getName();
+            consumed.add(name);
+            validateParameter(p, arguments.get(name));
+        });
+        if (parameters.isStrict()) {
+            List<String> unknown = arguments.keySet().stream()
+                    .filter(it -> consumed.contains(it) == false)
+                    .collect(Collectors.toList());
+            if (unknown.isEmpty() == false) {
+                throw new ExecutionConditionException(MessageFormat.format(
+                        "unknown batch arguments: {0}",
+                        unknown));
+            }
+        }
+    }
+
+    private static void validateParameter(ParameterInfo parameter, String value) {
+        if (parameter.isMandatory() && value == null) {
+            throw new ExecutionConditionException(MessageFormat.format(
+                    "batch argument \"{0}\" [{1}] must be defined",
+                    parameter.getName(),
+                    Optional.ofNullable(parameter.getComment()).orElse("?")));
+        }
+        if (parameter.getPattern() != null && value != null) {
+            Pattern pattern = Pattern.compile(parameter.getPattern());
+            if (pattern.matcher(value).matches() == false) {
+                throw new ExecutionConditionException(MessageFormat.format(
+                        "batch argument \"{0}\" [{1}] must match the pattern \"{2}\": {3}",
+                        parameter.getName(),
+                        Optional.ofNullable(parameter.getComment()).orElse("?"),
+                        pattern,
+                        value));
+
+            }
         }
     }
 

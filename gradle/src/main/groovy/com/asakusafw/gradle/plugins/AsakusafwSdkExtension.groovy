@@ -19,7 +19,7 @@ package com.asakusafw.gradle.plugins
 /**
  * An extension object for Asakusa SDK.
  * @since 0.9.0
- * @version 0.9.1
+ * @version 0.10.0
  */
 class AsakusafwSdkExtension {
 
@@ -75,6 +75,17 @@ class AsakusafwSdkExtension {
      * </dl>
      */
     Object testkit
+
+    /**
+     * Whether or not the YAESS feature is enabled.
+     * This value will be resolved as {@code it as boolean}.
+     * <dl>
+     *   <dt> Default value: </dt>
+     *     <dd> {@code true} </dd>
+     * </dl>
+     * @since 0.10.0
+     */
+    Object yaess
 
     /**
      * Whether or not Direct I/O feature is enabled.

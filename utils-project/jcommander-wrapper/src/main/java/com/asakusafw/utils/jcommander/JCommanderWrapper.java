@@ -137,12 +137,12 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
     }
 
     private static boolean isHelp(Object object) {
-        try {
-            for (Class<?> current = object.getClass();
-                    current != Object.class && current != null;
-                    current = current.getSuperclass()) {
-                for (Field f : current.getDeclaredFields()) {
-                    Parameter parameter = f.getAnnotation(Parameter.class);
+        for (Class<?> current = object.getClass();
+                current != Object.class && current != null;
+                current = current.getSuperclass()) {
+            for (Field f : current.getDeclaredFields()) {
+                Parameter parameter = f.getAnnotation(Parameter.class);
+                try {
                     if (parameter != null && parameter.help()) {
                         f.setAccessible(true);
                         Object value = f.get(object);
@@ -157,13 +157,13 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
                             return true;
                         }
                     }
+                } catch (ReflectiveOperationException e) {
+                    LOG.warn("error occurred while searching for help option: {}", object, e);
+                    return false;
                 }
             }
-            return false;
-        } catch (ReflectiveOperationException e) {
-            LOG.warn("error occurred while searching for help option: {}", object, e);
-            return false;
         }
+        return false;
     }
 
     private static void inject(Object object, JCommander commander) {
@@ -171,17 +171,22 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
                 current != Object.class && current != null;
                 current = current.getSuperclass()) {
             for (Field f : current.getDeclaredFields()) {
-                if (f.getType() == JCommander.class
-                        && f.isAnnotationPresent(Inject.class)) {
-                    try {
+                try {
+                    if (f.getType() == JCommander.class
+                            && f.isAnnotationPresent(Inject.class)) {
                         f.setAccessible(true);
                         f.set(object, commander);
-                    } catch (ReflectiveOperationException e) {
-                        throw new CommandConfigurationException(MessageFormat.format(
-                                "error occurred while injecting JCommander object: {0}#{1}",
-                                object.getClass().getName(),
-                                f.getName()), e);
                     }
+                    if (f.isAnnotationPresent(ParametersDelegate.class)) {
+                        f.setAccessible(true);
+                        Object delegate = f.get(object);
+                        inject(delegate, commander);
+                    }
+                } catch (ReflectiveOperationException e) {
+                    throw new CommandConfigurationException(MessageFormat.format(
+                            "error occurred while injecting JCommander object: {0}#{1}",
+                            object.getClass().getName(),
+                            f.getName()), e);
                 }
             }
         }

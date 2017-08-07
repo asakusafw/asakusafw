@@ -18,7 +18,6 @@ package com.asakusafw.workflow.cli.run;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +30,7 @@ import com.asakusafw.utils.jcommander.common.HelpParameter;
 import com.asakusafw.workflow.cli.common.ExecutionContextParameter;
 import com.asakusafw.workflow.cli.common.WorkflowParameter;
 import com.asakusafw.workflow.executor.BatchExecutor;
+import com.asakusafw.workflow.executor.ExecutionConditionException;
 import com.asakusafw.workflow.executor.ExecutionContext;
 import com.asakusafw.workflow.model.BatchInfo;
 import com.beust.jcommander.Parameters;
@@ -72,10 +72,11 @@ public class RunCommand implements Runnable, CommandProvider {
         Map<String, String> arguments = applicationParameter.getBatchArguments();
         try {
             executor.execute(context, workflow, arguments);
-        } catch (NoSuchElementException e) {
+        } catch (ExecutionConditionException e) {
             throw new CommandConfigurationException(MessageFormat.format(
-                    "cannot execute batch \"{0}\"",
-                    workflow.getId()), e);
+                    "cannot execute batch \"{0}\" ({1})",
+                    workflow.getId(),
+                    e.getMessage()));
         } catch (IOException | InterruptedException e) {
             throw new CommandExecutionException(MessageFormat.format(
                     "executing batch \"{0}\" was failed",

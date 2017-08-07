@@ -77,7 +77,7 @@ public class ListParameterCommand implements Runnable {
                     ListUtil.printBlock(writer, 4, members);
                 });
             } else {
-                attr.getElements().forEach(writer::println);
+                attr.getElements().forEach(it -> writer.println(it.getName()));
             }
         }
     }

@@ -16,5 +16,6 @@
     <module>model</module>
     <module>executor</module>
     <module>cli</module>
+    <module>hadoop</module>
   </modules>
 </project>

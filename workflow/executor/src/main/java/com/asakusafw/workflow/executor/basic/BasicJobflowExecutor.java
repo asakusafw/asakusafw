@@ -22,13 +22,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.workflow.executor.ExecutionConditionException;
 import com.asakusafw.workflow.executor.JobflowExecutor;
 import com.asakusafw.workflow.executor.TaskExecutionContext;
 import com.asakusafw.workflow.executor.TaskExecutor;
@@ -84,7 +84,7 @@ public class BasicJobflowExecutor implements JobflowExecutor {
         }
         for (TaskInfo task : tasks) {
             TaskExecutor executor = findExecutor(context, task)
-                    .orElseThrow(() -> new NoSuchElementException(MessageFormat.format(
+                    .orElseThrow(() -> new ExecutionConditionException(MessageFormat.format(
                             "there are no suitable executor for task: kind={0}, module={1}, executors={2}",
                             task.getClass().getSimpleName(),
                             task.getModuleName(),

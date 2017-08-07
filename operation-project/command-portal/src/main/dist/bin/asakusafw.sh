@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# Copyright 2011-2017 Asakusa Framework Team.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+_ROOT="$(cd "$(dirname "$0")/../tools" ; pwd)"
+
+. "${ASAKUSA_HOME:?ASAKUSA_HOME is not defined}/core/libexec/configure-java.sh"
+
+_CLASSPATH=()
+_CLASSPATH+=("$_ROOT/lib/asakusa-command-portal.jar")
+_CLASSPATH+=("$_ROOT/lib/slf4j-simple.jar")
+
+exec "$_JAVA_CMD" $JAVA_OPTS \
+    -classpath "$(IFS=:; echo "${_CLASSPATH[*]}")" \
+    -Dcli.name="asakusafw.sh" \
+    -Dorg.slf4j.simpleLogger.showThreadName=false \
+    -Dorg.slf4j.simpleLogger.showLogName=false \
+    -Dorg.slf4j.simpleLogger.levelInBrackets=true \
+    "com.asakusafw.operation.tools.portal.AsakusaPortal" \
+    "$@"

@@ -44,8 +44,8 @@ public class JobflowInfoParameter {
      * The flow ID.
      */
     @Parameter(
-            names = { "--jobflow" },
-            description = "Flow ID.",
+            names = { "--flow", "--jobflow" },
+            description = "Target flow ID.",
             required = false
     )
     public String flowId;

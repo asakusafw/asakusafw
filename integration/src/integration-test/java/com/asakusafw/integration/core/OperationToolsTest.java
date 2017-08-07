@@ -34,10 +34,12 @@ import com.asakusafw.utils.gradle.Bundle;
 import com.asakusafw.utils.gradle.ContentsConfigurator;
 
 /**
- * Test for {@code $ASAKUSA_HOME/operation-tools}.
+ * Test for {@code $ASAKUSA_HOME/tools}.
  */
 @RunWith(Parameterized.class)
 public class OperationToolsTest {
+
+    private static final String CMD_PORTAL = "bin/asakusafw.sh";
 
     /**
      * Return the test parameters.
@@ -68,6 +70,66 @@ public class OperationToolsTest {
         } else {
             provider.withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.UNSET_ALWAYS));
         }
+    }
+
+    /**
+     * portal.
+     */
+    @Test
+    public void portal() {
+        AsakusaProject project = provider.newInstance("ptl");
+        project.gradle("installAsakusafw");
+
+        Bundle framework = project.getFramework();
+        framework.withLaunch(CMD_PORTAL);
+    }
+
+    /**
+     * portal {@code list}.
+     */
+    @Test
+    public void portal_list() {
+        AsakusaProject project = provider.newInstance("ptl");
+        project.gradle("installAsakusafw");
+
+        Bundle framework = project.getFramework();
+        framework.withLaunch(CMD_PORTAL, "list");
+    }
+
+    /**
+     * portal {@code draw}.
+     */
+    @Test
+    public void portal_draw() {
+        AsakusaProject project = provider.newInstance("ptl");
+        project.gradle("installAsakusafw");
+
+        Bundle framework = project.getFramework();
+        framework.withLaunch(CMD_PORTAL, "draw");
+    }
+
+    /**
+     * portal {@code run --help}.
+     */
+    @Test
+    public void portal_run() {
+        AsakusaProject project = provider.newInstance("ptl");
+        project.gradle("installAsakusafw");
+
+        Bundle framework = project.getFramework();
+        framework.withLaunch(CMD_PORTAL, "run", "--help");
+    }
+
+    /**
+     * portal {@code list batch}.
+     */
+    @Test
+    public void portal_list_batch() {
+        AsakusaProject project = provider.newInstance("ptl");
+        project.gradle("installAsakusafw");
+
+        Bundle framework = project.getFramework();
+        framework.withLaunch(CMD_PORTAL, "list", "batch");
     }
 
     /**
@@ -169,35 +231,5 @@ public class OperationToolsTest {
                 is(0));
 
         assertThat(contents.find("var"), is(Optional.empty()));
-    }
-
-    /**
-     * {@code info.sh}.
-     */
-    @Test
-    public void info() {
-        AsakusaProject project = provider.newInstance("tls");
-        project.gradle("installAsakusafw");
-
-        Bundle contents = project.getContents();
-        contents.put("var/file.txt");
-
-        Bundle framework = project.getFramework();
-        framework.withLaunch("tools/bin/info.sh");
-    }
-
-    /**
-     * {@code info.sh list batch}.
-     */
-    @Test
-    public void info_list_batch() {
-        AsakusaProject project = provider.newInstance("tls");
-        project.gradle("installAsakusafw");
-
-        Bundle contents = project.getContents();
-        contents.put("var/file.txt");
-
-        Bundle framework = project.getFramework();
-        framework.withLaunch("tools/bin/info.sh", "list", "batch", "-v");
     }
 }

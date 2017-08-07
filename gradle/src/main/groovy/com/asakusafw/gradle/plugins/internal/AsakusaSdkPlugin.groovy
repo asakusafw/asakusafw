@@ -123,6 +123,7 @@ class AsakusaSdkPlugin implements Plugin<Project> {
             operator true
             testing true
             testkit true
+            yaess true
             directio true
             windgate true
             hive false

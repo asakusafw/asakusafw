@@ -16,7 +16,9 @@
 package com.asakusafw.workflow.cli.common;
 
 import com.asakusafw.workflow.executor.ExecutionContext;
+import com.asakusafw.workflow.executor.TaskExecutors;
 import com.asakusafw.workflow.executor.basic.BasicExecutionContext;
+import com.beust.jcommander.Parameter;
 
 /**
  * Handles parameters about execution context.
@@ -24,9 +26,17 @@ import com.asakusafw.workflow.executor.basic.BasicExecutionContext;
  */
 public class ExecutionContextParameter {
 
-    // NOTE: require Hadoop Configuration?
+    /**
+     * The batch application base directory.
+     */
+    @Parameter(
+            names = { "-B", "--batchapps" },
+            description = "Batch application base directory (ASAKUSA_BATCHAPPS_HOME).",
+            required = false
+    )
+    public String batchappsPath;
 
-    private final ExecutionContext context = new BasicExecutionContext()
+    private final BasicExecutionContext context = new BasicExecutionContext()
             .withEnvironmentVariables(m -> m.putAll(System.getenv()));
 
     /**
@@ -34,6 +44,9 @@ public class ExecutionContextParameter {
      * @return the execution context
      */
     public ExecutionContext getExecutionContext() {
+        if (batchappsPath != null) {
+            context.withEnvironmentVariables(m -> m.put(TaskExecutors.ENV_BATCHAPPS_PATH, batchappsPath));
+        }
         return context;
     }
 }

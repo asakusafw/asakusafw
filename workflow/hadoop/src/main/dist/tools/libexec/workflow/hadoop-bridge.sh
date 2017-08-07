@@ -31,22 +31,18 @@ then
     exit 2
 fi
 
-_ROOT="$(cd "$(dirname "$0")/../.." ; pwd)"
+_BOOTSTRAP="$1"
+shift
 
 import "${ASAKUSA_HOME:?ASAKUSA_HOME is not defined}/hadoop/libexec/configure-hadoop.sh"
 
-if [ -e "$_ROOT/conf/env.sh" ]
-then
-    import "$_ROOT/conf/env.sh"
-fi
-
 if [ "$_HADOOP_CMD" != "" ]
 then
-    export HADOOP_CLASSPATH="$_ROOT/lib/asakusa-workflow.jar:$HADOOP_CLASSPATH"
+    export HADOOP_CLASSPATH="$_BOOTSTRAP:$HADOOP_CLASSPATH"
     exec "$_HADOOP_CMD" \
         "$@"
 else
-    _CLASSPATH=("$_ROOT/lib/asakusa-workflow.jar")
+    _CLASSPATH=("$_BOOTSTRAP")
     _CLASSPATH+=("${_HADOOP_EMBED_CLASSPATH[@]}")
     _CLASSPATH+=("${_HADOOP_EMBED_LOGGING_CLASSPATH[@]}")
     import "$ASAKUSA_HOME/core/libexec/configure-java.sh"

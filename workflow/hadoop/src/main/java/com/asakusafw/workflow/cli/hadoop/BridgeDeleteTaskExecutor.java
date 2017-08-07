@@ -42,9 +42,9 @@ public class BridgeDeleteTaskExecutor extends BasicDeleteTaskExecutor {
     static final Logger LOG = LoggerFactory.getLogger(BridgeDeleteTaskExecutor.class);
 
     /**
-     * The Hadoop bridge script location (relative from framework installation path).
+     * The target class name.
      */
-    public static final String PATH_SCRIPT = "tools/libexec/workflow/hadoop-bridge.sh"; //$NON-NLS-1$
+    public static final String DELEGATE_CLASS = HadoopDelete.class.getName();
 
     private final Function<? super TaskExecutionContext, ? extends CommandLauncher> launchers;
 
@@ -74,13 +74,17 @@ public class BridgeDeleteTaskExecutor extends BasicDeleteTaskExecutor {
         CommandLauncher launcher = launchers.apply(context);
         Path command = getBridgeScript(context).orElseThrow(IllegalStateException::new);
         List<String> arguments = Arrays.asList(
-                HadoopDelete.class.getName(),
+                TaskExecutors.findFrameworkFile(context, Constants.PATH_BRIDGE_LIBRARY)
+                    .map(Path::toAbsolutePath)
+                    .map(Path::toString)
+                    .get(),
+                DELEGATE_CLASS,
                 path);
         BasicCommandTaskExecutor.execute(launcher, command, arguments);
     }
 
     private static Optional<Path> getBridgeScript(TaskExecutionContext context) {
-        return TaskExecutors.findFrameworkFile(context, PATH_SCRIPT)
+        return TaskExecutors.findFrameworkFile(context, Constants.PATH_BRIDGE_SCRIPT)
                 .filter(Files::isRegularFile)
                 .filter(Files::isExecutable);
     }
