@@ -19,7 +19,7 @@ package com.asakusafw.gradle.plugins
  * An extension object for the Asakusa features.
  * This is only for internal use.
  * @since 0.8.0
- * @version 0.9.0
+ * @version 0.10.0
  */
 class AsakusafwBaseExtension {
 
@@ -97,6 +97,12 @@ class AsakusafwBaseExtension {
      * The default Commons Logging version.
      */
     String commonsLoggingVersion
+
+    /**
+     * The default Hadoop version.
+     * @since 0.10.0
+     */
+    String hadoopVersion
 
     /**
      * The default Hive version.
