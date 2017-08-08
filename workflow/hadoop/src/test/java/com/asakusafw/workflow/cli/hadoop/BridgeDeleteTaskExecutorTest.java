@@ -15,6 +15,7 @@
  */
 package com.asakusafw.workflow.cli.hadoop;
 
+import static com.asakusafw.workflow.cli.hadoop.BridgeHadoopTaskExecutorTest.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -68,7 +69,7 @@ public class BridgeDeleteTaskExecutorTest {
         TaskInfo task = new BasicDeleteTaskInfo(PathKind.HADOOP_FILE_SYSTEM, "testing");
         TaskExecutor executor = new BridgeDeleteTaskExecutor(ctxt -> (command, arguments) -> {
             assertThat(command.toRealPath(), is(HOME_DIR.resolve(Constants.PATH_BRIDGE_SCRIPT).toRealPath()));
-            assertThat(arguments.get(0), endsWith(Constants.PATH_BRIDGE_LIBRARY));
+            assertThat(Paths.get(arguments.get(0)), pathEndsWith(Constants.PATH_BRIDGE_LIBRARY));
             assertThat(arguments.get(1), is(BridgeDeleteTaskExecutor.DELEGATE_CLASS));
             assertThat(arguments.get(2), is("testing"));
             return 0;
@@ -86,7 +87,7 @@ public class BridgeDeleteTaskExecutorTest {
         TaskInfo task = new BasicDeleteTaskInfo(PathKind.HADOOP_FILE_SYSTEM, "${execution_id}");
         TaskExecutor executor = new BridgeDeleteTaskExecutor(ctxt -> (command, arguments) -> {
             assertThat(command.toRealPath(), is(HOME_DIR.resolve(Constants.PATH_BRIDGE_SCRIPT).toRealPath()));
-            assertThat(arguments.get(0), endsWith(Constants.PATH_BRIDGE_LIBRARY));
+            assertThat(Paths.get(arguments.get(0)), pathEndsWith(Constants.PATH_BRIDGE_LIBRARY));
             assertThat(arguments.get(1), is(BridgeDeleteTaskExecutor.DELEGATE_CLASS));
             assertThat(arguments.get(2), is(context.getExecutionId()));
             return 0;
