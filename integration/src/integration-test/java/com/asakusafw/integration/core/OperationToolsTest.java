@@ -28,6 +28,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.asakusafw.integration.AsakusaConfigurator;
+import com.asakusafw.integration.AsakusaConstants;
 import com.asakusafw.integration.AsakusaProject;
 import com.asakusafw.integration.AsakusaProjectProvider;
 import com.asakusafw.utils.gradle.Bundle;
@@ -38,8 +39,6 @@ import com.asakusafw.utils.gradle.ContentsConfigurator;
  */
 @RunWith(Parameterized.class)
 public class OperationToolsTest {
-
-    private static final String CMD_PORTAL = "bin/asakusafw.sh";
 
     /**
      * Return the test parameters.
@@ -81,7 +80,7 @@ public class OperationToolsTest {
         project.gradle("installAsakusafw");
 
         Bundle framework = project.getFramework();
-        framework.withLaunch(CMD_PORTAL);
+        framework.withLaunch(AsakusaConstants.CMD_PORTAL);
     }
 
     /**
@@ -93,7 +92,7 @@ public class OperationToolsTest {
         project.gradle("installAsakusafw");
 
         Bundle framework = project.getFramework();
-        framework.withLaunch(CMD_PORTAL, "list");
+        framework.withLaunch(AsakusaConstants.CMD_PORTAL, "list");
     }
 
     /**
@@ -105,7 +104,7 @@ public class OperationToolsTest {
         project.gradle("installAsakusafw");
 
         Bundle framework = project.getFramework();
-        framework.withLaunch(CMD_PORTAL, "draw");
+        framework.withLaunch(AsakusaConstants.CMD_PORTAL, "draw");
     }
 
     /**
@@ -117,7 +116,7 @@ public class OperationToolsTest {
         project.gradle("installAsakusafw");
 
         Bundle framework = project.getFramework();
-        framework.withLaunch(CMD_PORTAL, "run", "--help");
+        framework.withLaunch(AsakusaConstants.CMD_PORTAL, "run", "--help");
     }
 
     /**
@@ -129,7 +128,7 @@ public class OperationToolsTest {
         project.gradle("installAsakusafw");
 
         Bundle framework = project.getFramework();
-        framework.withLaunch(CMD_PORTAL, "list", "batch");
+        framework.withLaunch(AsakusaConstants.CMD_PORTAL, "list", "batch");
     }
 
     /**
