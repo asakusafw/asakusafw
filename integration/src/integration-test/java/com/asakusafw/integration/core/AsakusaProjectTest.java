@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.asakusafw.integration.AsakusaConfigurator;
+import com.asakusafw.integration.AsakusaConstants;
 import com.asakusafw.integration.AsakusaProject;
 import com.asakusafw.integration.AsakusaProjectProvider;
 import com.asakusafw.utils.gradle.Bundle;
@@ -63,7 +64,7 @@ public class AsakusaProjectTest {
         AsakusaProject project = provider.newInstance("simple");
         project.gradle("installAsakusafw");
         Bundle framework = project.getFramework();
-        assertThat(framework.find("yaess/bin/yaess-batch.sh"), is(not(Optional.empty())));
+        assertThat(framework.find(AsakusaConstants.CMD_YAESS), is(not(Optional.empty())));
     }
 
     /**
