@@ -104,7 +104,12 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
      * @throws ParameterException if arguments are not valid
      */
     public Optional<T> parse(String... args) {
-        root.commander.parse(args);
+        try {
+            root.commander.parse(args);
+        } catch (ParameterException e) {
+            Optional.ofNullable(findCommander()).ifPresent(e::setJCommander);
+            throw e;
+        }
         @SuppressWarnings("unchecked")
         T cmd = (T) getActiveCommand(findCommander());
         return Optional.ofNullable(cmd);
