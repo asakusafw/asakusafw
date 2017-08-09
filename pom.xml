@@ -460,6 +460,7 @@ encoding/<project>=UTF-8
               <include>src/**/*.flex</include>
               <include>src/**/*.jj</include>
               <include>src/**/*.sh</include>
+              <include>src/**/*.cmd</include>
             </includes>
             <encoding>UTF-8</encoding>
             <mapping>
