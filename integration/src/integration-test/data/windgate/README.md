@@ -46,5 +46,5 @@
 ```sh
 gradle installAsakusafw
 export PROJECT_HOME=/path/to/project
-$ASAKUSA_HOME/windgate/bin/process.sh arguments...
+$ASAKUSA_HOME/windgate/bin/process arguments...
 ```

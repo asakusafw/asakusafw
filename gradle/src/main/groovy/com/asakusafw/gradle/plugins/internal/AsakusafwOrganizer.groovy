@@ -153,9 +153,9 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 YaessIterativeLib : [
                     "com.asakusafw:asakusa-iterative-yaess:${base.frameworkVersion}:lib@jar",
                 ],
-                WindGateDist : "com.asakusafw:asakusa-windgate-bootstrap:${base.frameworkVersion}:dist@jar",
+                WindGateDist : "com.asakusafw:asakusa-windgate-cli:${base.frameworkVersion}:dist@jar",
                 WindGateLib : [
-                    "com.asakusafw:asakusa-windgate-bootstrap:${base.frameworkVersion}@jar",
+                    "com.asakusafw:asakusa-windgate-cli:${base.frameworkVersion}@jar",
                     "com.asakusafw:asakusa-windgate-core:${base.frameworkVersion}@jar",
                     "ch.qos.logback:logback-classic:${base.logbackVersion}@jar",
                     "ch.qos.logback:logback-core:${base.logbackVersion}@jar",
@@ -266,6 +266,14 @@ class AsakusafwOrganizer extends AbstractOrganizer {
             WindGate : {
                 into('.') {
                     extract configuration('asakusafwWindGateDist')
+                    process {
+                        filesMatching('**/windgate/bin/process') { FileCopyDetails f ->
+                            f.setMode(0755)
+                        }
+                        filesMatching('**/windgate/bin/finalize') { FileCopyDetails f ->
+                        f.setMode(0755)
+                        }
+                    }
                 }
                 into('windgate/lib') {
                     put configuration('asakusafwWindGateLib')

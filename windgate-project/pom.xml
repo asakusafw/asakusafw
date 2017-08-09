@@ -12,7 +12,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>asakusa-windgate-bootstrap</module>
+    <module>cli</module>
     <module>asakusa-windgate-core</module>
     <module>asakusa-windgate-dmdl</module>
     <module>asakusa-windgate-hadoopfs</module>

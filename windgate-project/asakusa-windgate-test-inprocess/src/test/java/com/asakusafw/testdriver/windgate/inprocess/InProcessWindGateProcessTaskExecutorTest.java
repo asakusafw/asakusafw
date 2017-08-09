@@ -42,7 +42,7 @@ import org.junit.Test;
 
 import com.asakusafw.testdriver.windgate.inprocess.model.Line;
 import com.asakusafw.testdriver.windgate.inprocess.testing.io.LineStreamSupport;
-import com.asakusafw.windgate.bootstrap.ExecutionKind;
+import com.asakusafw.windgate.cli.ExecutionKind;
 import com.asakusafw.windgate.core.DriverScript;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.ProcessScript;

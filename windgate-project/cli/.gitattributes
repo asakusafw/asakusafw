@@ -1,0 +1,4 @@
+src/main/dist/windgate/bin/process      eol=lf
+src/main/dist/windgate/bin/finalize     eol=lf
+src/main/dist/windgate/bin/process.cmd  eol=crlf
+src/main/dist/windgate/bin/finalize.cmd eol=crlf
