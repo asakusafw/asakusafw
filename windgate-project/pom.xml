@@ -13,6 +13,7 @@
 
   <modules>
     <module>cli</module>
+    <module>bootstrap</module>
     <module>asakusa-windgate-core</module>
     <module>asakusa-windgate-dmdl</module>
     <module>asakusa-windgate-hadoopfs</module>
