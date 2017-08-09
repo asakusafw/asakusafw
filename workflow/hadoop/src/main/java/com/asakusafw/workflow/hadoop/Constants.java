@@ -13,14 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.workflow.cli.hadoop;
+package com.asakusafw.workflow.hadoop;
 
 final class Constants {
 
     /**
      * The Hadoop bridge script location (relative from framework installation path).
      */
-    public static final String PATH_BRIDGE_SCRIPT = "tools/libexec/workflow/hadoop-bridge.sh"; //$NON-NLS-1$
+    public static final String PATH_BRIDGE_SCRIPT = "tools/libexec/workflow/hadoop-bridge"; //$NON-NLS-1$
+
+    /**
+     * {@link #PATH_BRIDGE_SCRIPT} for Windows.
+     */
+    public static final String PATH_BRIDGE_SCRIPT_WINDOWS = PATH_BRIDGE_SCRIPT + ".cmd"; //$NON-NLS-1$
 
     /**
      * The Hadoop bridge library location (relative from framework installation path).

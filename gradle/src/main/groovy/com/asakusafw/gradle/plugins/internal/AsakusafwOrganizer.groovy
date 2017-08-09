@@ -294,6 +294,9 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                         filesMatching('**/bin/asakusa') { FileCopyDetails f ->
                             f.setMode(0755)
                         }
+                        filesMatching('**/tools/libexec/workflow/hadoop-bridge') { FileCopyDetails f ->
+                            f.setMode(0755)
+                        }
                     }
                 }
                 into('tools/lib') {

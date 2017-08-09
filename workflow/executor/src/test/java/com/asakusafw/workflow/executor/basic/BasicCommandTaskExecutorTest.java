@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 
 import org.junit.Assume;
 import org.junit.Rule;
@@ -60,9 +61,42 @@ public class BasicCommandTaskExecutorTest {
      */
     @Test
     public void simple() throws Exception {
-        String cmd = command();
+        String cmd = command("mock.cmd");
         TaskExecutor executor = new BasicCommandTaskExecutor(c -> (command, arguments) -> {
             assertThat(command.getFileName().toString(), is(cmd));
+            assertThat(arguments, contains(
+                    "Hello, world!",
+                    context.getBatchId(),
+                    context.getFlowId(),
+                    context.getExecutionId(),
+                    "testing=OK"));
+            return 0;
+        });
+        executor.execute(context, new BasicCommandTaskInfo("mock", "testing", cmd, Arrays.asList(
+                CommandToken.of("Hello, world!"),
+                CommandToken.BATCH_ID,
+                CommandToken.FLOW_ID,
+                CommandToken.EXECUTION_ID,
+                CommandToken.BATCH_ARGUMENTS)));
+    }
+
+    /**
+     * simple case.
+     * @throws Exception if failed
+     */
+    @Test
+    public void path_ext() throws Exception {
+        String cmd = command("mock");
+        String cmdExt = command("mock.cmd");
+        String expect;
+        if (BasicCommandTaskExecutor.WINDOWS) {
+            parent.withEnvironmentVariables(m -> m.put("PathExt", ".EXE;.BAT;.CMD"));
+            expect = cmdExt;
+        } else {
+            expect = cmd;
+        }
+        TaskExecutor executor = new BasicCommandTaskExecutor(c -> (command, arguments) -> {
+            assertThat(command.getFileName().toString().toLowerCase(Locale.ENGLISH), is(expect));
             assertThat(arguments, contains(
                     "Hello, world!",
                     context.getBatchId(),
@@ -85,7 +119,7 @@ public class BasicCommandTaskExecutorTest {
      */
     @Test(expected = Exception.class)
     public void abend() throws Exception {
-        String cmd = command();
+        String cmd = command("mock.cmd");
         TaskExecutor executor = new BasicCommandTaskExecutor(c -> (command, arguments) -> {
             return 1;
         });
@@ -106,16 +140,16 @@ public class BasicCommandTaskExecutorTest {
                 executor.isSupported(context, new BasicCommandTaskInfo("m", "t", "missing", Arrays.asList())),
                 is(false));
         assertThat(
-                executor.isSupported(context, new BasicCommandTaskInfo("m", "t", command(), Arrays.asList())),
+                executor.isSupported(context, new BasicCommandTaskInfo("m", "t", command("mock.cmd"), Arrays.asList())),
                 is(true));
     }
 
-    private String command() {
+    private String command(String name) {
         parent.withEnvironmentVariables(m -> m.put(
                 TaskExecutors.ENV_FRAMEWORK_PATH,
                 temporary.getRoot().getAbsolutePath()));
         try {
-            File path = temporary.newFile("mock.cmd");
+            File path = temporary.newFile(name);
             path.setExecutable(true);
             return path.getName();
         } catch (IOException e) {

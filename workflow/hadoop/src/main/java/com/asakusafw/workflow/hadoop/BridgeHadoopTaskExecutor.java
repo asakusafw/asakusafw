@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.workflow.cli.hadoop;
+package com.asakusafw.workflow.hadoop;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,7 +41,7 @@ import com.asakusafw.workflow.model.HadoopTaskInfo;
 import com.asakusafw.workflow.model.TaskInfo;
 
 /**
- * Executes hadoop tasks via {@code tools/bin/libexec/workflow/hadoop-bridge.sh}.
+ * Executes hadoop tasks via {@code tools/bin/libexec/workflow/hadoop-bridge}.
  * @since 0.10.0
  */
 public class BridgeHadoopTaskExecutor implements TaskExecutor {
@@ -103,7 +103,7 @@ public class BridgeHadoopTaskExecutor implements TaskExecutor {
                 .collect(Collectors.joining(",")));
 
         arguments.addAll(getHadoopArguments(context));
-        BasicCommandTaskExecutor.execute(launcher, command, arguments);
+        BasicCommandTaskExecutor.execute(context, launcher, command, arguments);
     }
 
     private static List<Path> getLibraries(TaskExecutionContext context) {

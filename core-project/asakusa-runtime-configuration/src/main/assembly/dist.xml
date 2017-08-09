@@ -13,7 +13,18 @@
       <directoryMode>0755</directoryMode>
       <lineEnding>unix</lineEnding>
       <filtered>true</filtered>
+      <excludes>
+        <exclude>**/*.exe</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <directory>src/main/dist</directory>
+      <outputDirectory>.</outputDirectory>
+      <lineEnding>keep</lineEnding>
+      <filtered>false</filtered>
+      <includes>
+        <include>**/*.exe</include>
+      </includes>
     </fileSet>
   </fileSets>
-
 </assembly>

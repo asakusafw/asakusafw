@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Asakusa workflow Hadoop bridge classes.
+ * Hadoop bridge bootstrap for Windows platform.
  */
-package com.asakusafw.workflow.cli.hadoop;
+package com.asakusafw.workflow.hadoop.bootstrap;

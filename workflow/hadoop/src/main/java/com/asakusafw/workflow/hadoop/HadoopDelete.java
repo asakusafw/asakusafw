@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.workflow.cli.hadoop;
+package com.asakusafw.workflow.hadoop;
 
 import java.io.IOException;
 import java.text.MessageFormat;

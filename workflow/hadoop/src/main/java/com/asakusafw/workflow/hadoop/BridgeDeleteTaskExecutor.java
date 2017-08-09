@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.workflow.cli.hadoop;
+package com.asakusafw.workflow.hadoop;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,7 +34,7 @@ import com.asakusafw.workflow.executor.basic.BasicDeleteTaskExecutor;
 import com.asakusafw.workflow.model.TaskInfo;
 
 /**
- * Executes delete tasks via {@code tools/bin/libexec/workflow/hadoop-bridge.sh}.
+ * Executes delete tasks via {@code tools/bin/libexec/workflow/hadoop-bridge}.
  * @since 0.10.0
  */
 public class BridgeDeleteTaskExecutor extends BasicDeleteTaskExecutor {
@@ -80,7 +80,7 @@ public class BridgeDeleteTaskExecutor extends BasicDeleteTaskExecutor {
                     .get(),
                 DELEGATE_CLASS,
                 path);
-        BasicCommandTaskExecutor.execute(launcher, command, arguments);
+        BasicCommandTaskExecutor.execute(context, launcher, command, arguments);
     }
 
     private static Optional<Path> getBridgeScript(TaskExecutionContext context) {

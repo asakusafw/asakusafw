@@ -18,8 +18,6 @@ package com.asakusafw.workflow.cli.run;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.asakusafw.workflow.cli.hadoop.BridgeDeleteTaskExecutor;
-import com.asakusafw.workflow.cli.hadoop.BridgeHadoopTaskExecutor;
 import com.asakusafw.workflow.executor.BatchExecutor;
 import com.asakusafw.workflow.executor.CommandLauncher;
 import com.asakusafw.workflow.executor.ExecutionContext;
@@ -31,6 +29,8 @@ import com.asakusafw.workflow.executor.basic.BasicBatchExecutor;
 import com.asakusafw.workflow.executor.basic.BasicCommandLauncher;
 import com.asakusafw.workflow.executor.basic.BasicCommandTaskExecutor;
 import com.asakusafw.workflow.executor.basic.BasicJobflowExecutor;
+import com.asakusafw.workflow.hadoop.BridgeDeleteTaskExecutor;
+import com.asakusafw.workflow.hadoop.BridgeHadoopTaskExecutor;
 import com.beust.jcommander.Parameter;
 
 /**

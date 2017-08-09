@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.workflow.cli.hadoop;
+package com.asakusafw.workflow.hadoop;
 
+import static com.asakusafw.workflow.hadoop.BridgeHadoopTaskExecutorTest.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -22,9 +23,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -32,15 +30,21 @@ import org.junit.rules.TemporaryFolder;
 import com.asakusafw.workflow.executor.TaskExecutionContext;
 import com.asakusafw.workflow.executor.TaskExecutor;
 import com.asakusafw.workflow.executor.TaskExecutors;
+import com.asakusafw.workflow.executor.basic.BasicCommandTaskExecutor;
 import com.asakusafw.workflow.executor.basic.BasicExecutionContext;
 import com.asakusafw.workflow.executor.basic.BasicTaskExecutionContext;
+import com.asakusafw.workflow.model.DeleteTaskInfo.PathKind;
 import com.asakusafw.workflow.model.TaskInfo;
-import com.asakusafw.workflow.model.basic.BasicHadoopTaskInfo;
+import com.asakusafw.workflow.model.basic.BasicDeleteTaskInfo;
 
 /**
- * Test for {@link BridgeHadoopTaskExecutor}.
+ * Test for {@link BridgeDeleteTaskExecutor}.
  */
-public class BridgeHadoopTaskExecutorTest {
+public class BridgeDeleteTaskExecutorTest {
+
+    private static final String PATH_BRIDGE_SCRIPT = BasicCommandTaskExecutor.WINDOWS
+            ? Constants.PATH_BRIDGE_SCRIPT_WINDOWS
+            : Constants.PATH_BRIDGE_SCRIPT;
 
     static final Path HOME_DIR = Paths.get("src/main/dist");
 
@@ -67,28 +71,33 @@ public class BridgeHadoopTaskExecutorTest {
      */
     @Test
     public void simple() throws Exception {
-        TaskInfo task = new BasicHadoopTaskInfo("testing", "TEST_CLASS");
-        TaskExecutor executor = new BridgeHadoopTaskExecutor(ctxt -> (command, arguments) -> {
-            assertThat(command.toRealPath(), is(HOME_DIR.resolve(Constants.PATH_BRIDGE_SCRIPT).toRealPath()));
-            assertThat(Paths.get(arguments.get(0)), pathEndsWith(Constants.PATH_LAUNCHER_LIBRARY));
-            assertThat(arguments.get(1), is(BridgeHadoopTaskExecutor.LAUNCHER_CLASS));
-            assertThat(arguments.get(2), is("TEST_CLASS"));
+        TaskInfo task = new BasicDeleteTaskInfo(PathKind.HADOOP_FILE_SYSTEM, "testing");
+        TaskExecutor executor = new BridgeDeleteTaskExecutor(ctxt -> (command, arguments) -> {
+            assertThat(command.toRealPath(), is(HOME_DIR.resolve(PATH_BRIDGE_SCRIPT).toRealPath()));
+            assertThat(Paths.get(arguments.get(0)), pathEndsWith(Constants.PATH_BRIDGE_LIBRARY));
+            assertThat(arguments.get(1), is(BridgeDeleteTaskExecutor.DELEGATE_CLASS));
+            assertThat(arguments.get(2), is("testing"));
             return 0;
         });
         assertThat(executor.isSupported(context, task), is(true));
         executor.execute(context, task);
     }
 
-    static Matcher<Path> pathEndsWith(String suffix) {
-        return new BaseMatcher<Path>() {
-            @Override
-            public boolean matches(Object item) {
-                return ((Path) item).endsWith(suffix);
-            }
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("ends with ").appendValue(suffix);
-            }
-        };
+    /**
+     * w/ variables.
+     * @throws Exception if failed
+     */
+    @Test
+    public void resolved() throws Exception {
+        TaskInfo task = new BasicDeleteTaskInfo(PathKind.HADOOP_FILE_SYSTEM, "${execution_id}");
+        TaskExecutor executor = new BridgeDeleteTaskExecutor(ctxt -> (command, arguments) -> {
+            assertThat(command.toRealPath(), is(HOME_DIR.resolve(PATH_BRIDGE_SCRIPT).toRealPath()));
+            assertThat(Paths.get(arguments.get(0)), pathEndsWith(Constants.PATH_BRIDGE_LIBRARY));
+            assertThat(arguments.get(1), is(BridgeDeleteTaskExecutor.DELEGATE_CLASS));
+            assertThat(arguments.get(2), is(context.getExecutionId()));
+            return 0;
+        });
+        assertThat(executor.isSupported(context, task), is(true));
+        executor.execute(context, task);
     }
 }

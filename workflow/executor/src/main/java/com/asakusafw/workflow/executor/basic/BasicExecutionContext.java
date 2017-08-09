@@ -15,9 +15,14 @@
  */
 package com.asakusafw.workflow.executor.basic;
 
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import com.asakusafw.workflow.executor.ExecutionContext;
@@ -28,13 +33,38 @@ import com.asakusafw.workflow.executor.ExecutionContext;
  */
 public class BasicExecutionContext implements ExecutionContext {
 
+    static final boolean CASE_SENSITIVE = isCaseSensitiveEnvironmentVariables();
+
     private ClassLoader classLoader = getClass().getClassLoader();
 
     private final Map<String, String> configurations = new LinkedHashMap<>();
 
-    private final Map<String, String> environmentVariables = new LinkedHashMap<>();
+    private final Map<String, String> environmentVariables = CASE_SENSITIVE
+            ? new LinkedHashMap<>()
+            : new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     private final Map<Class<?>, Object> resources = new LinkedHashMap<>();
+
+    private static boolean isCaseSensitiveEnvironmentVariables() {
+        Map<String, String> env = System.getenv();
+        if (env instanceof SortedMap<?, ?>) {
+            Comparator<? super String> comparator = ((SortedMap<String, String>) env).comparator();
+            return comparator == null || comparator.compare("a", "A") != 0;
+        }
+        if (env.isEmpty() == false) {
+            for (String name : env.keySet()) {
+                String upper = name.toUpperCase(Locale.ENGLISH);
+                String lower = name.toLowerCase(Locale.ENGLISH);
+                if (upper.equals(lower) == false) {
+                    String value = System.getenv(name);
+                    String upperValue = System.getenv(upper);
+                    String lowerValue = System.getenv(lower);
+                    return Objects.equals(value, upperValue) == false || Objects.equals(value, lowerValue) == false;
+                }
+            }
+        }
+        return true;
+    }
 
     @Override
     public ClassLoader getClassLoader() {

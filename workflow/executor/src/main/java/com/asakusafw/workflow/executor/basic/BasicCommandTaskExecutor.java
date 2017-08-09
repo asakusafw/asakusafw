@@ -15,13 +15,19 @@
  */
 package com.asakusafw.workflow.executor.basic;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import com.asakusafw.workflow.executor.CommandLauncher;
 import com.asakusafw.workflow.executor.ExecutionContext;
@@ -36,6 +42,15 @@ import com.asakusafw.workflow.model.TaskInfo;
  * @since 0.10.0
  */
 public class BasicCommandTaskExecutor implements TaskExecutor {
+
+    /**
+     * Whether the running System is Windows or not.
+     */
+    public static final boolean WINDOWS = System.getProperty("os.name", "")
+            .toLowerCase(Locale.ENGLISH)
+            .startsWith("windows");
+
+    static final String ENV_PATHEXT = "PATHEXT";
 
     private final Function<? super TaskExecutionContext, ? extends CommandLauncher> launchers;
 
@@ -69,7 +84,7 @@ public class BasicCommandTaskExecutor implements TaskExecutor {
         List<String> arguments = TaskExecutors.resolveCommandTokens(
                 context,
                 mirror.getArguments(context.getConfigurations()));
-        execute(launcher, command, arguments);
+        execute(context, launcher, command, arguments);
     }
 
     static boolean isSupported(TaskExecutionContext context, String command) {
@@ -118,11 +133,12 @@ public class BasicCommandTaskExecutor implements TaskExecutor {
     public static void execute(
             TaskExecutionContext context,
             Path command, List<String> arguments) throws IOException, InterruptedException {
-        execute(getCommandLauncher(context), command, arguments);
+        execute(context, getCommandLauncher(context), command, arguments);
     }
 
     /**
      * Executes a command.
+     * @param context the current context
      * @param launcher the command launcher
      * @param command the command path
      * @param arguments the resolved arguments
@@ -130,15 +146,43 @@ public class BasicCommandTaskExecutor implements TaskExecutor {
      * @throws InterruptedException if interrupted while executing the command
      */
     public static void execute(
-            CommandLauncher launcher,
+            TaskExecutionContext context, CommandLauncher launcher,
             Path command, List<String> arguments) throws IOException, InterruptedException {
-        int exit = launcher.launch(command, arguments);
+        Path resolved = resolveCommand(context, command);
+        int exit = launcher.launch(resolved, arguments);
         if (exit != 0) {
             throw new IOException(MessageFormat.format(
                     "failed to execute task: command={0}, arguments={1}, exit={2}",
-                    command,
+                    resolved,
                     arguments,
                     exit));
         }
+    }
+
+    private static Path resolveCommand(TaskExecutionContext context, Path command) {
+        // path extension is available only for Windows
+        if (WINDOWS == false) {
+            return command;
+        }
+
+        String name = Optional.ofNullable(command.getFileName())
+                .map(Path::toString)
+                .orElse(null);
+        if (name == null || name.indexOf('.') >= 0) {
+            // if already has extension, we don't add any extensions.
+            return command;
+        }
+
+        // we append each %PathExt% to suffix of the command
+        return Optional.ofNullable(context.getEnvironmentVariables().get(ENV_PATHEXT))
+                .map(it -> Arrays.stream(it.split(Pattern.quote(File.pathSeparator))))
+                .orElse(Stream.empty())
+                .map(String::trim)
+                .filter(it -> it.isEmpty() == false)
+                .map(name::concat)
+                .map(command::resolveSibling)
+                .filter(Files::isRegularFile)
+                .findFirst()
+                .orElse(command);
     }
 }
