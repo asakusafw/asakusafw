@@ -22,6 +22,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -67,12 +70,25 @@ public class BridgeHadoopTaskExecutorTest {
         TaskInfo task = new BasicHadoopTaskInfo("testing", "TEST_CLASS");
         TaskExecutor executor = new BridgeHadoopTaskExecutor(ctxt -> (command, arguments) -> {
             assertThat(command.toRealPath(), is(HOME_DIR.resolve(Constants.PATH_BRIDGE_SCRIPT).toRealPath()));
-            assertThat(arguments.get(0), endsWith(Constants.PATH_LAUNCHER_LIBRARY));
-            assertThat(arguments.get(1), endsWith(BridgeHadoopTaskExecutor.LAUNCHER_CLASS));
+            assertThat(Paths.get(arguments.get(0)), pathEndsWith(Constants.PATH_LAUNCHER_LIBRARY));
+            assertThat(arguments.get(1), is(BridgeHadoopTaskExecutor.LAUNCHER_CLASS));
             assertThat(arguments.get(2), is("TEST_CLASS"));
             return 0;
         });
         assertThat(executor.isSupported(context, task), is(true));
         executor.execute(context, task);
+    }
+
+    static Matcher<Path> pathEndsWith(String suffix) {
+        return new BaseMatcher<Path>() {
+            @Override
+            public boolean matches(Object item) {
+                return ((Path) item).endsWith(suffix);
+            }
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("ends with ").appendValue(suffix);
+            }
+        };
     }
 }
