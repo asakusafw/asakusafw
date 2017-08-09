@@ -16,14 +16,15 @@
 package com.asakusafw.integration;
 
 /**
- * Privides constants about Asakusa Framework.
+ * Provides constants about Asakusa Framework.
+ * @since 0.10.0
  */
 public final class AsakusaConstants {
 
     /**
      * The path of portal command.
      */
-    public static final String CMD_PORTAL = "bin/asakusafw.sh";
+    public static final String CMD_PORTAL = "bin/asakusa";
 
     /**
      * The path of YAESS command.

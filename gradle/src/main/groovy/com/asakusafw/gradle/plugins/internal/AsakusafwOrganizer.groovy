@@ -18,6 +18,7 @@ package com.asakusafw.gradle.plugins.internal
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.tasks.bundling.Compression
 import org.gradle.api.tasks.bundling.Tar
 
@@ -289,6 +290,11 @@ class AsakusafwOrganizer extends AbstractOrganizer {
             Operation : {
                 into('.') {
                     extract configuration('asakusafwOperationDist')
+                    process {
+                        filesMatching('**/bin/asakusa') { FileCopyDetails f ->
+                            f.setMode(0755)
+                        }
+                    }
                 }
                 into('tools/lib') {
                     put configuration('asakusafwOperationLib')

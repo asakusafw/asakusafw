@@ -16,8 +16,10 @@
 package com.asakusafw.operation.tools.portal;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ import com.asakusafw.utils.jcommander.CommandExecutionException;
 import com.asakusafw.utils.jcommander.JCommanderWrapper;
 import com.asakusafw.utils.jcommander.common.CommandProvider;
 import com.asakusafw.utils.jcommander.common.GroupUsageCommand;
+import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 
@@ -55,14 +58,19 @@ public final class AsakusaPortal extends GroupUsageCommand {
         try {
             exec(args);
         } catch (CommandExecutionException e) {
-            LOG.error("error occurred while executing command", e);
+            handle(e);
             System.exit(1);
         } catch (CommandConfigurationException e) {
-            LOG.error("{}", e.getMessage());
+            handle(e);
             LOG.debug("configuration error detail: {}", Arrays.toString(args), e);
             System.exit(2);
+        } catch (MissingCommandException e) {
+            handle(e);
+            LOG.debug("parameter error detail: {}", Arrays.toString(args), e);
+            System.exit(3);
         } catch (ParameterException e) {
-            LOG.error("cannot recognize arguments: {}", Arrays.toString(args), e);
+            handle(e);
+            LOG.debug("parameter error detail: {}", Arrays.toString(args), e);
             System.exit(3);
         }
     }
@@ -75,5 +83,33 @@ public final class AsakusaPortal extends GroupUsageCommand {
                         .forEach(provider -> provider.accept(it)))
                 .parse(args)
                 .ifPresent(Runnable::run);
+    }
+
+    private static void handle(CommandConfigurationException e) {
+        LOG.error("{}", e.getMessage());
+    }
+
+    private static void handle(CommandExecutionException e) {
+        LOG.error("error occurred while executing command", e);
+    }
+
+    private static void handle(ParameterException e) {
+        LOG.error("{} ({})",
+                e.getMessage(),
+                e.getJCommander().getProgramName());
+    }
+
+    private static void handle(MissingCommandException e) {
+        LOG.error("{} \"{}\" is not defined.",
+                e.getJCommander().getProgramName(),
+                e.getUnknownCommand());
+        List<String> candidates = e.getJCommander().getCommands().keySet().stream()
+                .sorted()
+                .collect(Collectors.toList());
+        if (candidates.isEmpty() == false) {
+            LOG.error("Available commands are: {}", candidates.stream()
+                    .map(it -> String.format("\"%s\"", it))
+                    .collect(Collectors.joining(", ")));
+        }
     }
 }
