@@ -289,6 +289,10 @@ public final class TaskExecutors {
     }
 
     private static String encodeBatchArguments(Map<String, String> arguments) {
+        if (arguments.isEmpty()) {
+            // NOTE: never empty for windows
+            return ",";
+        }
         StringBuilder buf = new StringBuilder();
         arguments.forEach((k, v) -> {
             if (buf.length() != 0) {
