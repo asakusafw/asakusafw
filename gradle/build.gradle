@@ -146,6 +146,3 @@ artifacts {
     archives tasks.testsJar
 }
 
-wrapper {
-    distributionType 'ALL'
-}
