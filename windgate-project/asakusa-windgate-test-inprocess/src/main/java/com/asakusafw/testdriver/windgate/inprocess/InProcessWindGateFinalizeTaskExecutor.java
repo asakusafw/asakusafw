@@ -28,14 +28,14 @@ import com.asakusafw.workflow.model.CommandTaskInfo;
 import com.asakusafw.workflow.model.TaskInfo;
 
 /**
- * In-process {@link TaskExecutor} for {@code windgate/bin/finalize.sh}.
+ * In-process {@link TaskExecutor} for {@code windgate/bin/finalize}.
  * @since 0.10.0
  */
 public class InProcessWindGateFinalizeTaskExecutor implements TaskExecutor {
 
     static final Logger LOG = LoggerFactory.getLogger(InProcessWindGateFinalizeTaskExecutor.class);
 
-    static final String COMMAND_SUFFIX = WindGateTaskExecutors.PATH_WINDGATE + "/bin/finalize.sh"; //$NON-NLS-1$
+    static final String COMMAND_SUFFIX = WindGateTaskExecutors.PATH_WINDGATE + "/bin/finalize"; //$NON-NLS-1$
 
     static final int ARG_BATCH_ID = WindGateTaskExecutors.ARG_PROFILE + 1;
 

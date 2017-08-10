@@ -27,8 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.runtime.stage.StageConstants;
-import com.asakusafw.windgate.bootstrap.CommandLineUtil;
-import com.asakusafw.windgate.bootstrap.ExecutionKind;
+import com.asakusafw.windgate.cli.CommandLineUtil;
+import com.asakusafw.windgate.cli.ExecutionKind;
 import com.asakusafw.windgate.core.GateProfile;
 import com.asakusafw.windgate.core.GateScript;
 import com.asakusafw.windgate.core.GateTask;
@@ -40,14 +40,14 @@ import com.asakusafw.workflow.model.CommandTaskInfo;
 import com.asakusafw.workflow.model.TaskInfo;
 
 /**
- * In-process {@link TaskExecutor} for {@code windgate/bin/process.sh}.
+ * In-process {@link TaskExecutor} for {@code windgate/bin/process}.
  * @since 0.10.0
  */
 public class InProcessWindGateProcessTaskExecutor implements TaskExecutor {
 
     static final Logger LOG = LoggerFactory.getLogger(InProcessWindGateProcessTaskExecutor.class);
 
-    static final String COMMAND_SUFFIX = WindGateTaskExecutors.PATH_WINDGATE + "/bin/process.sh"; //$NON-NLS-1$
+    static final String COMMAND_SUFFIX = WindGateTaskExecutors.PATH_WINDGATE + "/bin/process"; //$NON-NLS-1$
 
     static final int ARG_SESSION_KIND = WindGateTaskExecutors.ARG_PROFILE + 1;
 

@@ -23,7 +23,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>asakusa-windgate-bootstrap</artifactId>
+      <artifactId>asakusa-windgate-cli</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

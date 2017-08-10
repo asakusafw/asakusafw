@@ -49,6 +49,10 @@ import com.asakusafw.utils.gradle.ContentsConfigurator;
 @RunWith(Parameterized.class)
 public class WindGateTest {
 
+    private static final String PROCESS_CMD = "windgate/bin/process";
+
+    private static final String FINALIZE_CMD = "windgate/bin/finalize";
+
     /**
      * Return the test parameters.
      * @return the test parameters
@@ -83,7 +87,7 @@ public class WindGateTest {
     }
 
     /**
-     * {@code process.sh} - one-shot.
+     * {@code process} - one-shot.
      */
     @Test
     public void oneshot() {
@@ -93,7 +97,7 @@ public class WindGateTest {
         Bundle framework = project.getFramework();
         assertThat(
                 framework.launch(
-                        "windgate/bin/process.sh",
+                        PROCESS_CMD,
                         "copy",
                         "oneshot",
                         framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
@@ -104,7 +108,7 @@ public class WindGateTest {
                 is(0));
         assertThat(
                 framework.launch(
-                        "windgate/bin/finalize.sh",
+                        FINALIZE_CMD,
                         "copy",
                         "app",
                         "flow",
@@ -116,7 +120,7 @@ public class WindGateTest {
     }
 
     /**
-     * {@code process.sh} - begin and end.
+     * {@code process} - begin and end.
      */
     @Test
     public void begin_end() {
@@ -127,7 +131,7 @@ public class WindGateTest {
         Bundle framework = project.getFramework();
         assertThat(
                 framework.launch(
-                        "windgate/bin/process.sh",
+                        PROCESS_CMD,
                         "copy",
                         "begin",
                         framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
@@ -141,7 +145,7 @@ public class WindGateTest {
 
         assertThat(
                 framework.launch(
-                        "windgate/bin/process.sh",
+                        PROCESS_CMD,
                         "copy",
                         "end",
                         framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
@@ -155,7 +159,7 @@ public class WindGateTest {
 
         assertThat(
                 framework.launch(
-                        "windgate/bin/finalize.sh",
+                        FINALIZE_CMD,
                         "copy",
                         "app",
                         "flow",
@@ -164,7 +168,7 @@ public class WindGateTest {
     }
 
     /**
-     * {@code process.sh} - begin and end.
+     * {@code process} - begin and end.
      */
     @Test
     public void begin_finalize_end() {
@@ -175,7 +179,7 @@ public class WindGateTest {
         Bundle framework = project.getFramework();
         assertThat(
                 framework.launch(
-                        "windgate/bin/process.sh",
+                        PROCESS_CMD,
                         "copy",
                         "begin",
                         framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
@@ -189,7 +193,7 @@ public class WindGateTest {
 
         assertThat(
                 framework.launch(
-                        "windgate/bin/finalize.sh",
+                        FINALIZE_CMD,
                         "copy",
                         "app",
                         "flow",
@@ -198,7 +202,7 @@ public class WindGateTest {
 
         assertThat(
                 framework.launch(
-                        "windgate/bin/process.sh",
+                        PROCESS_CMD,
                         "copy",
                         "end",
                         framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
@@ -211,7 +215,7 @@ public class WindGateTest {
 
         assertThat(
                 framework.launch(
-                        "windgate/bin/finalize.sh",
+                        FINALIZE_CMD,
                         "copy",
                         "app",
                         "flow",
@@ -230,7 +234,7 @@ public class WindGateTest {
         Bundle framework = project.getFramework();
         assertThat(
                 framework.launch(
-                        "windgate/bin/process.sh",
+                        PROCESS_CMD,
                         "copy",
                         "begin",
                         framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
@@ -242,7 +246,7 @@ public class WindGateTest {
 
         assertThat(
                 framework.launch(
-                        "windgate/bin/process.sh",
+                        PROCESS_CMD,
                         "copy",
                         "begin",
                         framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
@@ -254,7 +258,7 @@ public class WindGateTest {
 
         assertThat(
                 framework.launch(
-                        "windgate/bin/finalize.sh",
+                        FINALIZE_CMD,
                         "copy",
                         "app",
                         "flow",
@@ -274,7 +278,7 @@ public class WindGateTest {
         Bundle framework = project.getFramework();
         assertThat(
                 framework.launch(
-                        "windgate/bin/process.sh",
+                        PROCESS_CMD,
                         "copy",
                         "begin",
                         framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
@@ -288,7 +292,7 @@ public class WindGateTest {
 
         assertThat(
                 framework.launch(
-                        "windgate/bin/process.sh",
+                        PROCESS_CMD,
                         "copy",
                         "begin",
                         framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
@@ -302,7 +306,7 @@ public class WindGateTest {
 
         assertThat(
                 framework.launch(
-                        "windgate/bin/finalize.sh",
+                        FINALIZE_CMD,
                         "copy"),
                 is(0));
     }
@@ -325,7 +329,7 @@ public class WindGateTest {
         Bundle framework = project.getFramework();
         assertThat(
                 framework.launch(
-                        "windgate/bin/process.sh",
+                        PROCESS_CMD,
                         "copy-remote",
                         "begin",
                         framework.get("windgate/script/remote-put.properties").toAbsolutePath().toString(),
@@ -337,7 +341,7 @@ public class WindGateTest {
         assertThat(contents.find("tmp.bin"), is(not(Optional.empty())));
         assertThat(
                 framework.launch(
-                        "windgate/bin/process.sh",
+                        PROCESS_CMD,
                         "copy-remote",
                         "end",
                         framework.get("windgate/script/remote-get.properties").toAbsolutePath().toString(),
@@ -348,7 +352,7 @@ public class WindGateTest {
                 is(0));
         assertThat(
                 framework.launch(
-                        "windgate/bin/finalize.sh",
+                        FINALIZE_CMD,
                         "copy-remote",
                         "app",
                         "flow",

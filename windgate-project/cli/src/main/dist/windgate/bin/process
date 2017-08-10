@@ -1,0 +1,179 @@
+#!/bin/bash
+#
+# Copyright 2011-2017 Asakusa Framework Team.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+usage() {
+    cat 1>&2 <<EOF
+WindGate - A portable data transfer tool
+
+Usage:
+    $0 profile session-kind script batch-id flow-id execution-id arguments
+
+Parameters:
+    profile
+        name of WindGate profile name
+    session-kind
+        process kind of WindGate execution
+        this must be one of:
+              "begin" - creates a new session and then keep it
+                "end" - opens a created session and then complete it
+            "oneshot" - creates a new session and then complete it
+    script
+        path to the WindGate script
+    batch-id
+        batch ID of current execution
+    flow-id
+        flow ID of current execution
+    execution-id
+        execution ID of current execution
+    arguments
+        The arguments for this execution
+        This must be form of "key1=value1,key2=value2,...",
+        and the special characters '=', ',', '\' can be escaped by '\'.
+EOF
+}
+
+import() {
+    _SCRIPT="$1"
+    if [ -e "$_SCRIPT" ]
+    then
+        . "$_SCRIPT"
+    else
+        echo "$_SCRIPT is not found" 1>&2
+        exit 1
+    fi
+}
+
+if [ $# -ne 7 ]; then
+    usage
+    exit 1
+fi
+
+_OPT_PROFILE="$1"
+_OPT_SESSION_KIND="$2"
+_OPT_SCRIPT="$3"
+_OPT_BATCH_ID="$4"
+_OPT_FLOW_ID="$5"
+_OPT_EXECUTION_ID="$6"
+_OPT_ARGUMENTS="$7"
+
+_ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
+
+import "$_ROOT/conf/env.sh"
+import "$_ROOT/libexec/validate-env.sh"
+
+# Move to home directory
+cd
+
+_WG_PROFILE="$_ROOT/profile/${_OPT_PROFILE}.properties"
+_WG_SCRIPT="$_OPT_SCRIPT"
+
+case "$_OPT_SESSION_KIND" in
+    begin)
+        _WG_MODE="begin"
+    ;;
+    end)
+        _WG_MODE="end"
+    ;;
+    oneshot)
+        _WG_MODE="oneshot"
+    ;;
+    *)
+        echo "Unknown process kind: \"$_OPT_SESSION_KIND\"" 1>&2
+        exit 1
+    ;;
+esac
+
+_WG_SESSION="$_OPT_EXECUTION_ID"
+_WG_ARGUMENTS="$_OPT_ARGUMENTS"
+_WG_ARGUMENTS="$_WG_ARGUMENTS,user=$USER"
+_WG_ARGUMENTS="$_WG_ARGUMENTS,batch_id=$_OPT_BATCH_ID"
+_WG_ARGUMENTS="$_WG_ARGUMENTS,flow_id=$_OPT_FLOW_ID"
+_WG_ARGUMENTS="$_WG_ARGUMENTS,execution_id=$_OPT_EXECUTION_ID"
+_CLASS_NAME="com.asakusafw.windgate.cli.WindGate"
+
+import "$ASAKUSA_HOME/hadoop/libexec/configure-hadoop.sh"
+import "$_ROOT/libexec/configure-classpath.sh"
+import "$_ROOT/libexec/configure-plugin.sh"
+
+export WINDGATE_PROFILE="$_OPT_PROFILE"
+
+echo "Starting WindGate:"
+echo " Hadoop Command: ${_HADOOP_CMD:-N/A}"
+echo "          Class: $_CLASS_NAME"
+echo "      Libraries: ${_CLASSPATH[*]}"
+echo "   Process Mode: $_WG_MODE"
+echo "        Profile: $_WG_PROFILE"
+echo "         Script: $_WG_SCRIPT"
+echo "     Session ID: $_WG_SESSION"
+echo "       Plug-ins: ${_PLUGINPATH[*]}"
+echo "      Arguments: $_WG_ARGUMENTS"
+echo "  WINDGATE_OPTS: $WINDGATE_OPTS"
+
+
+_CLASSPATH_DELIMITER="${WG_CLASSPATH_DELIMITER-:}"
+
+if [ "$_HADOOP_CMD" != "" ]
+then
+    export HADOOP_CLASSPATH="$(IFS=$_CLASSPATH_DELIMITER; echo "${_CLASSPATH[*]}")$_CLASSPATH_DELIMITER$HADOOP_CLASSPATH"
+    HADOOP_OPTS="$HADOOP_OPTS $WINDGATE_OPTS"
+    HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.batchId=${_OPT_BATCH_ID:-(unknown)}"
+    HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.flowId=${_OPT_FLOW_ID:-(unknown)}"
+    HADOOP_OPTS="$HADOOP_OPTS -Dcom.asakusafw.windgate.log.executionId=${_OPT_EXECUTION_ID:-(unknown)}"
+    export HADOOP_OPTS
+    "$_HADOOP_CMD" \
+        "$_CLASS_NAME" \
+        -mode "$_WG_MODE" \
+        -profile "$_WG_PROFILE" \
+        -script "$_WG_SCRIPT" \
+        -session "$_WG_SESSION" \
+        -plugin "$(IFS=$_CLASSPATH_DELIMITER; echo "${_PLUGINPATH[*]}")" \
+        -arguments "$_WG_ARGUMENTS"
+    _RET=$?
+else
+    import "$ASAKUSA_HOME/core/libexec/configure-java.sh"
+    _CLASSPATH+=("${_HADOOP_EMBED_CLASSPATH[@]}")
+    "$_JAVA_CMD" \
+        $WINDGATE_OPTS \
+        -classpath "$(IFS=$_CLASSPATH_DELIMITER; echo "${_CLASSPATH[*]}")" \
+        "-Dcom.asakusafw.windgate.log.batchId=${_OPT_BATCH_ID:-(unknown)}" \
+        "-Dcom.asakusafw.windgate.log.flowId=${_OPT_FLOW_ID:-(unknown)}" \
+        "-Dcom.asakusafw.windgate.log.executionId=${_OPT_EXECUTION_ID:-(unknown)}" \
+        "$_CLASS_NAME" \
+        -mode "$_WG_MODE" \
+        -profile "$_WG_PROFILE" \
+        -script "$_WG_SCRIPT" \
+        -session "$_WG_SESSION" \
+        -plugin "$(IFS=$_CLASSPATH_DELIMITER; echo "${_PLUGINPATH[*]}")" \
+        -arguments "$_WG_ARGUMENTS"
+    _RET=$?
+fi
+
+if [ $_RET -ne 0 ]
+then
+    echo "WindGate failed with exit code: $_RET" 1>&2
+    echo " Hadoop Command: ${_HADOOP_CMD:-N/A}" 1>&2
+    echo "          Class: $_CLASS_NAME" 1>&2
+    echo "      Libraries: ${_CLASSPATH[*]}" 1>&2
+    echo "   Process Mode: $_WG_MODE" 1>&2
+    echo "        Profile: $_WG_PROFILE" 1>&2
+    echo "         Script: $_WG_SCRIPT" 1>&2
+    echo "     Session ID: $_WG_SESSION" 1>&2
+    echo "       Plug-ins: ${_PLUGINPATH[*]}" 1>&2
+    echo "      Arguments: $_WG_ARGUMENTS" 1>&2
+    echo "  WINDGATE_OPTS: $WINDGATE_OPTS" 1>&2
+    exit $_RET
+fi

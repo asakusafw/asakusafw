@@ -41,7 +41,7 @@ import com.asakusafw.runtime.stage.launcher.ApplicationLauncher;
 import com.asakusafw.testdriver.windgate.PluginClassLoader;
 import com.asakusafw.testdriver.windgate.WindGateTestHelper;
 import com.asakusafw.vocabulary.windgate.Constants;
-import com.asakusafw.windgate.bootstrap.CommandLineUtil;
+import com.asakusafw.windgate.cli.CommandLineUtil;
 import com.asakusafw.windgate.core.GateProfile;
 import com.asakusafw.windgate.core.ParameterList;
 import com.asakusafw.windgate.core.ProfileContext;
