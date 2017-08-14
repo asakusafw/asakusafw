@@ -22,13 +22,18 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.tasks.options.Option
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.TaskAction
 import org.gradle.process.JavaExecSpec
 
 /**
  * An abstract implementation of Asakusa test tool tasks.
  */
 abstract class AbstractTestToolTask extends DefaultTask {
+
+    /**
+     * The tool launcher class libraries (can empty).
+     * @since 0.10.0
+     */
+    List<Object> launcherClasspath = []
 
     /**
      * The logback configuration for the tool.
@@ -117,24 +122,43 @@ abstract class AbstractTestToolTask extends DefaultTask {
      * @param toolArguments the tool-specific arguments
      */
     protected void execute(String mainClass, List<String> toolArguments) {
-        project.javaexec { JavaExecSpec spec ->
-            spec.main = mainClass
-            spec.classpath = getToolClasspath()
-            spec.jvmArgs = ResolutionUtils.resolveToStringList(getJvmArgs())
-            if (getMaxHeapSize()) {
-                spec.maxHeapSize = getMaxHeapSize()
-            }
-            if (getLogbackConf()) {
-                spec.systemProperties += ['logback.configurationFile' : getLogbackConf().absolutePath]
-            }
-            spec.systemProperties += ResolutionUtils.resolveToStringMap(this.getSystemProperties())
-            spec.args += toolArguments
-            ResolutionUtils.resolveToStringMap(getBatchArguments()).each { String key, String value ->
-                spec.args += ['-A', "${key}=${value}"]
-            }
-            ResolutionUtils.resolveToStringMap(getHadoopProperties()).each { String key, String value ->
-                spec.args += ['-D', "${key}=${value}"]
-            }
+        String javaMain = mainClass
+        FileCollection javaClasspath = project.files(getToolClasspath())
+        List<String> javaArguments = createArguments(toolArguments)
+        FileCollection launcher = project.files(getLauncherClasspath())
+        if (!launcher.empty) {
+            logger.info "Starting test tool via launcher"
+            File script = ToolLauncherUtils.createLaunchFile(this, javaClasspath, javaMain, javaArguments)
+            javaMain = ToolLauncherUtils.MAIN_CLASS
+            javaClasspath = launcher
+            javaArguments = [script.absolutePath]
         }
+        project.javaexec { JavaExecSpec spec ->
+            spec.main = javaMain
+            spec.classpath = javaClasspath
+            spec.jvmArgs = this.getJvmArgs()
+            if (this.getMaxHeapSize() != null) {
+                spec.maxHeapSize = this.getMaxHeapSize()
+            }
+            if (this.getLogbackConf()) {
+                spec.systemProperties += [ 'logback.configurationFile' : this.getLogbackConf().absolutePath ]
+            }
+            spec.systemProperties += [ 'java.awt.headless' : true ]
+            spec.systemProperties += ResolutionUtils.resolveToStringMap(this.getSystemProperties())
+            spec.enableAssertions = true
+            spec.args = javaArguments
+        }
+    }
+
+    private List<String> createArguments(List<String> toolArguments) {
+        List<String> results = []
+        results += toolArguments
+        ResolutionUtils.resolveToStringMap(getBatchArguments()).each { String key, String value ->
+            results += ['-A', "${key}=${value}"]
+        }
+        ResolutionUtils.resolveToStringMap(getHadoopProperties()).each { String key, String value ->
+            results += ['-D', "${key}=${value}"]
+        }
+        return results
     }
 }
