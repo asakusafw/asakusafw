@@ -23,11 +23,8 @@ _CLASSPATH=()
 _CLASSPATH+=("$_ROOT/lib/asakusa-command-portal.jar")
 _CLASSPATH+=("$_ROOT/lib/slf4j-simple.jar")
 
-exec "$_JAVA_CMD" $JAVA_OPTS \
+exec "$_JAVA_CMD" $ASAKUSA_CLIENT_OPTS \
     -classpath "$(IFS=:; echo "${_CLASSPATH[*]}")" \
     -Dcli.name="asakusa" \
-    -Dorg.slf4j.simpleLogger.showThreadName=false \
-    -Dorg.slf4j.simpleLogger.showLogName=false \
-    -Dorg.slf4j.simpleLogger.levelInBrackets=true \
     "com.asakusafw.operation.tools.portal.AsakusaPortal" \
     "$@"

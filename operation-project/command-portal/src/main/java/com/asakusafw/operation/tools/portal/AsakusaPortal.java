@@ -42,6 +42,10 @@ import com.beust.jcommander.Parameters;
 )
 public final class AsakusaPortal extends GroupUsageCommand {
 
+    static {
+        SimpleLoggerUtil.configure();
+    }
+
     static final Logger LOG = LoggerFactory.getLogger(AsakusaPortal.class);
 
     static final String KEY_COMMAND_NAME = "cli.name";

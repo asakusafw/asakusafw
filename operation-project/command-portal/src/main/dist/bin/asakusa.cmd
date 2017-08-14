@@ -27,8 +27,5 @@ set java_classpath=%libdir%\asakusa-command-portal.jar;%libdir%\slf4j-simple.jar
 set main_class=com.asakusafw.operation.tools.portal.AsakusaPortal
 
 set java_props=-Dcli.name=asakusa
-set java_props=%java_props% -Dorg.slf4j.simpleLogger.showThreadName=false
-set java_props=%java_props% -Dorg.slf4j.simpleLogger.showLogName=false
-set java_props=%java_props% -Dorg.slf4j.simpleLogger.levelInBrackets=true
 
-java %JAVA_OPTS% -classpath %java_classpath% %java_props% %main_class% %*
+java %ASAKUSA_CLIENT_OPTS% -classpath %java_classpath% %java_props% %main_class% %*
