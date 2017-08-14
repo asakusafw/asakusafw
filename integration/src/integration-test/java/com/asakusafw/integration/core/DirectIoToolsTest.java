@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 
 import java.util.Optional;
 
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +31,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.asakusafw.integration.AsakusaConfigurator;
 import com.asakusafw.integration.AsakusaProject;
 import com.asakusafw.integration.AsakusaProjectProvider;
+import com.asakusafw.integration.PlatformUtil;
 import com.asakusafw.utils.gradle.Bundle;
 import com.asakusafw.utils.gradle.ContentsConfigurator;
 
@@ -50,6 +52,14 @@ public class DirectIoToolsTest {
             { false },
             { true },
         };
+    }
+
+    /**
+     * Skip this test class for Windows platform.
+     */
+    @BeforeClass
+    public static void checkCkass() {
+        PlatformUtil.skipIfWindows();
     }
 
     /**

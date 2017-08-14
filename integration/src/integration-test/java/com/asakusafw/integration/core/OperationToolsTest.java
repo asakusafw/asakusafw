@@ -31,6 +31,7 @@ import com.asakusafw.integration.AsakusaConfigurator;
 import com.asakusafw.integration.AsakusaConstants;
 import com.asakusafw.integration.AsakusaProject;
 import com.asakusafw.integration.AsakusaProjectProvider;
+import com.asakusafw.integration.PlatformUtil;
 import com.asakusafw.utils.gradle.Bundle;
 import com.asakusafw.utils.gradle.ContentsConfigurator;
 
@@ -136,6 +137,7 @@ public class OperationToolsTest {
      */
     @Test
     public void hadoop_fs_clean_help() {
+        PlatformUtil.skipIfWindows();
         AsakusaProject project = provider.newInstance("tls");
         project.gradle("installAsakusafw");
 
@@ -151,6 +153,7 @@ public class OperationToolsTest {
      */
     @Test
     public void hadoop_fs_clean_delete() {
+        PlatformUtil.skipIfWindows();
         AsakusaProject project = provider.newInstance("tls");
         project.gradle("installAsakusafw");
 
@@ -172,6 +175,7 @@ public class OperationToolsTest {
      */
     @Test
     public void hadoop_fs_clean_dryrun() {
+        PlatformUtil.skipIfWindows();
         AsakusaProject project = provider.newInstance("tls");
         project.gradle("installAsakusafw");
 
@@ -194,6 +198,7 @@ public class OperationToolsTest {
      */
     @Test
     public void hadoop_fs_clean_skip_dir() {
+        PlatformUtil.skipIfWindows();
         AsakusaProject project = provider.newInstance("tls");
         project.gradle("installAsakusafw");
 
@@ -215,6 +220,7 @@ public class OperationToolsTest {
      */
     @Test
     public void hadoop_fs_clean_recursive() {
+        PlatformUtil.skipIfWindows();
         AsakusaProject project = provider.newInstance("tls");
         project.gradle("installAsakusafw");
 
