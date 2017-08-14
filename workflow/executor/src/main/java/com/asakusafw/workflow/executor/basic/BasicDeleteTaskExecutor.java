@@ -51,7 +51,7 @@ public class BasicDeleteTaskExecutor implements TaskExecutor {
     public void execute(TaskExecutionContext context, TaskInfo task) throws IOException, InterruptedException {
         DeleteTaskInfo delete = (DeleteTaskInfo) task;
         String resolved = TaskExecutors.resolvePath(context, delete.getPath());
-        LOG.debug("deleting file: {} ({})", resolved, delete.getPathKind());
+        LOG.info("delete file: {} ({})", resolved, delete.getPathKind());
         switch (delete.getPathKind()) {
         case LOCAL_FILE_SYSTEM:
             deleteOnLocalFileSystem(context, resolved);

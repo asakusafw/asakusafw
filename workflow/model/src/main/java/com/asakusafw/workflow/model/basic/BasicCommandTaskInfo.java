@@ -15,6 +15,7 @@
  */
 package com.asakusafw.workflow.model.basic;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -134,5 +135,14 @@ public class BasicCommandTaskInfo extends BasicTaskInfo implements CommandTaskIn
             results.addAll(resolver.apply(extraConfigurations));
         }
         return results;
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format(
+                "Command(module={0}, profile={1}, command={2})",
+                getModuleName(),
+                getProfileName(),
+                getCommand());
     }
 }

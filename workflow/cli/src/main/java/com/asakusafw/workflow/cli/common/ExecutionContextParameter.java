@@ -15,6 +15,9 @@
  */
 package com.asakusafw.workflow.cli.common;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.workflow.executor.ExecutionContext;
 import com.asakusafw.workflow.executor.TaskExecutors;
 import com.asakusafw.workflow.executor.basic.BasicExecutionContext;
@@ -25,6 +28,8 @@ import com.beust.jcommander.Parameter;
  * @since 0.10.0
  */
 public class ExecutionContextParameter {
+
+    static final Logger LOG = LoggerFactory.getLogger(ExecutionContextParameter.class);
 
     /**
      * The batch application base directory.

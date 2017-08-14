@@ -66,22 +66,20 @@ public class WorkflowParameter {
                     "target batch ID must be specified ({0})",
                     getAvailableApplicationsMessage(context)));
         }
-        Optional<Path> path = resolvePath(context);
-        if (path.isPresent()) {
-            File file = path.get().toFile();
-            ObjectMapper mapper = new ObjectMapper();
-            try {
-                return mapper.readValue(file, BatchInfo.class);
-            } catch (IOException e) {
-                throw new CommandConfigurationException(MessageFormat.format(
-                        "error occurred while loading workflow definition: {0}",
-                        file), e);
-            }
-        } else {
+        Path path = resolvePath(context)
+                .orElseThrow(() -> new CommandConfigurationException(MessageFormat.format(
+                        "batch application \"{0}\"is not found ({1})",
+                        workflow,
+                        getAvailableApplicationsMessage(context))));
+        LOG.debug("loading workflow definition: {}", path);
+        File file = path.toFile();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(file, BatchInfo.class);
+        } catch (IOException e) {
             throw new CommandConfigurationException(MessageFormat.format(
-                    "batch application \"{0}\"is not found ({1})",
-                    workflow,
-                    getAvailableApplicationsMessage(context)));
+                    "error occurred while loading workflow definition: {0}",
+                    file), e);
         }
     }
 
@@ -97,18 +95,22 @@ public class WorkflowParameter {
     private Optional<Path> resolvePath(ExecutionContext context) {
         Path path = Paths.get(workflow);
         if (Files.isDirectory(path)) {
+            LOG.debug("found directory: {}", path);
             return Optional.of(path)
                     .map(it -> it.resolve(TaskExecutors.LOCATION_APPLICATION_WORKFLOW_DEFINITION))
                     .filter(Files::isRegularFile);
         } else if (Files.isRegularFile(path)) {
+            LOG.debug("found regular file: {}", path);
             return Optional.of(path)
                     .filter(Files::isRegularFile);
         } else if (path.getNameCount() == 1) {
+            LOG.debug("process as batch ID: {}", path);
             return TaskExecutors.findApplicationHome(context)
                     .map(it -> it.resolve(path.toString()))
                     .map(it -> it.resolve(TaskExecutors.LOCATION_APPLICATION_WORKFLOW_DEFINITION))
                     .filter(Files::isRegularFile);
         } else {
+            LOG.debug("unknown batch location: {}", path);
             return Optional.empty();
         }
     }

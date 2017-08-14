@@ -34,6 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +86,11 @@ public class BasicCommandLauncher implements CommandLauncher {
         builder.environment().clear();
         builder.environment().putAll(environment);
 
-        LOG.info("Command: {}", builder.command());
+        if (LOG.isInfoEnabled()) {
+            LOG.info("exec: {}", builder.command().stream()
+                    .map(it -> '"' + it + '"')
+                    .collect(Collectors.joining(", ")));
+        }
         Process process = builder.start();
         try {
             return handle(process, Optional.ofNullable(command.getFileName())
