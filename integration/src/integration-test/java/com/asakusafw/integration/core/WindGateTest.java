@@ -100,11 +100,11 @@ public class WindGateTest {
                         PROCESS_CMD,
                         "copy",
                         "oneshot",
-                        framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
+                        framework.get("windgate/script/copy.properties").toUri().toString(),
                         "app",
                         "flow",
                         "testing",
-                        ""),
+                        ","),
                 is(0));
         assertThat(
                 framework.launch(
@@ -134,11 +134,11 @@ public class WindGateTest {
                         PROCESS_CMD,
                         "copy",
                         "begin",
-                        framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
+                        framework.get("windgate/script/copy.properties").toUri().toString(),
                         "app",
                         "flow",
                         "testing",
-                        ""),
+                        ","),
                 is(0));
         assertThat(contents.find("output.csv"), is(not(Optional.empty())));
         contents.get("output.csv", Files::delete);
@@ -148,11 +148,11 @@ public class WindGateTest {
                         PROCESS_CMD,
                         "copy",
                         "end",
-                        framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
+                        framework.get("windgate/script/copy.properties").toUri().toString(),
                         "app",
                         "flow",
                         "testing",
-                        ""),
+                        ","),
                 is(0));
         assertThat(contents.find("output.csv"), is(not(Optional.empty())));
         contents.get("output.csv", Files::delete);
@@ -182,11 +182,11 @@ public class WindGateTest {
                         PROCESS_CMD,
                         "copy",
                         "begin",
-                        framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
+                        framework.get("windgate/script/copy.properties").toUri().toString(),
                         "app",
                         "flow",
                         "testing",
-                        ""),
+                        ","),
                 is(0));
         assertThat(contents.find("output.csv"), is(not(Optional.empty())));
         contents.get("output.csv", Files::delete);
@@ -205,11 +205,11 @@ public class WindGateTest {
                         PROCESS_CMD,
                         "copy",
                         "end",
-                        framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
+                        framework.get("windgate/script/copy.properties").toUri().toString(),
                         "app",
                         "flow",
                         "testing",
-                        ""),
+                        ","),
                 is(not(0)));
         assertThat(contents.find("output.csv"), is(Optional.empty()));
 
@@ -237,11 +237,11 @@ public class WindGateTest {
                         PROCESS_CMD,
                         "copy",
                         "begin",
-                        framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
+                        framework.get("windgate/script/copy.properties").toUri().toString(),
                         "app",
                         "flow",
                         "testing",
-                        ""),
+                        ","),
                 is(0));
 
         assertThat(
@@ -249,11 +249,11 @@ public class WindGateTest {
                         PROCESS_CMD,
                         "copy",
                         "begin",
-                        framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
+                        framework.get("windgate/script/copy.properties").toUri().toString(),
                         "app",
                         "flow",
                         "testing",
-                        ""),
+                        ","),
                 is(not(0)));
 
         assertThat(
@@ -281,11 +281,11 @@ public class WindGateTest {
                         PROCESS_CMD,
                         "copy",
                         "begin",
-                        framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
+                        framework.get("windgate/script/copy.properties").toUri().toString(),
                         "app",
                         "flow",
                         "testing-1",
-                        ""),
+                        ","),
                 is(0));
         assertThat(contents.find("output.csv"), is(not(Optional.empty())));
         contents.get("output.csv", Files::delete);
@@ -295,11 +295,11 @@ public class WindGateTest {
                         PROCESS_CMD,
                         "copy",
                         "begin",
-                        framework.get("windgate/script/copy.properties").toAbsolutePath().toString(),
+                        framework.get("windgate/script/copy.properties").toUri().toString(),
                         "app",
                         "flow",
                         "testing-2",
-                        ""),
+                        ","),
                 is(0));
         assertThat(contents.find("output.csv"), is(not(Optional.empty())));
         contents.get("output.csv", Files::delete);
@@ -332,11 +332,11 @@ public class WindGateTest {
                         PROCESS_CMD,
                         "copy-remote",
                         "begin",
-                        framework.get("windgate/script/remote-put.properties").toAbsolutePath().toString(),
+                        framework.get("windgate/script/remote-put.properties").toUri().toString(),
                         "app",
                         "flow",
                         "testing",
-                        ""),
+                        ","),
                 is(0));
         assertThat(contents.find("tmp.bin"), is(not(Optional.empty())));
         assertThat(
@@ -344,11 +344,11 @@ public class WindGateTest {
                         PROCESS_CMD,
                         "copy-remote",
                         "end",
-                        framework.get("windgate/script/remote-get.properties").toAbsolutePath().toString(),
+                        framework.get("windgate/script/remote-get.properties").toUri().toString(),
                         "app",
                         "flow",
                         "testing",
-                        ""),
+                        ","),
                 is(0));
         assertThat(
                 framework.launch(

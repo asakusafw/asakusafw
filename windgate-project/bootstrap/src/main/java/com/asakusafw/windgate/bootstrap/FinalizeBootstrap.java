@@ -20,6 +20,7 @@ import static com.asakusafw.windgate.bootstrap.WindGateConstants.*;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -82,7 +83,7 @@ public class FinalizeBootstrap {
         Path home = getHome(environment);
         return new String[] {
                 "-profile", getProfileUri(home, context.getProfileName()).toString(),
-                "-session", context.getExecutionId(),
+                "-session", Optional.ofNullable(context.getExecutionId()).orElse(""),
                 "-plugin", getPluginPath(home).stream()
                         .map(Path::toString)
                         .collect(Collectors.joining(File.pathSeparator)),
