@@ -71,8 +71,7 @@ dependencies {
     deployerJars 'org.springframework.build:aws-maven:5.0.0.RELEASE'
 }
 
-project.sourceCompatibility = JavaVersion.toVersion('1.7')
-project.targetCompatibility = JavaVersion.toVersion('1.7')
+project.sourceCompatibility = JavaVersion.toVersion('1.8')
 
 tasks.withType(AbstractCompile) { task ->
     task.options.encoding = 'UTF-8'
