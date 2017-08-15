@@ -122,10 +122,10 @@ public class BasicCommandLauncher implements CommandLauncher {
     }
 
     private Consumer<CharSequence> getOutput(String label, boolean err) {
-        String title = String.format("%s:%s", label, err ? "stdout" : "stderr");
+        String title = String.format("%s:%s", label, err ? "stderr" : "stdout");
         switch (output) {
         case STANDARD:
-            return err ? System.out::println : System.err::println;
+            return err ? System.err::println : System.out::println;
         case LOGGING:
             return line -> LOG.info("({}) {}", title, line);
         case NOTHING:
