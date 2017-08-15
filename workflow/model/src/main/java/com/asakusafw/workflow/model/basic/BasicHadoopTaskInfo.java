@@ -15,6 +15,7 @@
  */
 package com.asakusafw.workflow.model.basic;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -75,5 +76,13 @@ public class BasicHadoopTaskInfo extends BasicTaskInfo implements HadoopTaskInfo
     @Override
     public String getClassName() {
         return className;
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format(
+                "Hadoop(module={0}, class={1})",
+                getModuleName(),
+                getClassName());
     }
 }

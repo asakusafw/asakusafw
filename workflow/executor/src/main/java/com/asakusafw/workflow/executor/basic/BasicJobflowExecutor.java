@@ -65,6 +65,7 @@ public class BasicJobflowExecutor implements JobflowExecutor {
 
     @Override
     public void execute(TaskExecutionContext context, JobflowInfo jobflow) throws IOException, InterruptedException {
+        LOG.info("start jobflow: {} - {}", context.getBatchId(), context.getFlowId());
         try {
             for (TaskInfo.Phase phase : EnumSet.complementOf(BODY)) {
                 executePhase(context, jobflow, phase);
@@ -73,29 +74,39 @@ public class BasicJobflowExecutor implements JobflowExecutor {
             executePhase(context, jobflow, TaskInfo.Phase.FINALIZE);
         }
         executePhase(context, jobflow, TaskInfo.Phase.CLEANUP);
+        LOG.info("finish jobflow: {} - {}", context.getBatchId(), context.getFlowId());
     }
 
     private void executePhase(
             TaskExecutionContext context,
             JobflowInfo jobflow, TaskInfo.Phase phase) throws InterruptedException, IOException {
         List<TaskInfo> tasks = Util.sort(jobflow.getTasks(phase));
-        if (LOG.isInfoEnabled() && tasks.isEmpty() == false) {
-            LOG.info("starting phase: {}@{}", phase, context.getFlowId());
+        if (tasks.isEmpty() == false) {
+            LOG.info("start phase: {} ({} tasks)", phase, tasks.size());
         }
+        int count = 0;
         for (TaskInfo task : tasks) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("starting task: {} ({}/{} in {})", task, ++count, tasks.size(), phase);
+            }
             TaskExecutor executor = findExecutor(context, task)
                     .orElseThrow(() -> new ExecutionConditionException(MessageFormat.format(
-                            "there are no suitable executor for task: kind={0}, module={1}, executors={2}",
+                            "there are no suitable executor for task: task={0}, executors={1}",
                             task.getClass().getSimpleName(),
                             task.getModuleName(),
                             taskExecutors.stream()
                                 .map(it -> it.getClass().getSimpleName())
                                 .collect(Collectors.joining(", ", "{", "}")))));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("task executor \"{}\" is available: {}", executor, task);
+            }
             executor.execute(context, task);
         }
     }
 
     private Optional<TaskExecutor> findExecutor(TaskExecutionContext context, TaskInfo task) {
-        return taskExecutors.stream().filter(it -> it.isSupported(context, task)).findFirst();
+        return taskExecutors.stream()
+                .peek(it -> LOG.trace("testing task executor {}: {}", it, task))
+                .filter(it -> it.isSupported(context, task)).findFirst();
     }
 }

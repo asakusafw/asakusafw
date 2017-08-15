@@ -29,6 +29,9 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.asakusafw.workflow.executor.BatchExecutor;
 import com.asakusafw.workflow.executor.ExecutionConditionException;
 import com.asakusafw.workflow.executor.ExecutionContext;
@@ -44,6 +47,8 @@ import com.asakusafw.workflow.model.attribute.ParameterListAttribute;
  * @since 0.10.0
  */
 public class BasicBatchExecutor implements BatchExecutor {
+
+    static final Logger LOG = LoggerFactory.getLogger(BasicBatchExecutor.class);
 
     private final JobflowExecutor jobflowExecutor;
 
@@ -82,16 +87,26 @@ public class BasicBatchExecutor implements BatchExecutor {
     public void execute(
             ExecutionContext context,
             BatchInfo batch, Map<String, String> arguments) throws IOException, InterruptedException {
+        LOG.info("start batch: {} ({})", batch.getId(), arguments);
         batch.findAttribute(ParameterListAttribute.class)
                 .ifPresent(it -> validateParameters(it, arguments));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("starting jobflow graph: {} ({} jobflows)", batch.getId(), batch.getElements().size());
+        }
+        int count = 0;
         for (JobflowInfo jobflow : Util.sort(batch.getElements())) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("preparing jobflow: {} ({}/{})", jobflow.getId(), ++count, batch.getElements().size());
+            }
             executeJobflow(context, batch, jobflow, arguments);
         }
+        LOG.info("finish batch: {} ({})", batch.getId(), arguments);
     }
 
     private static void validateParameters(
             ParameterListAttribute parameters,
             Map<String, String> arguments) {
+        LOG.debug("validate parameters: {}", arguments);
         Set<String> consumed = new HashSet<>();
         parameters.getElements().forEach(p -> {
             String name = p.getName();
@@ -102,6 +117,7 @@ public class BasicBatchExecutor implements BatchExecutor {
             List<String> unknown = arguments.keySet().stream()
                     .filter(it -> consumed.contains(it) == false)
                     .collect(Collectors.toList());
+            LOG.debug("validate rest parameters: {}", unknown);
             if (unknown.isEmpty() == false) {
                 throw new ExecutionConditionException(MessageFormat.format(
                         "unknown batch arguments: {0}",
@@ -111,6 +127,11 @@ public class BasicBatchExecutor implements BatchExecutor {
     }
 
     private static void validateParameter(ParameterInfo parameter, String value) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("validating parameter: name={}, comment={}, mandatory={}, pattern={}, value={}",
+                    parameter.getName(), parameter.getComment(), parameter.isMandatory(), parameter.getPattern(),
+                    value);
+        }
         if (parameter.isMandatory() && value == null) {
             throw new ExecutionConditionException(MessageFormat.format(
                     "batch argument \"{0}\" [{1}] must be defined",

@@ -15,6 +15,7 @@
  */
 package com.asakusafw.workflow.model.basic;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -89,5 +90,14 @@ public class BasicDeleteTaskInfo extends BasicTaskInfo implements DeleteTaskInfo
     @Override
     public String getPath() {
         return path;
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormat.format(
+                "Delete(module={0}, kind={1}, path={2})",
+                getModuleName(),
+                getPathKind(),
+                getPath());
     }
 }
