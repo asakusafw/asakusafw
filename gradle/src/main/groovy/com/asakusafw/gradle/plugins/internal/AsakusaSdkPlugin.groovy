@@ -493,9 +493,11 @@ class AsakusaSdkPlugin implements Plugin<Project> {
     private void configureTestToolTasks() {
         project.tasks.withType(RunBatchappTask) { AbstractTestToolTask task ->
             task.toolClasspath = project.files({ project.sourceSets.test.runtimeClasspath })
+            task.launcherClasspath << project.configurations.asakusaToolLauncher
         }
         project.tasks.withType(TestToolTask) { AbstractTestToolTask task ->
             task.toolClasspath = project.files({ project.sourceSets.test.runtimeClasspath })
+            task.launcherClasspath << project.configurations.asakusaToolLauncher
         }
     }
 
