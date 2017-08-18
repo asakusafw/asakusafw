@@ -76,7 +76,7 @@ public class RunCommand implements Runnable, CommandProvider {
             throw new CommandConfigurationException(MessageFormat.format(
                     "cannot execute batch \"{0}\" ({1})",
                     workflow.getId(),
-                    e.getMessage()));
+                    e.getMessage()), e);
         } catch (IOException | InterruptedException e) {
             throw new CommandExecutionException(MessageFormat.format(
                     "executing batch \"{0}\" was failed",

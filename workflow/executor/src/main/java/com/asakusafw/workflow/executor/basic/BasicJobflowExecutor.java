@@ -66,14 +66,36 @@ public class BasicJobflowExecutor implements JobflowExecutor {
     @Override
     public void execute(TaskExecutionContext context, JobflowInfo jobflow) throws IOException, InterruptedException {
         LOG.info("start jobflow: {} - {}", context.getBatchId(), context.getFlowId());
+        boolean finalized = false;
         try {
             for (TaskInfo.Phase phase : EnumSet.complementOf(BODY)) {
                 executePhase(context, jobflow, phase);
             }
-        } finally {
+            finalized = true;
             executePhase(context, jobflow, TaskInfo.Phase.FINALIZE);
+        } catch (Exception e) {
+            if (finalized == false && jobflow.getTasks(TaskInfo.Phase.FINALIZE).isEmpty() == false) {
+                LOG.error(MessageFormat.format(
+                        "batch \"{0}\" was failed. we try to execute finalize phase.",
+                        context.getBatchId()), e);
+                try {
+                    executePhase(context, jobflow, TaskInfo.Phase.FINALIZE);
+                } catch (Exception nested) {
+                    LOG.warn(MessageFormat.format(
+                            "error occurred while running finalize of batch \"{0}\".",
+                            context.getBatchId()), nested);
+                    e.addSuppressed(nested);
+                }
+            }
+            throw e;
         }
-        executePhase(context, jobflow, TaskInfo.Phase.CLEANUP);
+        try {
+            executePhase(context, jobflow, TaskInfo.Phase.CLEANUP);
+        } catch (Exception e) {
+            LOG.warn(MessageFormat.format(
+                    "error occurred while runnning cleanup of batch \"{0}\".",
+                    context.getBatchId()), e);
+        }
         LOG.info("finish jobflow: {} - {}", context.getBatchId(), context.getFlowId());
     }
 
@@ -92,8 +114,7 @@ public class BasicJobflowExecutor implements JobflowExecutor {
             TaskExecutor executor = findExecutor(context, task)
                     .orElseThrow(() -> new ExecutionConditionException(MessageFormat.format(
                             "there are no suitable executor for task: task={0}, executors={1}",
-                            task.getClass().getSimpleName(),
-                            task.getModuleName(),
+                            task,
                             taskExecutors.stream()
                                 .map(it -> it.getClass().getSimpleName())
                                 .collect(Collectors.joining(", ", "{", "}")))));
