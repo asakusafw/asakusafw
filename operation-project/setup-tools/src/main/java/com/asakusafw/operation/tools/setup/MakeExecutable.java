@@ -43,6 +43,7 @@ final class MakeExecutable {
             ".sh").collect(Collectors.toSet());
 
     private static final Set<String> EXTENSION_NEVER = Stream.of(
+            ".jar",
             ".cmd",
             ".exe").collect(Collectors.toSet());
 
