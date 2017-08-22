@@ -85,6 +85,7 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                       TestingDist : "Contents of Asakusa Framework testing tools (${profile.name}).",
                     OperationDist : "Contents of Asakusa Framework operation tools (${profile.name}).",
                      OperationLib : "Libraries of Asakusa Framework operation tools (${profile.name}).",
+                    OperationExec : "Executables of Asakusa Framework operation tools (${profile.name}).",
                      ExtensionLib : "Asakusa Framework extension libraries (${profile.name}).",
         ])
         configuration('asakusafwExtensionLib').transitive = false
@@ -196,6 +197,9 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                     "com.asakusafw:asakusa-command-portal:${base.frameworkVersion}:exec@jar",
                     "com.asakusafw.workflow:asakusa-workflow-hadoop:${base.frameworkVersion}:lib@jar",
                     "org.slf4j:slf4j-simple:${base.slf4jVersion}@jar",
+                ],
+                OperationExec : [
+                    "com.asakusafw:asakusa-setup-tools:${base.frameworkVersion}:exec@jar",
                 ],
                 DirectIoHiveDist : [],
                 DirectIoHiveLib : [
@@ -324,6 +328,12 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                         rename(/slf4j-simple-.*\.jar/, 'slf4j-simple.jar')
                     }
                }
+                into('tools/bin') {
+                    put configuration('asakusafwOperationExec')
+                    process {
+                        rename(/asakusa-setup-tools-.*-exec.jar/, 'setup.jar')
+                    }
+                }
             },
             Extension : {
                 into('ext/lib') {

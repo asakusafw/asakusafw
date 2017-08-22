@@ -13,6 +13,7 @@
   <modules>
     <module>asakusa-operation-tools</module>
     <module>command-portal</module>
+    <module>setup-tools</module>
   </modules>
 
 </project>
