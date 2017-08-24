@@ -80,7 +80,7 @@ import com.asakusafw.runtime.stage.output.BridgeOutputFormat;
 /**
  * Utilities for Direct data access facilities on Hadoop.
  * @since 0.2.5
- * @version 0.9.1
+ * @version 0.10.0
  */
 public final class HadoopDataSourceUtil {
 
@@ -122,9 +122,28 @@ public final class HadoopDataSourceUtil {
 
     private static final int PARALLEL_MOVE_MIN = 3;
 
-    static final String DEFAULT_SYSTEM_DIR = "_directio"; //$NON-NLS-1$
+    /**
+     * The file name prefix of transaction began mark.
+     */
+    public static final String PREFIX_BEGIN_MARK = "tx-";
 
-    static final String TRANSACTION_INFO_DIR = "transactions"; //$NON-NLS-1$
+    /**
+     * The file name prefix of transaction committed mark.
+     * @since 0.10.0
+     */
+    public static final String PREFIX_COMMIT_MARK = "commit-";
+
+    /**
+     * The default system directory name.
+     * @since 0.10.0
+     */
+    public static final String DEFAULT_SYSTEM_DIR = "_directio"; //$NON-NLS-1$
+
+    /**
+     * The transaction directory name.
+     * @since 0.10.0
+     */
+    public static final String TRANSACTION_INFO_DIR = "transactions"; //$NON-NLS-1$
 
     /**
      * Charset for commit mark file comments.
@@ -395,9 +414,7 @@ public final class HadoopDataSourceUtil {
         if (executionId == null) {
             throw new IllegalArgumentException("transactionId must not be null"); //$NON-NLS-1$
         }
-        return new Path(
-                getTransactionInfoDir(conf),
-                String.format("tx-%s", executionId)); //$NON-NLS-1$
+        return new Path(getTransactionInfoDir(conf), PREFIX_BEGIN_MARK + executionId);
     }
 
     /**
@@ -415,9 +432,7 @@ public final class HadoopDataSourceUtil {
         if (executionId == null) {
             throw new IllegalArgumentException("transactionId must not be null"); //$NON-NLS-1$
         }
-        return new Path(
-                getTransactionInfoDir(conf),
-                String.format("commit-%s", executionId)); //$NON-NLS-1$
+        return new Path(getTransactionInfoDir(conf), PREFIX_COMMIT_MARK + executionId);
     }
 
     /**
@@ -454,13 +469,23 @@ public final class HadoopDataSourceUtil {
         return results;
     }
 
-    private static Path getTransactionInfoDir(Configuration conf) throws IOException {
+    /**
+     * Returns the system directory.
+     * @param conf the current configuration
+     * @return the system directory
+     * @throws IOException if I/O error was occurred
+     */
+    public static Path getSystemDir(Configuration conf) throws IOException {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
         String working = conf.get(KEY_SYSTEM_DIR, DEFAULT_SYSTEM_DIR);
-        Path path = new Path(working, TRANSACTION_INFO_DIR);
+        Path path = new Path(working);
         return path.getFileSystem(conf).makeQualified(path);
+    }
+
+    private static Path getTransactionInfoDir(Configuration conf) throws IOException {
+        return new Path(getSystemDir(conf), TRANSACTION_INFO_DIR);
     }
 
     /**

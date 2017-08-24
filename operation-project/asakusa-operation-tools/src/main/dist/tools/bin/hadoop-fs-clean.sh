@@ -69,6 +69,8 @@ fi
 
 _ROOT="$(cd "$(dirname "$0")/.." ; pwd)"
 
+cd
+
 import "${ASAKUSA_HOME:?ASAKUSA_HOME is not defined}/hadoop/libexec/configure-hadoop.sh"
 import "$_ROOT/conf/env.sh"
 

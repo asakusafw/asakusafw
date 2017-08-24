@@ -114,9 +114,9 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 HadoopLoggingLib : [
                     "org.slf4j:slf4j-simple:${base.slf4jVersion}@jar",
                  ],
-                DirectIoDist : "com.asakusafw:asakusa-directio-tools:${base.frameworkVersion}:dist@jar",
+                DirectIoDist : "com.asakusafw:asakusa-directio-tools-legacy:${base.frameworkVersion}:dist@jar",
                 DirectIoLib : [
-                    "com.asakusafw:asakusa-directio-tools:${base.frameworkVersion}:lib@jar",
+                    "com.asakusafw:asakusa-directio-tools-legacy:${base.frameworkVersion}:lib@jar",
                     "org.slf4j:slf4j-simple:${base.slf4jVersion}@jar",
                 ],
                 YaessDist : "com.asakusafw:asakusa-yaess-bootstrap:${base.frameworkVersion}:dist@jar",
@@ -190,11 +190,13 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 OperationDist : [
                     "com.asakusafw:asakusa-operation-tools:${base.frameworkVersion}:dist@jar",
                     "com.asakusafw:asakusa-command-portal:${base.frameworkVersion}:dist@jar",
+                    "com.asakusafw:asakusa-directio-tools:${base.frameworkVersion}:dist@jar",
                     "com.asakusafw.workflow:asakusa-workflow-hadoop:${base.frameworkVersion}:dist@jar",
                 ],
                 OperationLib : [
                     "com.asakusafw:asakusa-operation-tools:${base.frameworkVersion}:lib@jar",
                     "com.asakusafw:asakusa-command-portal:${base.frameworkVersion}:exec@jar",
+                    "com.asakusafw:asakusa-directio-tools:${base.frameworkVersion}:lib@jar",
                     "com.asakusafw.workflow:asakusa-workflow-hadoop:${base.frameworkVersion}:lib@jar",
                     "org.slf4j:slf4j-simple:${base.slf4jVersion}@jar",
                 ],
@@ -313,6 +315,9 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                         filesMatching('**/bin/asakusa') { FileCopyDetails f ->
                             f.setMode(0755)
                         }
+                        filesMatching('**/bin/directio') { FileCopyDetails f ->
+                        f.setMode(0755)
+                        }
                         filesMatching('**/tools/libexec/workflow/hadoop-bridge') { FileCopyDetails f ->
                             f.setMode(0755)
                         }
@@ -324,6 +329,7 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                         rename(/(asakusa-operation-tools)-.*-lib\.jar/, '$1.jar')
                         rename(/(asakusa-workflow-hadoop)-.*-lib\.jar/, '$1.jar')
                         rename(/(asakusa-command-portal)-.*-exec\.jar/, '$1.jar')
+                        rename(/(asakusa-directio-tools)-.*-lib\.jar/, '$1.jar')
                         rename(/([0-9A-Za-z\-]+)-cli-.*-exec.jar/, '$1.jar')
                         rename(/slf4j-simple-.*\.jar/, 'slf4j-simple.jar')
                     }

@@ -17,6 +17,7 @@ package com.asakusafw.runtime.directio;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
@@ -58,16 +59,25 @@ import com.asakusafw.runtime.io.ModelOutput;
  * </li>
  * </ol>
  * @since 0.2.5
- * @version 0.8.1
+ * @version 0.10.0
  * @see AbstractDirectDataSource
  */
 public interface DirectDataSource {
 
     /**
+     * Returns a textually representation of the target path.
+     * @param basePath base path of target resources
+     * @return the corresponded path
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.10.0
+     */
+    String path(String basePath);
+
+    /**
      * Returns a textually representation of the target path pattern.
      * @param basePath base path of target resources
      * @param resourcePattern search pattern of target resources from {@code basePath}
-     * @return the found resources, or an empty list if there are no resources
+     * @return the corresponded path
      * @throws IllegalArgumentException if some parameters were {@code null}
      * @since 0.8.1
      */
@@ -218,4 +228,18 @@ public interface DirectDataSource {
      * @see <a href="#output-staging">Output Staging</a>
      */
     void cleanupTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException;
+
+    /**
+     * Returns the property of this data source.
+     * @param <T> the property type
+     * @param propertyType the property type
+     * @return the corresponded property, or {@code empty} if it is not defined
+     * @since 0.10.0
+     */
+    default <T> Optional<T> findProperty(Class<T> propertyType) {
+        if (propertyType.isInstance(this)) {
+            return Optional.of(propertyType.cast(this));
+        }
+        return Optional.empty();
+    }
 }

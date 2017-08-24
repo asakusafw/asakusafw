@@ -87,7 +87,7 @@ public class DirectIoToolsTest {
     @Test
     public void list_file() {
         AsakusaProject project = provider.newInstance("dio");
-        project.gradle("installAsakusafw");
+        project.gradle(it -> it.withArguments("-i", "-s").launch("installAsakusafw"));
         Bundle framework = project.getFramework();
         assertThat(
                 framework.launch("directio/bin/list-file.sh", "/", "**"),
