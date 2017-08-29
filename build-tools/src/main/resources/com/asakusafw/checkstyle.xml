@@ -10,7 +10,7 @@
     <module name="FileContentsHolder"/>
     <module name="JavadocMethod">
       <property name="scope" value="protected"/>
-      <property name="validateThrows" value="true"/>
+      <property name="validateThrows" value="false"/>
       <property name="allowUndeclaredRTE" value="true"/>
       <property name="suppressLoadErrors" value="true"/>
       <property name="tokens" value="METHOD_DEF,CTOR_DEF"/>
@@ -125,6 +125,11 @@
       <property name="severity" value="ignore"/>
       <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
     </module>
+    <module name="SuppressionCommentFilter">
+      <property name="offCommentFormat" value="CHECKSTYLE\:OFF\s+([\w\|\.\*]+)"/>
+      <property name="onCommentFormat" value="CHECKSTYLE\:ON\s+([\w\|\.\*]+)"/>
+      <property name="checkFormat" value="$1"/>
+    </module>
   </module>
   <module name="JavadocPackage"/>
   <module name="NewlineAtEndOfFile">
@@ -142,10 +147,5 @@
     <property name="format" value="\s+$"/>
     <property name="message" value="Line has trailing spaces."/>
     <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
-  </module>
-  <module name="SuppressionCommentFilter">
-    <property name="offCommentFormat" value="CHECKSTYLE\:OFF\s+([\w\|\.\*]+)"/>
-    <property name="onCommentFormat" value="CHECKSTYLE\:ON\s+([\w\|\.\*]+)"/>
-    <property name="checkFormat" value="$1"/>
   </module>
 </module>
