@@ -49,7 +49,7 @@ repositories {
 dependencies {
     compile "com.asakusafw:gradle-launcher:${project.version}"
     compile 'junit:junit:4.12'
-    runtime 'org.slf4j:slf4j-simple:1.7.10'
+    runtime 'org.slf4j:slf4j-simple:1.7.25'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
     deployerJars 'org.springframework.build:aws-maven:5.0.0.RELEASE'
 }
