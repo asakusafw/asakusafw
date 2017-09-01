@@ -31,8 +31,8 @@ export CALLER_CWD="$(pwd)"
 
 cd
 
-import "$ASAKUSA_HOME/hadoop/libexec/configure-hadoop.sh"
 import "$_ROOT/conf/env.sh"
+import "$ASAKUSA_HOME/hadoop/libexec/configure-hadoop.sh"
 
 _MAIN_CLASS=com.asakusafw.operation.tools.directio.DirectIo
 _CLI_NAME=directio

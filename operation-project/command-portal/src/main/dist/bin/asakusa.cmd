@@ -22,6 +22,8 @@ if not defined ASAKUSA_HOME (
     exit /b 1
 )
 
+cd /d %USERPROFILE%
+
 set libdir=%ASAKUSA_HOME%\tools\lib
 set java_classpath=%libdir%\asakusa-command-portal.jar;%libdir%\slf4j-simple.jar
 set main_class=com.asakusafw.operation.tools.portal.AsakusaPortal

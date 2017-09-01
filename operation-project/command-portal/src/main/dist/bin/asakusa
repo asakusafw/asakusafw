@@ -15,9 +15,11 @@
 # limitations under the License.
 #
 
-_ROOT="$(cd "$(dirname "$0")/../tools" ; pwd)"
+_ROOT="${ASAKUSA_HOME:?ASAKUSA_HOME is not defined}/tools"
 
-. "${ASAKUSA_HOME:?ASAKUSA_HOME is not defined}/core/libexec/configure-java.sh"
+cd
+
+. "$ASAKUSA_HOME/core/libexec/configure-java.sh"
 
 _CLASSPATH=()
 _CLASSPATH+=("$_ROOT/lib/asakusa-command-portal.jar")
