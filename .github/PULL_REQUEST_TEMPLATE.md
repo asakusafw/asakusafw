@@ -11,5 +11,3 @@ triggers. Also it must include expected results and actual results,
 making the difference clear.
 
 ## Related Issue, Pull Request or Code
-
-## Wanted reviewer
