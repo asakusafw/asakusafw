@@ -19,7 +19,6 @@
     <module>asakusa-test-compiler</module>
     <module>asakusa-test-trace-model</module>
     <module>asakusa-test-inprocess</module>
-    <module>asakusa-test-inprocess-ext</module>
     <module>asakusa-test-windows</module>
   </modules>
 
