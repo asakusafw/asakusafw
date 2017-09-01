@@ -18,7 +18,9 @@ package com.asakusafw.utils.jcommander;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
@@ -26,6 +28,7 @@ import javax.inject.Inject;
 import org.junit.Test;
 
 import com.asakusafw.utils.jcommander.JCommanderWrapper;
+import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
@@ -172,6 +175,45 @@ public class JCommanderWrapperTest {
         commander.parse("--unknown").map(Supplier::get);
     }
 
+    /**
+     * w/ expand.
+     */
+    @Test
+    public void expand() {
+        JCommanderWrapper<Supplier<String>> commander = new JCommanderWrapper<>("PG", new Exp());
+        Optional<String> result = commander.parse("-abc").map(Supplier::get);
+        assertThat(result, is(Optional.of("abc")));
+    }
+
+    /**
+     * w/ expand + dynamic.
+     */
+    @Test
+    public void expand_dynamic() {
+        JCommanderWrapper<Supplier<String>> commander = new JCommanderWrapper<>("PG", new Exp());
+        Optional<String> result = commander.parse("-ac", "-De").map(Supplier::get);
+        assertThat(result, is(Optional.of("ace=f")));
+    }
+
+    /**
+     * w/ expand + main arg.
+     */
+    @Test
+    public void expand_main() {
+        JCommanderWrapper<Supplier<String>> commander = new JCommanderWrapper<>("PG", new Exp());
+        Optional<String> result = commander.parse("-abc", "MAIN").map(Supplier::get);
+        assertThat(result, is(Optional.of("abcMAIN")));
+    }
+
+    /**
+     * w/ expand fail.
+     */
+    @Test(expected = ParameterException.class)
+    public void expand_fail() {
+        JCommanderWrapper<Supplier<String>> commander = new JCommanderWrapper<>("PG", new ExpPrevent());
+        commander.parse("-aabb", "HELLO");
+    }
+
     @Parameters(commandDescription = "CMD")
     static class Cmd implements Supplier<String> {
 
@@ -200,6 +242,80 @@ public class JCommanderWrapperTest {
         public String get() {
             assertThat(commander, is(notNullValue()));
             return "OK";
+        }
+    }
+
+    @Parameters(commandDescription = "EXP")
+    static class Exp implements Supplier<String> {
+
+        @Parameter(names = { "-a" })
+        boolean a;
+
+        @Parameter(names = { "-b" })
+        boolean b;
+
+        @Parameter(names = { "-c" })
+        boolean c;
+
+        @DynamicParameter(names = { "-D", "--dyn" })
+        Map<String, String> dynamic = new TreeMap<>();
+
+        @Parameter
+        String message;
+
+        @Override
+        public String get() {
+            StringBuilder buf = new StringBuilder();
+            if (a) {
+                buf.append("a");
+            }
+            if (b) {
+                buf.append("b");
+            }
+            if (c) {
+                buf.append("c");
+            }
+            if (dynamic.isEmpty() == false) {
+                new TreeMap<>(dynamic).forEach((k, v) -> buf.append(k + "=" + v));
+            }
+            if (message != null) {
+                buf.append(message);
+            }
+            return buf.toString();
+        }
+    }
+
+    @Parameters(commandDescription = "EXPP")
+    static class ExpPrevent implements Supplier<String> {
+
+        @Parameter(names = { "-aa" })
+        boolean a;
+
+        @Parameter(names = { "-bb" })
+        boolean b;
+
+        @Parameter(names = { "-cc" })
+        boolean c;
+
+        @Parameter
+        String message;
+
+        @Override
+        public String get() {
+            StringBuilder buf = new StringBuilder();
+            if (a) {
+                buf.append("a");
+            }
+            if (b) {
+                buf.append("b");
+            }
+            if (c) {
+                buf.append("c");
+            }
+            if (message != null) {
+                buf.append(message);
+            }
+            return buf.toString();
         }
     }
 }
