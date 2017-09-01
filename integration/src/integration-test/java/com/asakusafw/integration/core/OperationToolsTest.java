@@ -237,4 +237,56 @@ public class OperationToolsTest {
 
         assertThat(contents.find("var"), is(Optional.empty()));
     }
+
+    /**
+     * {@code directio}.
+     */
+    @Test
+    public void directio() {
+        AsakusaProject project = provider.newInstance("dio");
+        project.gradle("installAsakusafw");
+        Bundle framework = project.getFramework();
+        assertThat(
+                framework.launch("tools/bin/directio"),
+                is(0));
+    }
+
+    /**
+     * {@code directio list}.
+     */
+    @Test
+    public void directio_list() {
+        AsakusaProject project = provider.newInstance("dio");
+        project.gradle("installAsakusafw");
+        Bundle framework = project.getFramework();
+        assertThat(
+                framework.launch("tools/bin/directio", "list"),
+                is(0));
+    }
+
+    /**
+     * {@code directio configuration list}.
+     */
+    @Test
+    public void directio_conf_list() {
+        AsakusaProject project = provider.newInstance("dio");
+        project.gradle("installAsakusafw");
+        Bundle framework = project.getFramework();
+        assertThat(
+                framework.launch("tools/bin/directio", "configuration", "list"),
+                is(0));
+    }
+
+    /**
+     * {@code directio transaction list}.
+     */
+    @Test
+    public void directio_tx_list() {
+        AsakusaProject project = provider.newInstance("dio");
+        project.gradle("installAsakusafw");
+        Bundle framework = project.getFramework();
+        assertThat(
+                framework.launch("tools/bin/directio", "transaction", "list"),
+                is(0));
+    }
 }

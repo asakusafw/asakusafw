@@ -17,6 +17,7 @@ package com.asakusafw.runtime.directio.keepalive;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DataDefinition;
@@ -57,6 +58,11 @@ public class KeepAliveDataSource implements DirectDataSource {
     @Override
     public String path(String basePath, ResourcePattern resourcePattern) {
         return entity.path(basePath, resourcePattern);
+    }
+
+    @Override
+    public String path(String basePath) {
+        return entity.path(basePath);
     }
 
     @Override
@@ -196,6 +202,14 @@ public class KeepAliveDataSource implements DirectDataSource {
         } finally {
             heartbeat.unregister(counter);
         }
+    }
+
+    @Override
+    public <T> Optional<T> findProperty(Class<T> propertyType) {
+        if (propertyType.isInstance(this)) {
+            return Optional.of(propertyType.cast(this));
+        }
+        return entity.findProperty(propertyType);
     }
 
     private static final class WrappedModelInput<T> implements ModelInput<T> {

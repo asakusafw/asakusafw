@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -76,6 +77,14 @@ public class HadoopDataSourceCore implements DirectDataSource {
         Path root = p.getFileSystemPath();
         Path base = append(root, basePath);
         return String.format("%s/%s", base, resourcePattern); //$NON-NLS-1$
+    }
+
+    @Override
+    public String path(String basePath) {
+        HadoopDataSourceProfile p = profile;
+        Path root = p.getFileSystemPath();
+        Path base = append(root, basePath);
+        return base.toString();
     }
 
     @Override
@@ -630,5 +639,15 @@ public class HadoopDataSourceCore implements DirectDataSource {
                 context.getAttemptId(),
                 context.getOutputId());
         return append(tempPath, suffix);
+    }
+
+    @Override
+    public <T> Optional<T> findProperty(Class<T> propertyType) {
+        if (propertyType.isInstance(this)) {
+            return Optional.of(propertyType.cast(this));
+        } else if (propertyType.isInstance(profile)) {
+            return Optional.of(propertyType.cast(profile));
+        }
+        return Optional.empty();
     }
 }

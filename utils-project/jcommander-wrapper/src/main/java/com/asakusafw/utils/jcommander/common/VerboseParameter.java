@@ -15,6 +15,8 @@
  */
 package com.asakusafw.utils.jcommander.common;
 
+import java.io.PrintWriter;
+
 import com.beust.jcommander.Parameter;
 
 /**
@@ -24,7 +26,7 @@ import com.beust.jcommander.Parameter;
 public class VerboseParameter {
 
     /**
-     * Whether or not the help message is required.
+     * Whether or not the verbose message is required.
      */
     @Parameter(
             names = { "-v", "--verbose", },
@@ -39,5 +41,27 @@ public class VerboseParameter {
      */
     public boolean isRequired() {
         return required;
+    }
+
+    /**
+     * Executes the given action only if verbose messages are required.
+     * @param action the action
+     */
+    public void ifRequired(Runnable action) {
+        if (required) {
+            action.run();
+        }
+    }
+
+    /**
+     * Prints message only if verbose messages are required.
+     * @param writer the target writer
+     * @param format the message format
+     * @param arguments the message arguments
+     */
+    public void printf(PrintWriter writer, String format, Object... arguments) {
+        if (required) {
+            writer.printf(format, arguments);
+        }
     }
 }

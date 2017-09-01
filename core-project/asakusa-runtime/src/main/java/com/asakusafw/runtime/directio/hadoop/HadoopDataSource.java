@@ -18,6 +18,7 @@ package com.asakusafw.runtime.directio.hadoop;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -91,6 +92,11 @@ public class HadoopDataSource extends AbstractDirectDataSource implements Config
     }
 
     @Override
+    public String path(String basePath) {
+        return core.path(basePath);
+    }
+
+    @Override
     public <T> List<DirectInputFragment> findInputFragments(
             DataDefinition<T> definition,
             String basePath,
@@ -161,5 +167,13 @@ public class HadoopDataSource extends AbstractDirectDataSource implements Config
     @Override
     public void cleanupTransactionOutput(OutputTransactionContext context) throws IOException, InterruptedException {
         core.cleanupTransactionOutput(context);
+    }
+
+    @Override
+    public <T> Optional<T> findProperty(Class<T> propertyType) {
+        if (propertyType.isInstance(this)) {
+            return Optional.of(propertyType.cast(this));
+        }
+        return core.findProperty(propertyType);
     }
 }

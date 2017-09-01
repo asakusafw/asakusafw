@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A pattern describes file location.
@@ -204,6 +205,18 @@ public class FilePattern implements ResourcePattern {
     @Override
     public String toString() {
         return patternString;
+    }
+
+    /**
+     * Returns a pattern of the given segments.
+     * @param segments the pattern segments
+     * @return the pattern
+     * @since 0.10.0
+     */
+    public static FilePattern of(List<? extends Segment> segments) {
+        return new FilePattern(
+                new ArrayList<>(segments),
+                segments.stream().map(Segment::toString).collect(Collectors.joining("/")));
     }
 
     /**
@@ -470,6 +483,17 @@ public class FilePattern implements ResourcePattern {
          */
         public boolean isTraverse() {
             return elements.isEmpty();
+        }
+
+        @Override
+        public String toString() {
+            if (isTraverse()) {
+                return "**";
+            } else {
+                StringBuilder buf = new StringBuilder();
+                elements.forEach(buf::append);
+                return buf.toString();
+            }
         }
     }
 

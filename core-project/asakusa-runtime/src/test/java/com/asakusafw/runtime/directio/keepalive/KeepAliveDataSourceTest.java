@@ -203,6 +203,11 @@ public class KeepAliveDataSourceTest {
         }
 
         @Override
+        public String path(String basePath) {
+            return basePath;
+        }
+
+        @Override
         public <T> List<DirectInputFragment> findInputFragments(
                 DataDefinition<T> definition,
                 String basePath,
