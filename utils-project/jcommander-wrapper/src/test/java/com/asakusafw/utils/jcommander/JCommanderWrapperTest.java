@@ -191,7 +191,7 @@ public class JCommanderWrapperTest {
     @Test
     public void expand_dynamic() {
         JCommanderWrapper<Supplier<String>> commander = new JCommanderWrapper<>("PG", new Exp());
-        Optional<String> result = commander.parse("-ac", "-De").map(Supplier::get);
+        Optional<String> result = commander.parse("-ac", "-De=f").map(Supplier::get);
         assertThat(result, is(Optional.of("ace=f")));
     }
 
@@ -203,6 +203,16 @@ public class JCommanderWrapperTest {
         JCommanderWrapper<Supplier<String>> commander = new JCommanderWrapper<>("PG", new Exp());
         Optional<String> result = commander.parse("-abc", "MAIN").map(Supplier::get);
         assertThat(result, is(Optional.of("abcMAIN")));
+    }
+
+    /**
+     * w/ expand + escape.
+     */
+    @Test
+    public void expand_escape() {
+        JCommanderWrapper<Supplier<String>> commander = new JCommanderWrapper<>("PG", new Exp());
+        Optional<String> result = commander.parse("-a", "--", "-bc").map(Supplier::get);
+        assertThat(result, is(Optional.of("a-bc")));
     }
 
     /**
