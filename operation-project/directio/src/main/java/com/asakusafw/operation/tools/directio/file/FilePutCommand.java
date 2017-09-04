@@ -118,7 +118,7 @@ public class FilePutCommand implements Runnable {
             if (stat(parent).filter(it -> it.isDirectory()).isPresent()) {
                 if (sources.size() >= 2) {
                     throw new CommandConfigurationException(MessageFormat.format(
-                            "copy souce is ambiguous: {0}",
+                            "copy source is ambiguous: {0}",
                             sources.stream()
                                     .map(String::valueOf)
                                     .collect(Collectors.joining(", "))));
