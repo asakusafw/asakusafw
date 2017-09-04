@@ -205,8 +205,7 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 ],
                 DirectIoHiveDist : [],
                 DirectIoHiveLib : [
-                    "com.asakusafw:asakusa-hive-info:${base.frameworkVersion}@jar",
-                    "com.asakusafw:asakusa-hive-core:${base.frameworkVersion}@jar",
+                    "com.asakusafw:asakusa-hive-core:${base.frameworkVersion}:lib@jar",
                 ] + profile.hive.libraries,
                 ExtensionLib : profile.extension.libraries,
             ])
