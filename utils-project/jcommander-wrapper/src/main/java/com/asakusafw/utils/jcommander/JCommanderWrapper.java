@@ -17,10 +17,15 @@ package com.asakusafw.utils.jcommander;
 
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,6 +35,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
@@ -104,15 +110,88 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
      * @throws ParameterException if arguments are not valid
      */
     public Optional<T> parse(String... args) {
+        String[] expandedArgs = expand(args);
         try {
-            root.commander.parse(args);
+            root.commander.parse(expandedArgs);
         } catch (ParameterException e) {
             Optional.ofNullable(findCommander()).ifPresent(e::setJCommander);
             throw e;
         }
+        JCommander commander = findCommander();
         @SuppressWarnings("unchecked")
-        T cmd = (T) getActiveCommand(findCommander());
-        return Optional.ofNullable(cmd);
+        T cmd = (T) getActiveCommand(commander);
+        if (cmd != null) {
+            validate(commander, expandedArgs);
+            return Optional.of(cmd);
+        }
+        return Optional.empty();
+    }
+
+    private static void validate(JCommander commander, String[] args) {
+        List<String> dynamics = commander.getParameters().stream()
+                .filter(it -> it.isDynamicParameter())
+                .flatMap(it -> Arrays.stream(it.getParameter().names()))
+                .distinct()
+                .collect(Collectors.toList());
+        Set<String> statics = commander.getParameters().stream()
+                .filter(it -> it.isDynamicParameter() == false)
+                .flatMap(it -> Arrays.stream(it.getParameter().names()))
+                .collect(Collectors.toSet());
+        for (String arg : args) {
+            if (arg.equals("--")) {
+                break;
+            }
+            if (arg.startsWith("-")) {
+                if (statics.contains(arg) == false
+                        && dynamics.stream().anyMatch(arg::startsWith) == false) {
+                    ParameterException exc = new ParameterException(MessageFormat.format(
+                            "unknown option: {0}",
+                            arg));
+                    exc.setJCommander(commander);
+                    throw exc;
+                }
+            }
+        }
+    }
+
+    private String[] expand(String[] args) {
+        JCommander commander = findCommander(args);
+        Params params = collectParams(commander);
+        if (params.names.stream()
+                .filter(JCommanderWrapper::isShortNameOption)
+                .anyMatch(it -> it.length() > 2)) {
+            return args;
+        }
+        List<String> dynamics = params.dynamicNames.stream()
+                .filter(JCommanderWrapper::isShortNameOption)
+                .collect(Collectors.toList());
+
+        boolean sawExpand = false;
+        boolean sawEscape = false;
+        List<String> results = new ArrayList<>();
+        for (String arg : args) {
+            if (sawEscape) {
+                results.add(arg);
+            } else {
+                if (isShortNameOption(arg)
+                        && arg.length() > 2
+                        && dynamics.stream().anyMatch(arg::startsWith) == false) {
+                    LOG.debug("expand option: {}", arg);
+                    for (int i = 1, n = arg.length(); i < n; i++) {
+                        sawExpand = true;
+                        results.add("-" + arg.charAt(i));
+                    }
+                } else {
+                    sawEscape |= arg.equals("--");
+                    results.add(arg);
+                }
+            }
+        }
+        if (sawExpand) {
+            LOG.debug("expanded command line: {}", results);
+            return results.toArray(new String[results.size()]);
+        }
+        return args;
     }
 
     private JCommander findCommander() {
@@ -125,6 +204,25 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
                 current = current.getCommands().get(cmd);
             }
         }
+    }
+
+    private JCommander findCommander(String[] args) {
+        Deque<String> rest = new ArrayDeque<>(Arrays.asList(args));
+        JCommander current = root.commander;
+        while (rest.isEmpty() == false) {
+            String cmd = rest.removeFirst();
+            JCommander next = current.getCommands().get(cmd);
+            if (next == null) {
+                break;
+            } else {
+                current = next;
+            }
+        }
+        return current;
+    }
+
+    private static boolean isShortNameOption(String arg) {
+        return arg.startsWith("-") && arg.startsWith("--") == false;
     }
 
     private static Object getActiveCommand(JCommander commander) {
@@ -193,6 +291,55 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
                             object.getClass().getName(),
                             f.getName()), e);
                 }
+            }
+        }
+    }
+
+    private static Params collectParams(JCommander commander) {
+        Params results = new Params();
+        commander.getObjects().forEach(it -> collectParams(results, it));
+        return results;
+    }
+
+    private static void collectParams(Params results, Object object) {
+        for (Class<?> current = object.getClass();
+                current != Object.class && current != null;
+                current = current.getSuperclass()) {
+            for (Field f : current.getDeclaredFields()) {
+                Optional.ofNullable(f.getAnnotation(Parameter.class)).ifPresent(results::add);
+                Optional.ofNullable(f.getAnnotation(DynamicParameter.class)).ifPresent(results::add);
+                try {
+                    if (f.isAnnotationPresent(ParametersDelegate.class)) {
+                        f.setAccessible(true);
+                        Object delegate = f.get(object);
+                        collectParams(results, delegate);
+                    }
+                } catch (ReflectiveOperationException e) {
+                    LOG.warn("error occurred while analyzing arguments: {}", object, e);
+                }
+            }
+        }
+    }
+
+    private static class Params {
+
+        final Set<String> names = new HashSet<>();
+
+        final Set<String> dynamicNames = new HashSet<>();
+
+        Params() {
+            return;
+        }
+
+        void add(Parameter annotation) {
+            for (String name : annotation.names()) {
+                names.add(name);
+            }
+        }
+
+        void add(DynamicParameter annotation) {
+            for (String name : annotation.names()) {
+                dynamicNames.add(name);
             }
         }
     }

@@ -118,7 +118,7 @@ public class FilePutCommand implements Runnable {
             if (stat(parent).filter(it -> it.isDirectory()).isPresent()) {
                 if (sources.size() >= 2) {
                     throw new CommandConfigurationException(MessageFormat.format(
-                            "copy souce is ambiguous: {0}",
+                            "copy source is ambiguous: {0}",
                             sources.stream()
                                     .map(String::valueOf)
                                     .collect(Collectors.joining(", "))));
@@ -240,7 +240,7 @@ public class FilePutCommand implements Runnable {
                         }
                         dstFs.mkdirs(destination);
                         verboseParameter.printf(writer, "copy directory: %s -> %s%n", source, destination);
-                        Arrays.stream(dstFs.listStatus(source))
+                        Arrays.stream(srcFs.listStatus(source))
                                 .map(s -> {
                                     org.apache.hadoop.fs.Path src = s.getPath();
                                     org.apache.hadoop.fs.Path dst = resolve(destination, src.getName());

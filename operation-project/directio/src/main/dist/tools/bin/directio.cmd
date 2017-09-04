@@ -30,7 +30,6 @@ set java_classpath=%libdir%\asakusa-directio-tools.jar
 set main_class=com.asakusafw.operation.tools.directio.bootstrap.Bootstrap
 
 set java_props=-Dcli.name=directio
-set java_props=%java_props% -Dcli.name=directio
 set java_props=%java_props% -Dhadoop.home.dir=%ASAKUSA_HOME%\hadoop
 
 java %ASAKUSA_CLIENT_OPTS% -classpath %java_classpath% %java_props% %main_class% %*

@@ -125,7 +125,7 @@ public class FileGetCommand implements Runnable {
                 .isPresent()) {
             if (files.size() != 1) {
                 throw new CommandConfigurationException(MessageFormat.format(
-                        "copy souce is ambiguous: {0}",
+                        "copy source is ambiguous: {0}",
                         files.stream()
                                 .map(ResourceInfo::getPath)
                                 .collect(Collectors.joining(", "))));
