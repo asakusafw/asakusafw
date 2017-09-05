@@ -224,7 +224,12 @@ class AsakusaSdkPlugin implements Plugin<Project> {
                         compile "com.asakusafw:asakusa-windgate-vocabulary:${base.frameworkVersion}"
                     }
                     if (features.hive) {
-                        compile "com.asakusafw:asakusa-hive-core:${base.frameworkVersion}"
+                        compile("com.asakusafw:asakusa-hive-core:${base.frameworkVersion}") {
+                            exclude group: 'org.apache.hive', module: 'hive-exec'
+                        }
+                        compile("org.apache.hive:hive-exec:${base.hiveVersion}@jar") {
+                            transitive false
+                        }
                     }
                 }
                 if (features.testing) {
