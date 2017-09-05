@@ -88,6 +88,7 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                     OperationExec : "Executables of Asakusa Framework operation tools (${profile.name}).",
                      ExtensionLib : "Asakusa Framework extension libraries (${profile.name}).",
         ])
+        configuration('asakusafwDirectIoHiveLib').transitive = false
         configuration('asakusafwExtensionLib').transitive = false
         configuration('asakusafwHadoopLib').with { Configuration conf ->
             conf.transitive = true
