@@ -16,6 +16,7 @@
 package com.asakusafw.directio.hive.parquet;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +37,7 @@ import parquet.column.page.PageReadStore;
 import parquet.hadoop.ParquetFileReader;
 import parquet.hadoop.metadata.BlockMetaData;
 import parquet.hadoop.metadata.ColumnChunkMetaData;
+import parquet.hadoop.metadata.FileMetaData;
 import parquet.hadoop.metadata.ParquetMetadata;
 import parquet.io.ColumnIOFactory;
 import parquet.io.MessageColumnIO;
@@ -49,6 +51,23 @@ import parquet.io.RecordReader;
 public class ParquetFileInput<T> implements ModelInput<T> {
 
     static final Log LOG = LogFactory.getLog(ParquetFileInput.class);
+
+    private static final Constructor<ParquetFileReader> FILE_READER_NEWER_CTOR;
+    static {
+        LOG.debug("loading newer ParquetFileReader.<init>");
+        Constructor<ParquetFileReader> ctor = null;
+        try {
+            ctor = ParquetFileReader.class.getConstructor(
+                    Configuration.class,
+                    FileMetaData.class,
+                    Path.class,
+                    List.class,
+                    List.class);
+        } catch (ReflectiveOperationException e) {
+            LOG.debug("cannot load newer ParquetFileReader.<init>", e);
+        }
+        FILE_READER_NEWER_CTOR = ctor;
+    }
 
     private final DataModelDescriptor descriptor;
 
@@ -162,11 +181,7 @@ public class ParquetFileInput<T> implements ModelInput<T> {
                         offset,
                         fragmentSize));
             }
-            this.fileReader = new ParquetFileReader(
-                    hadoopConfiguration,
-                    path,
-                    blocks,
-                    footer.getFileMetaData().getSchema().getColumns());
+            this.fileReader = createFileReader(footer, blocks);
             this.materializer = new DataModelMaterializer(
                     descriptor,
                     footer.getFileMetaData().getSchema(),
@@ -178,7 +193,28 @@ public class ParquetFileInput<T> implements ModelInput<T> {
         return fileReader.readNextRowGroup();
     }
 
-    private long computeTotalRecords(List<BlockMetaData> blocks) {
+    private ParquetFileReader createFileReader(ParquetMetadata meta, List<BlockMetaData> blocks) throws IOException {
+        FileMetaData fileMetaData = meta.getFileMetaData();
+        if (FILE_READER_NEWER_CTOR != null) {
+            try {
+                return FILE_READER_NEWER_CTOR.newInstance(
+                        hadoopConfiguration,
+                        fileMetaData,
+                        path,
+                        blocks,
+                        fileMetaData.getSchema().getColumns());
+            } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
+                LOG.debug("failed ParquetFileReader.<init>", e);
+            }
+        }
+        return new ParquetFileReader(
+                hadoopConfiguration,
+                path,
+                blocks,
+                fileMetaData.getSchema().getColumns());
+    }
+
+    private static long computeTotalRecords(List<BlockMetaData> blocks) {
         long result = 0L;
         for (BlockMetaData block : blocks) {
             result += block.getTotalByteSize();
