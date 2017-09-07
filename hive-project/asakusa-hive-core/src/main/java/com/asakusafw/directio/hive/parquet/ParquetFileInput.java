@@ -34,6 +34,7 @@ import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.io.ModelInput;
 
 import parquet.column.page.PageReadStore;
+import parquet.format.converter.ParquetMetadataConverter;
 import parquet.hadoop.ParquetFileReader;
 import parquet.hadoop.metadata.BlockMetaData;
 import parquet.hadoop.metadata.ColumnChunkMetaData;
@@ -166,7 +167,8 @@ public class ParquetFileInput<T> implements ModelInput<T> {
                         descriptor.getDataModelClass().getSimpleName(),
                         path));
             }
-            ParquetMetadata footer = ParquetFileReader.readFooter(hadoopConfiguration, path);
+            ParquetMetadata footer = ParquetFileReader.readFooter(
+                    hadoopConfiguration, path, ParquetMetadataConverter.NO_FILTER);
             List<BlockMetaData> blocks = filterBlocks(footer.getBlocks());
             if (blocks.isEmpty()) {
                 return null;
