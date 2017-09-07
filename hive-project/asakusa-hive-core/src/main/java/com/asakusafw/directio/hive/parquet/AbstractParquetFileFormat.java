@@ -110,7 +110,8 @@ public abstract class AbstractParquetFileFormat<T> extends HadoopFileFormat<T>
                     context.getDataType().getSimpleName(),
                     files.size()));
         }
-        List<Footer> footers = ParquetFileReader.readAllFootersInParallel(getConf(), files);
+        // NOTE: BlockMetaData requires skipRowGroup=false
+        List<Footer> footers = ParquetFileReader.readAllFootersInParallel(getConf(), files, false);
         for (Footer footer : footers) {
             Path path = footer.getFile();
             FileStatus status = pathMap.get(path);
