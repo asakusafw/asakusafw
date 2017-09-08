@@ -121,6 +121,18 @@ public class OperationToolsTest {
     }
 
     /**
+     * portal {@code hive}.
+     */
+    @Test
+    public void portal_hive() {
+        AsakusaProject project = provider.newInstance("ptl");
+        project.gradle("installAsakusafw");
+
+        Bundle framework = project.getFramework();
+        framework.withLaunch(AsakusaConstants.CMD_PORTAL, "hive");
+    }
+
+    /**
      * portal {@code list batch}.
      */
     @Test
