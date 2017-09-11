@@ -80,8 +80,8 @@
     <!-- artifact id/versions -->
     <hadoop.version>2.7.3</hadoop.version>
     <hadoop.artifact.id>hadoop-client</hadoop.artifact.id>
-    <hive.version>1.2.1</hive.version>
-    <sdk.hive.version>1.1.1</sdk.hive.version>
+    <hive.version>1.2.2</hive.version>
+    <sdk.hive.version>1.2.2</sdk.hive.version>
     <snappy.version>1.1.2.6</snappy.version>
     <slf4j.version>1.7.25</slf4j.version>
     <logback.version>1.2.3</logback.version>
