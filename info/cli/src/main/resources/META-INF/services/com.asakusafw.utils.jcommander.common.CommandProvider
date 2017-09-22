@@ -1,2 +1,3 @@
 com.asakusafw.info.cli.list.ListGroup
 com.asakusafw.info.cli.draw.DrawGroup
+com.asakusafw.info.cli.hive.HiveGroup
