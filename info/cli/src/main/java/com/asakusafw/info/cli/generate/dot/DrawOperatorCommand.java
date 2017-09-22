@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.info.cli.draw;
+package com.asakusafw.info.cli.generate.dot;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.info.JobflowInfo;
 import com.asakusafw.info.cli.common.FlowPartSelectorParameter;
 import com.asakusafw.info.cli.common.JobflowInfoParameter;
-import com.asakusafw.info.cli.draw.DrawEngine.Feature;
+import com.asakusafw.info.cli.generate.dot.DrawEngine.Feature;
 import com.asakusafw.info.operator.FlowOperatorSpec;
 import com.asakusafw.info.operator.OperatorGraphAttribute;
 import com.asakusafw.info.operator.view.OperatorGraphView;
@@ -65,7 +65,7 @@ public class DrawOperatorCommand implements Runnable {
     final FlowPartSelectorParameter flowPartSelectorParameter = new FlowPartSelectorParameter();
 
     @ParametersDelegate
-    final GraphvizParameter graphvizParameter = new GraphvizParameter();
+    final DotParameter graphvizParameter = new DotParameter();
 
     @ParametersDelegate
     final OutputParameter outputParameter = new OutputParameter();

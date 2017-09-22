@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.info.cli.hive;
+package com.asakusafw.info.cli.generate.ddl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -49,12 +49,12 @@ import com.beust.jcommander.ParametersDelegate;
  * @since 0.10.0
  */
 @Parameters(
-        commandNames = "ddl",
+        commandNames = "hive",
         commandDescription = "Generates Hive DDL."
 )
-public class HiveDdlCommand implements Runnable {
+public class DdlHiveCommand implements Runnable {
 
-    static final Logger LOG = LoggerFactory.getLogger(HiveDdlCommand.class);
+    static final Logger LOG = LoggerFactory.getLogger(DdlHiveCommand.class);
 
     static final String STATEMENT_SEPARATOR = ";"; //$NON-NLS-1$
 

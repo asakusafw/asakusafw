@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.info.cli.draw;
+package com.asakusafw.info.cli.generate.dot;
 
 import java.io.PrintWriter;
 import java.text.MessageFormat;
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.info.JobflowInfo;
 import com.asakusafw.info.cli.common.JobflowInfoParameter;
 import com.asakusafw.info.cli.common.VertexSelectorParameter;
-import com.asakusafw.info.cli.draw.DrawEngine.Feature;
+import com.asakusafw.info.cli.generate.dot.DrawEngine.Feature;
 import com.asakusafw.info.operator.view.OperatorGraphView;
 import com.asakusafw.info.operator.view.OperatorView;
 import com.asakusafw.info.plan.PlanAttribute;
@@ -67,7 +67,7 @@ public class DrawPlanCommand implements Runnable {
     final VertexSelectorParameter vertexSelectorParameter = new VertexSelectorParameter();
 
     @ParametersDelegate
-    final GraphvizParameter graphvizParameter = new GraphvizParameter();
+    final DotParameter graphvizParameter = new DotParameter();
 
     @ParametersDelegate
     final OutputParameter outputParameter = new OutputParameter();

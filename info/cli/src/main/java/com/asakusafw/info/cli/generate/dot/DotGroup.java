@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.info.cli.draw;
+package com.asakusafw.info.cli.generate.dot;
 
 import com.asakusafw.utils.jcommander.CommandBuilder;
 import com.asakusafw.utils.jcommander.common.CommandProvider;
@@ -21,18 +21,18 @@ import com.asakusafw.utils.jcommander.common.GroupUsageCommand;
 import com.beust.jcommander.Parameters;
 
 /**
- * A group command for draw.
+ * A group command for Graphviz DOT.
  * @since 0.10.0
  */
 @Parameters(
-        commandNames = "draw",
+        commandNames = "dot",
         commandDescription = "Generates information graph as Graphviz DOT scripts."
 )
-public class DrawGroup extends GroupUsageCommand implements CommandProvider {
+public class DotGroup extends GroupUsageCommand implements CommandProvider {
 
     @Override
     public void accept(CommandBuilder<Runnable> builder) {
-        builder.addGroup(new DrawGroup(), group -> group
+        builder.addGroup(new DotGroup(), group -> group
                 .addCommand(new DrawJobflowCommand())
                 .addCommand(new DrawOperatorCommand())
                 .addCommand(new DrawPlanCommand()));

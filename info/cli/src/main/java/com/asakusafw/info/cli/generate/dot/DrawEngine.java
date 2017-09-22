@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.info.cli.draw;
+package com.asakusafw.info.cli.generate.dot;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.asakusafw.info.cli.draw.Drawer.Shape;
+import com.asakusafw.info.cli.generate.dot.Drawer.Shape;
 import com.asakusafw.info.operator.CoreOperatorSpec;
 import com.asakusafw.info.operator.CustomOperatorSpec;
 import com.asakusafw.info.operator.FlowOperatorSpec;

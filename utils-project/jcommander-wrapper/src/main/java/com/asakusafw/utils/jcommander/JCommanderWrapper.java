@@ -74,8 +74,9 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
      * @param configurator the configurator
      * @return this
      */
+    @Override
     public JCommanderWrapper<T> configure(Consumer<? super CommandBuilder<T>> configurator) {
-        configurator.accept(this);
+        root.configure(configurator);
         return this;
     }
 

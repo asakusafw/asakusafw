@@ -25,6 +25,16 @@ import java.util.function.Consumer;
 public interface CommandBuilder<T> {
 
     /**
+     * Configures this object.
+     * @param configurator the configurator
+     * @return this
+     */
+    default CommandBuilder<T> configure(Consumer<? super CommandBuilder<T>> configurator) {
+        configurator.accept(this);
+        return this;
+    }
+
+    /**
      * Adds a leaf command.
      * @param command the command object
      * @return this

@@ -13,7 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.asakusafw.info.cli.generate.dot;
+
+import com.beust.jcommander.Parameter;
+
 /**
- * Direct I/O Hive tools.
+ * Provides verbose flag for draw group.
+ * @since 0.10.0
  */
-package com.asakusafw.info.cli.hive;
+public class ShowAllParameter {
+
+    /**
+     * Whether or not the help message is required.
+     */
+    @Parameter(
+            names = { "-v", "--verbose", "--show-all", },
+            description = "Displays all optional information.",
+            required = false
+    )
+    public boolean required = false;
+
+    /**
+     * Returns the required.
+     * @return the required
+     */
+    public boolean isRequired() {
+        return required;
+    }
+}
