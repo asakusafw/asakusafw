@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Implementations of {@code draw} group.
+ * Implementations of {@code generate dot} group.
  */
-package com.asakusafw.info.cli.draw;
+package com.asakusafw.info.cli.generate.dot;

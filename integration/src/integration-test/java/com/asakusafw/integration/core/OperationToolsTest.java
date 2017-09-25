@@ -97,7 +97,7 @@ public class OperationToolsTest {
     }
 
     /**
-     * portal {@code draw}.
+     * portal {@code generate}.
      */
     @Test
     public void portal_draw() {
@@ -105,7 +105,7 @@ public class OperationToolsTest {
         project.gradle("installAsakusafw");
 
         Bundle framework = project.getFramework();
-        framework.withLaunch(AsakusaConstants.CMD_PORTAL, "draw");
+        framework.withLaunch(AsakusaConstants.CMD_PORTAL, "generate");
     }
 
     /**
@@ -118,18 +118,6 @@ public class OperationToolsTest {
 
         Bundle framework = project.getFramework();
         framework.withLaunch(AsakusaConstants.CMD_PORTAL, "run", "--help");
-    }
-
-    /**
-     * portal {@code hive}.
-     */
-    @Test
-    public void portal_hive() {
-        AsakusaProject project = provider.newInstance("ptl");
-        project.gradle("installAsakusafw");
-
-        Bundle framework = project.getFramework();
-        framework.withLaunch(AsakusaConstants.CMD_PORTAL, "hive");
     }
 
     /**

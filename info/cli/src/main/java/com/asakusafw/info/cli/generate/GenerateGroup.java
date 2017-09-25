@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.info.cli.hive;
+package com.asakusafw.info.cli.generate;
 
-import com.asakusafw.info.cli.list.ListHiveInputCommand;
-import com.asakusafw.info.cli.list.ListHiveOutputCommand;
+import com.asakusafw.info.cli.generate.ddl.DdlGroup;
+import com.asakusafw.info.cli.generate.dot.DotGroup;
 import com.asakusafw.utils.jcommander.CommandBuilder;
 import com.asakusafw.utils.jcommander.common.CommandProvider;
 import com.asakusafw.utils.jcommander.common.GroupUsageCommand;
@@ -27,16 +27,15 @@ import com.beust.jcommander.Parameters;
  * @since 0.10.0
  */
 @Parameters(
-        commandNames = "hive",
-        commandDescription = "Direct I/O Hive toolbox."
+        commandNames = "generate",
+        commandDescription = "Generates resources from DSL information."
 )
-public class HiveGroup extends GroupUsageCommand implements CommandProvider {
+public class GenerateGroup extends GroupUsageCommand implements CommandProvider {
 
     @Override
     public void accept(CommandBuilder<Runnable> builder) {
-        builder.addGroup(new HiveGroup(), group -> group
-                .addCommand(new HiveDdlCommand())
-                .addCommand(new ListHiveInputCommand())
-                .addCommand(new ListHiveOutputCommand()));
+        builder.addGroup(new GenerateGroup(), group -> group
+                .configure(new DotGroup())
+                .configure(new DdlGroup()));
     }
 }
