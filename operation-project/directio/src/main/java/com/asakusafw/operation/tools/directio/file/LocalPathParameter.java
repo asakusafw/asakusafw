@@ -16,14 +16,11 @@
 package com.asakusafw.operation.tools.directio.file;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.MessageFormat;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.utils.jcommander.CommandConfigurationException;
+import com.asakusafw.utils.jcommander.common.LocalPath;
 import com.beust.jcommander.Parameter;
 
 /**
@@ -34,20 +31,12 @@ public class LocalPathParameter {
 
     static final Logger LOG = LoggerFactory.getLogger(LocalPathParameter.class);
 
-    static final String KEY_WORKING_DIRECTORY = "cli.cwd";
-
-    static final String ENV_WORKING_DIRECTORY = "CALLER_CWD";
-
     @Parameter(
             names = { "--working-directory" },
-            description = "",
+            description = "base path of local files (only for testing).",
             required = false,
             hidden = true)
-    Path workingDirectory = Optional.ofNullable(
-            System.getProperty(KEY_WORKING_DIRECTORY, System.getenv(ENV_WORKING_DIRECTORY)))
-            .filter(it -> it.isEmpty() == false)
-            .map(Paths::get)
-            .orElse(null);
+    Path workingDirectory;
 
     /**
      * Resolves the given path.
@@ -55,22 +44,6 @@ public class LocalPathParameter {
      * @return the corresponded local file path
      */
     public Path resolve(String path) {
-        Path candidate = Paths.get(path);
-        if (candidate.isAbsolute()) {
-            return candidate;
-        } else if (workingDirectory != null) {
-            if (workingDirectory.isAbsolute() == false) {
-                throw new CommandConfigurationException(MessageFormat.format(
-                        "custom working dierctory path must be absolute: {0}",
-                        workingDirectory));
-            }
-            Path result = workingDirectory.resolve(path);
-            LOG.debug("resolve local path: {} -> {}", path, result);
-            return result;
-        } else {
-            throw new CommandConfigurationException(MessageFormat.format(
-                    "local file path must be absolute: {0}",
-                    path));
-        }
+        return LocalPath.of(path, workingDirectory);
     }
 }

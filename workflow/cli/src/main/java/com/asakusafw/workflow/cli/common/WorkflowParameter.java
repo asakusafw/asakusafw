@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
+import com.asakusafw.utils.jcommander.common.LocalPath;
 import com.asakusafw.workflow.executor.ExecutionContext;
 import com.asakusafw.workflow.executor.TaskExecutors;
 import com.asakusafw.workflow.model.BatchInfo;
@@ -93,7 +94,7 @@ public class WorkflowParameter {
     }
 
     private Optional<Path> resolvePath(ExecutionContext context) {
-        Path path = Paths.get(workflow);
+        Path path = LocalPath.of(workflow);
         if (Files.isDirectory(path)) {
             LOG.debug("found directory: {}", path);
             return Optional.of(path)
@@ -103,15 +104,18 @@ public class WorkflowParameter {
             LOG.debug("found regular file: {}", path);
             return Optional.of(path)
                     .filter(Files::isRegularFile);
-        } else if (path.getNameCount() == 1) {
-            LOG.debug("process as batch ID: {}", path);
-            return TaskExecutors.findApplicationHome(context)
-                    .map(it -> it.resolve(path.toString()))
-                    .map(it -> it.resolve(TaskExecutors.LOCATION_APPLICATION_WORKFLOW_DEFINITION))
-                    .filter(Files::isRegularFile);
         } else {
-            LOG.debug("unknown batch location: {}", path);
-            return Optional.empty();
+            Path purePath = Paths.get(workflow);
+            if (purePath.getNameCount() == 1) {
+                LOG.debug("process as batch ID: {}", purePath);
+                return TaskExecutors.findApplicationHome(context)
+                        .map(it -> it.resolve(purePath.toString()))
+                        .map(it -> it.resolve(TaskExecutors.LOCATION_APPLICATION_WORKFLOW_DEFINITION))
+                        .filter(Files::isRegularFile);
+            } else {
+                LOG.debug("unknown batch location: {}", purePath);
+                return Optional.empty();
+            }
         }
     }
 

@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
+import com.asakusafw.utils.jcommander.common.LocalPath;
 import com.beust.jcommander.Parameter;
 
 /**
@@ -86,7 +87,7 @@ public class ApplicationBaseDirectoryParameter {
             return Optional.empty();
         }
         return Optional.of(path)
-                .map(Paths::get)
+                .map(LocalPath::of)
                 .filter(Files::isDirectory);
     }
 
@@ -102,7 +103,7 @@ public class ApplicationBaseDirectoryParameter {
                     ENV_ASAKUSA_HOME,
                     OPT_BATCHAPPS));
         }
-        Path result = Paths.get(path);
+        Path result = LocalPath.of(path);
         if (Files.isDirectory(result) == false) {
             throw new CommandConfigurationException(MessageFormat.format(
                     "batch applications directory is not found: {0}",

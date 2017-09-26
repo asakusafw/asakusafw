@@ -21,7 +21,6 @@ import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Objects;
 
@@ -76,7 +75,7 @@ public class OutputParameter {
                     }
                 };
             } else {
-                Path file = Paths.get(output).toAbsolutePath();
+                Path file = LocalPath.of(output);
                 Path parent = file.getParent();
                 if (parent != null) {
                     Files.createDirectories(parent);
