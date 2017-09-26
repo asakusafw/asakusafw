@@ -22,6 +22,7 @@ if not defined ASAKUSA_HOME (
     exit /b 1
 )
 
+set CALLER_CWD=%cd%
 cd /d %USERPROFILE%
 
 set libdir=%ASAKUSA_HOME%\tools\lib

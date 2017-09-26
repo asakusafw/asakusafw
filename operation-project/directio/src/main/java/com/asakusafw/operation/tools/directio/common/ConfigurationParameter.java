@@ -25,6 +25,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.utils.jcommander.common.LocalPath;
 import com.beust.jcommander.Parameter;
 
 /**
@@ -57,7 +58,7 @@ public class ConfigurationParameter {
      * @return the configuration path
      */
     public Optional<Path> getPath() {
-        return Optional.ofNullable(path).map(Paths::get);
+        return Optional.ofNullable(path).map(LocalPath::of);
     }
 
     /**
@@ -70,7 +71,7 @@ public class ConfigurationParameter {
             if (path == null) {
                 LOG.warn("environment variable {} is not defined", ENV_ASAKUSA_HOME);
             } else {
-                Path p = Paths.get(path);
+                Path p = LocalPath.of(path);
                 LOG.debug("loading configuration: {}", p);
                 if (Files.isRegularFile(p)) {
                     try {

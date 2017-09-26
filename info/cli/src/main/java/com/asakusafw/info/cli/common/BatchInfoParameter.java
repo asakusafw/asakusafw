@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import com.asakusafw.info.BatchInfo;
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
+import com.asakusafw.utils.jcommander.common.LocalPath;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParametersDelegate;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -86,7 +87,7 @@ public class BatchInfoParameter {
      * @return the information file path, or {@code empty} if it is not found
      */
     public static Optional<Path> findInfo(Path applicationBaseDir, String location) {
-        Path path = Paths.get(location);
+        Path path = LocalPath.of(location);
         // just batch-info.json
         if (Files.isRegularFile(path)) {
             return Optional.of(path);
@@ -99,8 +100,9 @@ public class BatchInfoParameter {
             }
         }
         // may be a batch ID
-        if (path.isAbsolute() == false && path.getNameCount() == 1 && applicationBaseDir != null) {
-            Path applicationDir = applicationBaseDir.resolve(path.toString());
+        Path purePath = Paths.get(location);
+        if (purePath.isAbsolute() == false && purePath.getNameCount() == 1 && applicationBaseDir != null) {
+            Path applicationDir = applicationBaseDir.resolve(purePath.toString());
             Optional<Path> info = ApplicationBaseDirectoryParameter.findInfo(applicationDir);
             if (info.isPresent()) {
                 return info;
