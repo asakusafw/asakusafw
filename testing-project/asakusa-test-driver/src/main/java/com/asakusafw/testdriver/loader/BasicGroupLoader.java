@@ -206,7 +206,7 @@ public class BasicGroupLoader<T> implements GroupLoader<T> {
                                 "invalid key element type at {0}: required={1}, specified={2}",
                                 i,
                                 types[i].name(),
-                                expect.getSimpleName()));
+                                actual.getSimpleName()));
                     }
                 }
                 key.add(value);
