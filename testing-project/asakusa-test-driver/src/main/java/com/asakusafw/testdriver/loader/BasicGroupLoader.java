@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.asakusafw.runtime.core.GroupView;
@@ -206,7 +207,9 @@ public class BasicGroupLoader<T> implements GroupLoader<T> {
                                 "invalid key element type at {0}: required={1}, specified={2}",
                                 i,
                                 types[i].name(),
-                                actual.getSimpleName()));
+                                Optional.ofNullable(elements[i])
+                                    .map(it -> it.getClass().getSimpleName())
+                                    .orElseGet(() -> actual.getSimpleName())));
                     }
                 }
                 key.add(value);
