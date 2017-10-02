@@ -191,26 +191,37 @@ public class BasicGroupLoader<T> implements GroupLoader<T> {
         private List<Object> toKey(Object[] elements) {
             if (elements.length != types.length) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "invalid key element types: requires ({0})",
+                        "invalid number of key elements: requires ({0})",
                         Arrays.stream(types)
                             .map(Enum::name)
                             .collect(Collectors.joining())));
             }
             List<Object> key = new ArrayList<>(elements.length);
             for (int i = 0; i < elements.length; i++) {
-                Object value = definition.resolveRawValue(elements[i]);
-                if (value != null) {
-                    Class<?> expect = types[i].getRepresentation();
-                    Class<?> actual = value.getClass();
-                    if (expect.isAssignableFrom(actual) == false) {
-                        throw new IllegalArgumentException(MessageFormat.format(
-                                "invalid key element type at {0}: required={1}, specified={2}",
-                                i,
-                                types[i].name(),
-                                Optional.ofNullable(elements[i])
-                                    .map(it -> it.getClass().getSimpleName())
-                                    .orElseGet(() -> actual.getSimpleName())));
-                    }
+                Object value;
+                try {
+                    value = definition.resolveRawValue(elements[i]);
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException(MessageFormat.format(
+                            "invalid key element type at {0}: required={1}, specified={2}",
+                            i,
+                            types[i].name(),
+                            Optional.ofNullable(elements[i])
+                                .map(it -> it.getClass().getSimpleName())
+                                .orElse("null")), e); //$NON-NLS-1$
+                }
+                Class<?> expect = types[i].getRepresentation();
+                Class<?> actual = Optional.ofNullable(value)
+                        .map(Object::getClass)
+                        .orElse(null);
+                if (actual == null || expect.isAssignableFrom(actual) == false) {
+                    throw new IllegalArgumentException(MessageFormat.format(
+                            "invalid key element type at {0}: required={1}, specified={2}",
+                            i,
+                            types[i].name(),
+                            Optional.ofNullable(elements[i])
+                                .map(it -> it.getClass().getSimpleName())
+                                .orElse("null")));
                 }
                 key.add(value);
             }
