@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.asakusafw.runtime.core.GroupView;
@@ -190,14 +191,25 @@ public class BasicGroupLoader<T> implements GroupLoader<T> {
         private List<Object> toKey(Object[] elements) {
             if (elements.length != types.length) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "invalid key element types: requires ({0})",
+                        "invalid number of key elements: requires ({0})",
                         Arrays.stream(types)
                             .map(Enum::name)
                             .collect(Collectors.joining())));
             }
             List<Object> key = new ArrayList<>(elements.length);
             for (int i = 0; i < elements.length; i++) {
-                Object value = definition.resolveRawValue(elements[i]);
+                Object value;
+                try {
+                    value = definition.resolveRawValue(elements[i]);
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException(MessageFormat.format(
+                            "invalid key element type at {0}: required={1}, specified={2}",
+                            i,
+                            types[i].name(),
+                            Optional.ofNullable(elements[i])
+                                .map(it -> it.getClass().getSimpleName())
+                                .orElse("null")), e); //$NON-NLS-1$
+                }
                 if (value != null) {
                     Class<?> expect = types[i].getRepresentation();
                     Class<?> actual = value.getClass();
@@ -206,7 +218,9 @@ public class BasicGroupLoader<T> implements GroupLoader<T> {
                                 "invalid key element type at {0}: required={1}, specified={2}",
                                 i,
                                 types[i].name(),
-                                expect.getSimpleName()));
+                                Optional.ofNullable(elements[i])
+                                    .map(it -> it.getClass().getSimpleName())
+                                    .orElse("null")));
                     }
                 }
                 key.add(value);
