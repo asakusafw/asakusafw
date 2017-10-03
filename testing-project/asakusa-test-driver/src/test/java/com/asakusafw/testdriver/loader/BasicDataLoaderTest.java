@@ -295,6 +295,8 @@ public class BasicDataLoaderTest {
         assertThat(results.find(new IntOption(0), new DecimalOption(d(0))), hasSize(0));
         fail(() -> results.find(new StringOption(""), new DecimalOption(d(0))));
         fail(() -> results.find(new IntOption(0), new StringOption("")));
+        fail(() -> results.find(new IntOption(), new StringOption()));
+        fail(() -> results.find(0, BigDecimal.valueOf(0)));
     }
 
     private static void fail(Runnable r) {
