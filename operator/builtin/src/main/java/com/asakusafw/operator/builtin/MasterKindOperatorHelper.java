@@ -27,6 +27,7 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Types;
+import javax.tools.Diagnostic;
 
 import com.asakusafw.operator.CompileEnvironment;
 import com.asakusafw.operator.Constants;
@@ -172,6 +173,7 @@ final class MasterKindOperatorHelper {
                     selectorMethod.getSimpleName(),
                     operatorMaster));
         }
+        checkRedundantKey(environment, selectorMethod, selectorParams.get(0));
         if (selectorParams.size() == 1) {
             return;
         }
@@ -183,6 +185,7 @@ final class MasterKindOperatorHelper {
                     selectorMethod.getSimpleName(),
                     operatorTx));
         }
+        checkRedundantKey(environment, selectorMethod, selectorParams.get(1));
         for (int i = 2, n = selectorParams.size(); i < n; i++) {
             TypeMirror expected = operatorParams.get(i).asType();
             TypeMirror actual = selectorParams.get(i).asType();
@@ -193,6 +196,7 @@ final class MasterKindOperatorHelper {
                         expected,
                         selectorParams.get(i)));
             }
+            checkRedundantKey(environment, selectorMethod, selectorParams.get(i));
         }
     }
 
@@ -244,6 +248,26 @@ final class MasterKindOperatorHelper {
                     Messages.getString("MasterKindOperatorHelper.errorSelectorMethodParameterMissing"), //$NON-NLS-1$
                     selectorMethod.getSimpleName(),
                     operatorParams.get(0).asType()));
+        }
+    }
+
+    private static void checkRedundantKey(
+            CompileEnvironment environment,
+            ExecutableElement selectorMethod,
+            VariableElement parameter) {
+        TypeElement annotationType = environment.findTypeElement(Constants.TYPE_KEY);
+        if (annotationType == null) {
+            return;
+        }
+        AnnotationMirror annotation = AnnotationHelper.findAnnotation(environment, annotationType, parameter);
+        if (annotation != null) {
+            environment.getProcessingEnvironment().getMessager().printMessage(
+                    Diagnostic.Kind.WARNING,
+                    MessageFormat.format(
+                            Messages.getString("MasterKindOperatorHelper.warnSelectorMethodParameterRedundantKey"), //$NON-NLS-1$
+                            selectorMethod.getSimpleName(),
+                            parameter.getSimpleName()),
+                    parameter);
         }
     }
 

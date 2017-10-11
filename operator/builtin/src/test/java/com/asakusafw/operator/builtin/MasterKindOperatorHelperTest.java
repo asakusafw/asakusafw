@@ -357,4 +357,20 @@ public class MasterKindOperatorHelperTest extends OperatorDriverTestRoot {
     public void violate_selector_master_list_parameterized() {
         violate("com.example.ViolateSelectorMasterInputParameterizedList");
     }
+
+    /**
+     * violates selector method has pre-defined view.
+     */
+    @Test
+    public void violate_selector_undefined_view() {
+        violate("com.example.ViolateSelectorPreDefinedView");
+    }
+
+    /**
+     * violates selector method views does'nt has view.
+     */
+    @Test
+    public void violate_selector_view_without_key() {
+        violate("com.example.ViolateSelectorViewWithoutKey");
+    }
 }

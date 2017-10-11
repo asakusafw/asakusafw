@@ -1,0 +1,22 @@
+package $p;
+
+import java.util.*;
+
+import com.asakusafw.runtime.core.*;
+import com.asakusafw.vocabulary.model.Key;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class $s {
+
+    @MasterJoinUpdate(selection = "selector")
+    public void method(
+            @Key(group = "id") Side side,
+            @Key(group = "key") Model model,
+            @Key(group = "id") GroupView<Side> view) {
+    }
+
+    @MasterSelection
+    public Side selector(List<Side> sides, Model model, @Key(group = "id") GroupView<Side> view) {
+        return null;
+    }
+}
