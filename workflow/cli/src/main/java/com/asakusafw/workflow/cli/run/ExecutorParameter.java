@@ -48,6 +48,12 @@ public class ExecutorParameter {
     )
     public BasicCommandLauncher.Output outputStyle = BasicCommandLauncher.Output.STANDARD;
 
+    @Parameter(
+            names = { "--no-parameter-check" },
+            description = "Skips batch parameter validation"
+    )
+    boolean skipParameterCheck = false;
+
     /**
      * Returns the task executors.
      * @param context the current context
@@ -81,6 +87,7 @@ public class ExecutorParameter {
      * @return the batch executor
      */
     public BatchExecutor getBatchExecutor(ExecutionContext context) {
-        return new BasicBatchExecutor(getJobflowExecutor(context));
+        return new BasicBatchExecutor(getJobflowExecutor(context))
+                .withValidateParameters(skipParameterCheck == false);
     }
 }
