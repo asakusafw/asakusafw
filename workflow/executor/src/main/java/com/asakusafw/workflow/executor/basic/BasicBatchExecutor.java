@@ -50,9 +50,13 @@ public class BasicBatchExecutor implements BatchExecutor {
 
     static final Logger LOG = LoggerFactory.getLogger(BasicBatchExecutor.class);
 
+    private static final boolean DEFAULT_VALIDATE_PARAMETERS = true;
+
     private final JobflowExecutor jobflowExecutor;
 
     private final Function<JobflowInfo, String> executionIds;
+
+    private boolean validateParameters = DEFAULT_VALIDATE_PARAMETERS;
 
     /**
      * Creates a new instance.
@@ -83,13 +87,25 @@ public class BasicBatchExecutor implements BatchExecutor {
         this(jobflowExecutor, jobflow -> UUID.randomUUID().toString());
     }
 
+    /**
+     * Sets whether or not validates batch arguments.
+     * @param enable {@code true} to enable batch arguments, otherwise {@code false}
+     * @return this
+     */
+    public BasicBatchExecutor withValidateParameters(boolean enable) {
+        this.validateParameters = enable;
+        return this;
+    }
+
     @Override
     public void execute(
             ExecutionContext context,
             BatchInfo batch, Map<String, String> arguments) throws IOException, InterruptedException {
         LOG.info("start batch: {} ({})", batch.getId(), arguments);
-        batch.findAttribute(ParameterListAttribute.class)
-                .ifPresent(it -> validateParameters(it, arguments));
+        if (validateParameters) {
+            batch.findAttribute(ParameterListAttribute.class)
+                    .ifPresent(it -> validateParameters(it, arguments));
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug("starting jobflow graph: {} ({} jobflows)", batch.getId(), batch.getElements().size());
         }
