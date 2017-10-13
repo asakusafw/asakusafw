@@ -520,4 +520,12 @@ public class CoGroupOperatorDriverTest extends OperatorDriverTestRoot {
     public void violate_group_view_with_key() {
         violate("com.example.ViolateGroupViewWithKey");
     }
+
+    /**
+     * violates input exists.
+     */
+    @Test
+    public void violate_with_input_view() {
+        violate("com.example.ViolateWithInputView");
+    }
 }

@@ -237,7 +237,7 @@ final class DslBuilder {
         if (sawError()) {
             return null;
         }
-        if (inputs.isEmpty()) {
+        if (inputs.stream().noneMatch(it -> isView(it) == false)) {
             methodRef.error(Messages.getString("DslBuilder.errorInputMissing")); //$NON-NLS-1$
         }
         if (outputs.isEmpty()) {
@@ -306,12 +306,8 @@ final class DslBuilder {
     }
 
     private void validateParameterOrder() {
-        Predicate<Node> side = n -> n.getAttributes().stream()
-                .filter(v -> v instanceof ObjectDescription)
-                .map(v -> (ObjectDescription) v)
-                .anyMatch(o -> o.getValueType().equals(TYPE_VIEW_INFO));
         BitSet inMask = toMask(inputs);
-        BitSet sideMask = toMask(inputs, side);
+        BitSet sideMask = toMask(inputs, DslBuilder::isView);
         BitSet outMask = toMask(outputs);
         BitSet argMask = toMask(arguments);
 
@@ -336,6 +332,13 @@ final class DslBuilder {
                 parameterRefs.get(i).error(Messages.getString("DslBuilder.errorOutputAfterArgument")); //$NON-NLS-1$
             });
         }
+    }
+
+    private static boolean isView(Node node) {
+        return node.getKind() == Node.Kind.INPUT && node.getAttributes().stream()
+                .filter(v -> v instanceof ObjectDescription)
+                .map(v -> (ObjectDescription) v)
+                .anyMatch(o -> o.getValueType().equals(TYPE_VIEW_INFO));
     }
 
     private static BitSet toMask(List<Node> nodes, Predicate<Node> predicate) {
