@@ -83,6 +83,7 @@ public final class AsakusaPortal extends GroupUsageCommand {
         String programName = Optional.ofNullable(System.getProperty(KEY_COMMAND_NAME))
                 .orElse("java -jar <self.jar>");
         new JCommanderWrapper<Runnable>(programName, new AsakusaPortal())
+                .addCommand(new VersionCommand())
                 .configure(it -> ServiceLoader.load(CommandProvider.class)
                         .forEach(provider -> provider.accept(it)))
                 .parse(args)
