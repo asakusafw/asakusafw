@@ -27,6 +27,7 @@ import com.asakusafw.utils.jcommander.CommandConfigurationException;
 import com.asakusafw.utils.jcommander.CommandExecutionException;
 import com.asakusafw.utils.jcommander.common.CommandProvider;
 import com.asakusafw.utils.jcommander.common.HelpParameter;
+import com.asakusafw.utils.jcommander.common.VerboseParameter;
 import com.asakusafw.workflow.cli.common.ExecutionContextParameter;
 import com.asakusafw.workflow.cli.common.WorkflowParameter;
 import com.asakusafw.workflow.executor.BatchExecutor;
@@ -50,6 +51,9 @@ public class RunCommand implements Runnable, CommandProvider {
 
     @ParametersDelegate
     final HelpParameter helpParameter = new HelpParameter();
+
+    @ParametersDelegate
+    final VerboseParameter verboseParameter = new VerboseParameter();
 
     @ParametersDelegate
     final ExecutionContextParameter contextParameter = new ExecutionContextParameter();
