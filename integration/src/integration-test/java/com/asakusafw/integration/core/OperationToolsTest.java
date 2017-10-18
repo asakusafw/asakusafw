@@ -85,6 +85,18 @@ public class OperationToolsTest {
     }
 
     /**
+     * portal {@code version -v}.
+     */
+    @Test
+    public void portal_version() {
+        AsakusaProject project = provider.newInstance("ptl");
+        project.gradle("installAsakusafw");
+
+        Bundle framework = project.getFramework();
+        framework.withLaunch(AsakusaConstants.CMD_PORTAL, "version", "-v");
+    }
+
+    /**
      * portal {@code list}.
      */
     @Test
