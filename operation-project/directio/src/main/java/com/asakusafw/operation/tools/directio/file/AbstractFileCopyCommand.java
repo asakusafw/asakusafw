@@ -23,8 +23,10 @@ import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.hadoop.conf.Configuration;
@@ -112,7 +114,9 @@ public abstract class AbstractFileCopyCommand implements Runnable {
                 })
                 .collect(Collectors.toList());
 
-        Optional<org.apache.hadoop.fs.FileStatus> stat = stat(destination);
+        validate(files, destination);
+        Optional<FileStatus> stat = stat(destination);
+
         if (stat.filter(it -> it.isDirectory()).isPresent()) {
             copyOnto(files, destination);
         } else if (stat.filter(it -> it.isDirectory() == false).isPresent() && overwrite == false) {
@@ -139,7 +143,28 @@ public abstract class AbstractFileCopyCommand implements Runnable {
         }
     }
 
-    private Optional<org.apache.hadoop.fs.FileStatus> stat(Path path) {
+    private void validate(List<ResourceInfo> files, Path destination) {
+        Set<Path> ancestors = new HashSet<>();
+        for (Path path = qualify(destination); path != null; path = path.getParent()) {
+            ancestors.add(path);
+        }
+        for (ResourceInfo file : files) {
+            Path source = qualify(asHadoopPath(file.getPath()));
+            LOG.debug("validate: {} -> {}", source, destination);
+            if (ancestors.contains(source)) {
+                throw new CommandConfigurationException(MessageFormat.format(
+                        "cannot copy directory into its sub-directories: {0} -> {1}",
+                        source, destination));
+            }
+        }
+    }
+
+    private Path qualify(Path path) {
+        FileSystem fs = dataSourceParameter.getHadoopFileSystem(path);
+        return fs.makeQualified(path);
+    }
+
+    private Optional<FileStatus> stat(Path path) {
         try {
             return Optional.of(dataSourceParameter.getHadoopFileSystem(path).getFileStatus(path));
         } catch (FileNotFoundException e) {

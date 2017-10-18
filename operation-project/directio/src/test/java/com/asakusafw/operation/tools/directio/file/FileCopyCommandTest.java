@@ -258,4 +258,27 @@ public class FileCopyCommandTest extends DirectIoToolsTestRoot {
         touch(root, "dir/d");
         invoke("copy", "d", "dir", "--overwrite", "--recursive");
     }
+
+    /**
+     * conflict source.
+     */
+    @Test(expected = RuntimeException.class)
+    public void same_target() {
+        File root = add("root", "/");
+
+        touch(root, "d/a.txt");
+        invoke("copy", "d", "d", "--overwrite");
+    }
+
+    /**
+     * conflict source.
+     */
+    @Test(expected = RuntimeException.class)
+    public void nested_target() {
+        File root = add("root", "/");
+
+        touch(root, "d/a.txt");
+        touch(root, "d/d/");
+        invoke("copy", "d", "d/d", "--overwrite");
+    }
 }

@@ -243,4 +243,27 @@ public class FileMoveCommandTest extends DirectIoToolsTestRoot {
         touch(root, "dir/d");
         invoke("move", "d", "dir", "--overwrite");
     }
+
+    /**
+     * conflict source.
+     */
+    @Test(expected = RuntimeException.class)
+    public void same_target() {
+        File root = add("root", "/");
+
+        touch(root, "d/a.txt");
+        invoke("move", "d", "d", "--overwrite");
+    }
+
+    /**
+     * conflict source.
+     */
+    @Test(expected = RuntimeException.class)
+    public void nested_target() {
+        File root = add("root", "/");
+
+        touch(root, "d/a.txt");
+        touch(root, "d/d/");
+        invoke("move", "d", "d/d", "--overwrite");
+    }
 }
