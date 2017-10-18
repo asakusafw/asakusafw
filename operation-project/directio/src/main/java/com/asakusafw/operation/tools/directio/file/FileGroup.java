@@ -44,6 +44,8 @@ public class FileGroup extends GroupUsageCommand implements CommandProvider {
                 .addCommand(new FileListCommand())
                 .addCommand(new FileGetCommand())
                 .addCommand(new FilePutCommand())
+                .addCommand(new FileCopyCommand())
+                .addCommand(new FileMoveCommand())
                 .addCommand(new FileDeleteCommand())
                 .addCommand(new FileMakeDirectoryCommand());
     }
