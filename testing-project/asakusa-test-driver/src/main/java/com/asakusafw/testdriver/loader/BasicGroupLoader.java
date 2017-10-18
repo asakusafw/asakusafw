@@ -191,41 +191,54 @@ public class BasicGroupLoader<T> implements GroupLoader<T> {
         private List<Object> toKey(Object[] elements) {
             if (elements.length != types.length) {
                 throw new IllegalArgumentException(MessageFormat.format(
-                        "invalid number of key elements: requires ({0})",
+                        "invalid number of key elements: must be ''find({0})''",
                         Arrays.stream(types)
-                            .map(Enum::name)
-                            .collect(Collectors.joining())));
+                            .map(it -> nameOf(it))
+                            .collect(Collectors.joining(", "))));
             }
             List<Object> key = new ArrayList<>(elements.length);
             for (int i = 0; i < elements.length; i++) {
                 Object value;
+                Object input = elements[i];
                 try {
-                    value = definition.resolveRawValue(elements[i]);
+                    value = definition.resolveRawValue(input);
                 } catch (IllegalArgumentException e) {
-                    throw new IllegalArgumentException(MessageFormat.format(
-                            "invalid key element type at {0}: required={1}, specified={2}",
-                            i,
-                            types[i].name(),
-                            Optional.ofNullable(elements[i])
-                                .map(it -> it.getClass().getSimpleName())
-                                .orElse("null")), e); //$NON-NLS-1$
+                    throw invalidType(i, input, e);
+                }
+                if (input != null && types[i].getImplementation().isPresent()) {
+                    Class<?> expect = types[i].getImplementation().get();
+                    Class<?> actual = input.getClass();
+                    if (expect.isAssignableFrom(actual) == false) {
+                        throw invalidType(i, input, null);
+                    }
                 }
                 if (value != null) {
                     Class<?> expect = types[i].getRepresentation();
                     Class<?> actual = value.getClass();
                     if (expect.isAssignableFrom(actual) == false) {
-                        throw new IllegalArgumentException(MessageFormat.format(
-                                "invalid key element type at {0}: required={1}, specified={2}",
-                                i,
-                                types[i].name(),
-                                Optional.ofNullable(elements[i])
-                                    .map(it -> it.getClass().getSimpleName())
-                                    .orElse("null")));
+                        throw invalidType(i, input, null);
                     }
                 }
                 key.add(value);
             }
             return key;
+        }
+
+        private IllegalArgumentException invalidType(int index, Object value, Exception cause) {
+            return new IllegalArgumentException(MessageFormat.format(
+                    "invalid key element type at parameter #{0}: required={1}, specified={2}",
+                    index,
+                    nameOf(types[index]),
+                    Optional.ofNullable(value)
+                            .map(it -> it.getClass().getSimpleName())
+                            .orElse("(null)")),
+                    cause);
+        }
+
+        private static String nameOf(PropertyType type) {
+            return type.getImplementation()
+                    .map(Class::getSimpleName)
+                    .orElseGet(() -> type.name());
         }
     }
 }

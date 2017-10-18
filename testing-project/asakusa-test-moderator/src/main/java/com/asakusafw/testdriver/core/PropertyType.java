@@ -18,37 +18,52 @@ package com.asakusafw.testdriver.core;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
+import java.util.Optional;
+
+import com.asakusafw.runtime.value.BooleanOption;
+import com.asakusafw.runtime.value.ByteOption;
+import com.asakusafw.runtime.value.DateOption;
+import com.asakusafw.runtime.value.DateTimeOption;
+import com.asakusafw.runtime.value.DecimalOption;
+import com.asakusafw.runtime.value.DoubleOption;
+import com.asakusafw.runtime.value.FloatOption;
+import com.asakusafw.runtime.value.IntOption;
+import com.asakusafw.runtime.value.LongOption;
+import com.asakusafw.runtime.value.ShortOption;
+import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.runtime.value.ValueOption;
 
 /**
  * Type variation for properties.
  * @since 0.2.0
+ * @version 0.10.0
  */
 public enum PropertyType {
 
     /**
      * {@link Boolean} type.
      */
-    BOOLEAN(Boolean.class),
+    BOOLEAN(Boolean.class, BooleanOption.class),
 
     /**
-     * {@link Byte} sized integr type.
+     * {@link Byte} sized integer type.
      */
-    BYTE(Byte.class),
+    BYTE(Byte.class, ByteOption.class),
 
     /**
      * {@link Short} sized integer type.
      */
-    SHORT(Short.class),
+    SHORT(Short.class, ShortOption.class),
 
     /**
      * {@link Integer} sized integer type.
      */
-    INT(Integer.class),
+    INT(Integer.class, IntOption.class),
 
     /**
      * {@link Long} sized integer type.
      */
-    LONG(Long.class),
+    LONG(Long.class, LongOption.class),
 
     /**
      * {@link BigInteger variable sized integer} type.
@@ -56,29 +71,29 @@ public enum PropertyType {
     INTEGER(BigInteger.class),
 
     /**
-     * {@link Float single precised} floating point number type.
+     * {@link Float single precise} floating point number type.
      */
-    FLOAT(Float.class),
+    FLOAT(Float.class, FloatOption.class),
 
     /**
-     * {@link Float double precised} floating point number type.
+     * {@link Float double precise} floating point number type.
      */
-    DOUBLE(Double.class),
+    DOUBLE(Double.class, DoubleOption.class),
 
     /**
      * {@link BigDecimal decimal number} type.
      */
-    DECIMAL(BigDecimal.class),
+    DECIMAL(BigDecimal.class, DecimalOption.class),
 
     /**
      * {@link String} type.
      */
-    STRING(String.class),
+    STRING(String.class, StringOption.class),
 
     /**
      * {@link Calendar date (yyyy/mm/dd)} type.
      */
-    DATE(Calendar.class),
+    DATE(Calendar.class, DateOption.class),
 
     /**
      * {@link Calendar time (hh:mm:ss)} type.
@@ -88,7 +103,7 @@ public enum PropertyType {
     /**
      * {@link Calendar datetime (yyyy/mm/dd hh:mm:ss)} type.
      */
-    DATETIME(Calendar.class),
+    DATETIME(Calendar.class, DateTimeOption.class),
 
     /**
      * {@link Sequence} type.
@@ -103,9 +118,16 @@ public enum PropertyType {
     ;
     private final Class<?> representation;
 
+    private final Class<? extends ValueOption<?>> implementation;
+
     PropertyType(Class<?> representation) {
+        this(representation, null);
+    }
+
+    PropertyType(Class<?> representation, Class<? extends ValueOption<?>> implementation) {
         assert representation != null;
         this.representation = representation;
+        this.implementation = implementation;
     }
 
     /**
@@ -114,5 +136,14 @@ public enum PropertyType {
      */
     public Class<?> getRepresentation() {
         return representation;
+    }
+
+    /**
+     * Returns the implementation type of this type.
+     * @return the implementation type, or {@code empty} if it is not implemented
+     * @since 0.10.0
+     */
+    public Optional<? extends Class<? extends ValueOption<?>>> getImplementation() {
+        return Optional.ofNullable(implementation);
     }
 }
