@@ -188,7 +188,7 @@ public abstract class AbstractFileCopyCommand implements Runnable {
                                 "conflict destination file \"{0}\": {1}",
                                 dst,
                                 v.stream()
-                                        .map(String::valueOf)
+                                        .map(ResourceInfo::getPath)
                                         .collect(Collectors.joining(", "))));
                     }
                     ResourceInfo src = v.get(0);
