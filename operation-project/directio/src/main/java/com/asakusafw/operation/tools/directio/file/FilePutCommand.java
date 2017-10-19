@@ -109,7 +109,7 @@ public class FilePutCommand implements Runnable {
         if (stat.filter(it -> it.isDirectory()).isPresent()) {
             copyOnto(sources, destination);
         } else if (stat.filter(it -> it.isDirectory() == false).isPresent() && overwrite == false) {
-            throw new CommandExecutionException(MessageFormat.format(
+            throw new CommandConfigurationException(MessageFormat.format(
                     "destination file already exists: {0}",
                     destination));
         } else {
@@ -154,7 +154,7 @@ public class FilePutCommand implements Runnable {
                 .forEach((k, v) -> {
                     org.apache.hadoop.fs.Path dst = resolve(destination, k);
                     if (v.size() >= 2) {
-                        throw new CommandExecutionException(MessageFormat.format(
+                        throw new CommandConfigurationException(MessageFormat.format(
                                 "conflict destination file \"{0}\": {1}",
                                 dst,
                                 v.stream()
@@ -163,7 +163,7 @@ public class FilePutCommand implements Runnable {
                     }
                     java.nio.file.Path src = v.get(0);
                     if (overwrite == false && stat(dst).isPresent()) {
-                        throw new CommandExecutionException(MessageFormat.format(
+                        throw new CommandConfigurationException(MessageFormat.format(
                                 "destination file already exists: {0} ({1})",
                                 dst,
                                 src));

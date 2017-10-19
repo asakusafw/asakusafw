@@ -145,7 +145,7 @@ public class FileGetCommand implements Runnable {
                 .forEach((k, v) -> {
                     java.nio.file.Path dst = destination.resolve(k);
                     if (v.size() >= 2) {
-                        throw new CommandExecutionException(MessageFormat.format(
+                        throw new CommandConfigurationException(MessageFormat.format(
                                 "conflict destination file \"{0}\": {1}",
                                 dst,
                                 v.stream()
@@ -154,7 +154,7 @@ public class FileGetCommand implements Runnable {
                     }
                     ResourceInfo src = v.get(0);
                     if (overwrite == false && Files.exists(dst)) {
-                        throw new CommandExecutionException(MessageFormat.format(
+                        throw new CommandConfigurationException(MessageFormat.format(
                                 "destination file already exists: {0} ({1})",
                                 dst,
                                 src.getPath()));
@@ -210,7 +210,7 @@ public class FileGetCommand implements Runnable {
     private java.nio.file.Path getDestination() {
         java.nio.file.Path destination = localPathParameter.resolve(paths.get(paths.size() - 1));
         if (overwrite == false && Files.isRegularFile(destination)) {
-            throw new CommandExecutionException(MessageFormat.format(
+            throw new CommandConfigurationException(MessageFormat.format(
                     "destination file already exists: {0}",
                     destination));
         }

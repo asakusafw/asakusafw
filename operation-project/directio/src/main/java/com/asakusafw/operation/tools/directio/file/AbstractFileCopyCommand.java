@@ -120,7 +120,7 @@ public abstract class AbstractFileCopyCommand implements Runnable {
         if (stat.filter(it -> it.isDirectory()).isPresent()) {
             copyOnto(files, destination);
         } else if (stat.filter(it -> it.isDirectory() == false).isPresent() && overwrite == false) {
-            throw new CommandExecutionException(MessageFormat.format(
+            throw new CommandConfigurationException(MessageFormat.format(
                     "destination file already exists: {0}",
                     destination));
         } else {
@@ -184,7 +184,7 @@ public abstract class AbstractFileCopyCommand implements Runnable {
                 .forEach((k, v) -> {
                     Path dst = resolve(destination, k);
                     if (v.size() >= 2) {
-                        throw new CommandExecutionException(MessageFormat.format(
+                        throw new CommandConfigurationException(MessageFormat.format(
                                 "conflict destination file \"{0}\": {1}",
                                 dst,
                                 v.stream()
@@ -193,7 +193,7 @@ public abstract class AbstractFileCopyCommand implements Runnable {
                     }
                     ResourceInfo src = v.get(0);
                     if (overwrite == false && stat(dst).isPresent()) {
-                        throw new CommandExecutionException(MessageFormat.format(
+                        throw new CommandConfigurationException(MessageFormat.format(
                                 "destination file already exists: {0} ({1})",
                                 dst,
                                 src));
