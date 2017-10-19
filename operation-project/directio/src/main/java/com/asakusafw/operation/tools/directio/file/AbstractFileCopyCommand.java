@@ -196,7 +196,7 @@ public abstract class AbstractFileCopyCommand implements Runnable {
                         throw new CommandConfigurationException(MessageFormat.format(
                                 "destination file already exists: {0} ({1})",
                                 dst,
-                                src));
+                                src.getPath()));
                     }
                 });
         try (PrintWriter writer = outputParameter.open()) {
