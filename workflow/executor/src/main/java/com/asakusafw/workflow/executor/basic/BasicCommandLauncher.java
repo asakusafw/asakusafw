@@ -49,7 +49,7 @@ public class BasicCommandLauncher implements CommandLauncher {
 
     static final Logger LOG = LoggerFactory.getLogger(BasicCommandLauncher.class);
 
-    private final Output output;
+    private final OutputConsumer output;
 
     private final Path workingDir;
 
@@ -66,11 +66,11 @@ public class BasicCommandLauncher implements CommandLauncher {
 
     /**
      * Creates a new instance.
-     * @param output the output destination
+     * @param output the output consumer
      * @param workingDir the command working directory
      * @param environment environment variables
      */
-    public BasicCommandLauncher(Output output, Path workingDir, Map<String, String> environment) {
+    public BasicCommandLauncher(OutputConsumer output, Path workingDir, Map<String, String> environment) {
         this.output = output;
         this.workingDir = workingDir;
         this.environment = new HashMap<>(environment);
@@ -108,8 +108,10 @@ public class BasicCommandLauncher implements CommandLauncher {
             thread.setDaemon(true);
             return thread;
         });
-        try (ReaderRedirector stdOut = redirect(process.getInputStream(), label, false);
-                ReaderRedirector stdErr = redirect(process.getErrorStream(), label, true)) {
+        try (ReaderRedirector stdOut = redirect(process.getInputStream(), label,
+                    OutputChannel.STANDARD_OUTPUT);
+                ReaderRedirector stdErr = redirect(process.getErrorStream(), label,
+                        OutputChannel.STANDARD_ERROR_OUTPUT)) {
             Future<?> stdOutFuture = executor.submit(stdOut);
             Future<?> stdErrFuture = executor.submit(stdErr);
             stdOutFuture.get();
@@ -122,44 +124,109 @@ public class BasicCommandLauncher implements CommandLauncher {
         return process.waitFor();
     }
 
-    private ReaderRedirector redirect(InputStream stream, String label, boolean err) {
-        return new ReaderRedirector(stream, getOutput(label, err));
+    private ReaderRedirector redirect(InputStream stream, String label, OutputChannel channel) {
+        return new ReaderRedirector(
+                stream,
+                line -> output.accept(channel, label, line));
     }
 
-    private Consumer<CharSequence> getOutput(String label, boolean err) {
-        String title = String.format("%s:%s", label, err ? "stderr" : "stdout");
-        switch (output) {
-        case STANDARD:
-            return err ? System.err::println : System.out::println;
-        case LOGGING:
-            return line -> LOG.info("({}) {}", title, line);
-        case NOTHING:
-            return line -> LOG.debug("({}) {}", title, line);
-        default:
-            throw new AssertionError(output);
+    /**
+     * Represents a kind of output.
+     * @since 0.10.0
+     */
+    public enum OutputChannel {
+
+        /**
+         * Standard output.
+         */
+        STANDARD_OUTPUT("stdout"),
+
+        /**
+         * Standard error output.
+         */
+        STANDARD_ERROR_OUTPUT("stderr"),
+        ;
+
+        private final String symbol;
+
+        OutputChannel(String symbol) {
+            this.symbol = symbol;
         }
+
+        /**
+         * Returns the symbol.
+         * @return the symbol
+         */
+        public String getSymbol() {
+            return symbol;
+        }
+
+        @Override
+        public String toString() {
+            return getSymbol();
+        }
+    }
+
+    /**
+     * Consumes command output by lines.
+     * @since 0.10.0
+     */
+    @FunctionalInterface
+    public interface OutputConsumer {
+
+        /**
+         * Handles the output line.
+         * @param channel the output channel
+         * @param line the line
+         * @param label the output label
+         */
+        void accept(OutputChannel channel, String label, CharSequence line);
     }
 
     /**
      * Represents a kind of output target.
      * @since 0.10.0
      */
-    public enum Output {
+    public enum Output implements OutputConsumer {
 
         /**
          * Print to standard outputs.
          */
-        STANDARD,
+        STANDARD {
+            @Override
+            public void accept(OutputChannel channel, String label, CharSequence line) {
+                switch (channel) {
+                case STANDARD_OUTPUT:
+                    System.out.println(line);
+                    break;
+                case STANDARD_ERROR_OUTPUT:
+                    System.err.println(line);
+                    break;
+                default:
+                    throw new AssertionError(channel);
+                }
+            }
+        },
 
         /**
          * Print via logger.
          */
-        LOGGING,
+        LOGGING {
+            @Override
+            public void accept(OutputChannel channel, String label, CharSequence line) {
+                LOG.info("({}:{}) {}", label, channel, line);
+            }
+        },
 
         /**
          * Print nothing.
          */
-        NOTHING,
+        NOTHING {
+            @Override
+            public void accept(OutputChannel channel, String label, CharSequence line) {
+                LOG.debug("({}:{}) {}", label, channel, line);
+            }
+        },
     }
 
     private static final class ReaderRedirector implements Runnable, Closeable {

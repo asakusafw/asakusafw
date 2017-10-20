@@ -115,7 +115,7 @@ public class BasicCommandTaskExecutor implements TaskExecutor {
      */
     public static CommandLauncher getCommandLauncher(
             ExecutionContext context,
-            BasicCommandLauncher.Output output) {
+            BasicCommandLauncher.OutputConsumer output) {
         return new BasicCommandLauncher(
                 output,
                 TaskExecutors.getUserHome(context),
