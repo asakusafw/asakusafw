@@ -69,7 +69,15 @@ public class ExecutorParameter {
     }
 
     private CommandLauncher getCommandLauncher(TaskExecutionContext it) {
-        return BasicCommandTaskExecutor.getCommandLauncher(it, outputStyle);
+        return BasicCommandTaskExecutor.getCommandLauncher(it, getOutputStyle());
+    }
+
+    BasicCommandLauncher.OutputConsumer getOutputStyle() {
+        if (outputStyle == BasicCommandLauncher.Output.LOGGING) {
+            return new ExecutorLogger();
+        } else {
+            return outputStyle;
+        }
     }
 
     /**

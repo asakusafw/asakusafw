@@ -21,13 +21,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.asakusafw.workflow.cli.run.ExecutorLogger;
+
 final class SimpleLoggerUtil {
 
     static final String NAME_RESOURCE_FILE = "simplelogger.properties";
 
     static final String OPT_PREFIX = "org.slf4j.simpleLogger.";
 
-    static final String OPT_LOG_LEVEL = OPT_PREFIX + "defaultLogLevel";
+    static final String OPT_DEFAULT_LOG_LEVEL = OPT_PREFIX + "defaultLogLevel";
+
+    static final String OPT_LOG_LEVEL_PREFIX = OPT_PREFIX + "log.";
 
     static final String OPT_SHOW_DATE_TIME = OPT_PREFIX + "showDateTime";
 
@@ -37,7 +41,9 @@ final class SimpleLoggerUtil {
 
     static final String OPT_LEVEL_IN_BRACKETS = OPT_PREFIX + "levelInBrackets";
 
-    static final String DEFAULT_LOG_LEVEL = "warn";
+    static final String DEFAULT_DEFAULT_LOG_LEVEL = "warn";
+
+    static final String DEFAULT_WORKFLOW_EXECUTOR_LOG_LEVEL = "info";
 
     static final String DEFAULT_SHOW_DATE_TIME = String.valueOf(false);
 
@@ -50,11 +56,12 @@ final class SimpleLoggerUtil {
     static final Map<String, String> OPT_DEFAULTS;
     static {
         Map<String, String> map = new HashMap<>();
-        map.put(OPT_LOG_LEVEL, DEFAULT_LOG_LEVEL);
+        map.put(OPT_DEFAULT_LOG_LEVEL, DEFAULT_DEFAULT_LOG_LEVEL);
         map.put(OPT_SHOW_DATE_TIME, DEFAULT_SHOW_DATE_TIME);
         map.put(OPT_SHOW_THREAD_NAME, DEFAULT_SHOW_THREAD_NAME);
         map.put(OPT_SHOW_LOG_NAME, DEFAULT_SHOW_LOG_NAME);
         map.put(OPT_LEVEL_IN_BRACKETS, DEFAULT_LEVEL_IN_BRACKETS);
+        map.put(OPT_LOG_LEVEL_PREFIX + ExecutorLogger.LOGGER_NAME, DEFAULT_WORKFLOW_EXECUTOR_LOG_LEVEL);
         OPT_DEFAULTS = map;
     }
 
