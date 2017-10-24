@@ -17,9 +17,7 @@ package com.asakusafw.info.cli.list;
 
 import java.io.PrintWriter;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,14 +67,8 @@ public class ListWindGateOutputCommand implements Runnable {
                     .map(it -> (WindGateIoAttribute) it)
                     .flatMap(it -> it.getOutputs().stream())
                     .sorted(Comparator.comparing(WindGateOutputInfo::getName))
-                    .forEachOrdered(info -> {
-                        Map<String, Object> members = new LinkedHashMap<>();
-                        members.put("profile-name", info.getProfileName());
-                        members.put("resource-name", info.getResourceName());
-                        members.putAll(info.getConfiguration());
-                        writer.printf("%s:%n", info.getDescriptionClass());
-                        ListUtil.printBlock(writer, 4, members);
-                    });
+                    .forEachOrdered(info -> ListWindGateInputCommand.print(
+                            writer, info, verboseParameter.isRequired()));
         }
     }
 }
