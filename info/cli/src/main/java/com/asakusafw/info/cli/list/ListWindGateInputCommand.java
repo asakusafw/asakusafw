@@ -16,6 +16,8 @@
 package com.asakusafw.info.cli.list;
 
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,6 +30,7 @@ import com.asakusafw.info.JobflowInfo;
 import com.asakusafw.info.cli.common.JobflowInfoParameter;
 import com.asakusafw.info.windgate.WindGateInputInfo;
 import com.asakusafw.info.windgate.WindGateIoAttribute;
+import com.asakusafw.info.windgate.WindGatePortInfo;
 import com.asakusafw.utils.jcommander.common.HelpParameter;
 import com.asakusafw.utils.jcommander.common.OutputParameter;
 import com.asakusafw.utils.jcommander.common.VerboseParameter;
@@ -45,6 +48,14 @@ import com.beust.jcommander.ParametersDelegate;
 public class ListWindGateInputCommand implements Runnable {
 
     static final Logger LOG = LoggerFactory.getLogger(ListWindGateInputCommand.class);
+
+    private static final Map<String, List<String>> RESOURCE_KEY_MAP;
+    static {
+        Map<String, List<String>> map = new LinkedHashMap<>();
+        map.put("jdbc", Arrays.asList("table"));
+        map.put("local", Arrays.asList("file"));
+        RESOURCE_KEY_MAP = map;
+    }
 
     @ParametersDelegate
     final HelpParameter helpParameter = new HelpParameter();
@@ -69,14 +80,28 @@ public class ListWindGateInputCommand implements Runnable {
                     .map(it -> (WindGateIoAttribute) it)
                     .flatMap(it -> it.getInputs().stream())
                     .sorted(Comparator.comparing(WindGateInputInfo::getName))
-                    .forEachOrdered(info -> {
-                        Map<String, Object> members = new LinkedHashMap<>();
-                        members.put("profile-name", info.getProfileName());
-                        members.put("resource-name", info.getResourceName());
-                        members.putAll(info.getConfiguration());
-                        writer.printf("%s:%n", info.getDescriptionClass());
-                        ListUtil.printBlock(writer, 4, members);
-                    });
+                    .forEachOrdered(info -> print(writer, info, verboseParameter.isRequired()));
         }
+    }
+
+    static void print(PrintWriter writer, WindGatePortInfo info, boolean verbose) {
+        if (verbose) {
+            Map<String, Object> members = new LinkedHashMap<>();
+            members.put("profile-name", info.getProfileName());
+            members.put("resource-name", info.getResourceName());
+            members.putAll(info.getConfiguration());
+            writer.printf("%s:%n", info.getDescriptionClass());
+            ListUtil.printBlock(writer, 4, members);
+        } else {
+            writer.printf("%s::%s::%s%n", info.getProfileName(), info.getResourceName(), getResourceIdentifier(info));
+        }
+    }
+
+    private static String getResourceIdentifier(WindGatePortInfo info) {
+        return RESOURCE_KEY_MAP.getOrDefault(info.getResourceName(), Collections.emptyList()).stream()
+                .map(info.getConfiguration()::get)
+                .filter(it -> it != null)
+                .findFirst()
+                .orElse("N/A");
     }
 }
