@@ -126,7 +126,13 @@ public class ListOperatorCommand implements Runnable {
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(entity);
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Objects.hashCode(entity.getSpec());
+            if (verbose) {
+                result = prime * result + Objects.hashCode(entity.getParameters());
+            }
+            return result;
         }
 
         @Override
