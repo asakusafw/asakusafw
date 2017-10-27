@@ -15,14 +15,22 @@
  */
 package com.asakusafw.operation.tools.portal;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +58,17 @@ public class VersionCommand implements Runnable {
 
     static final String ENV_ASAKUSA_HOME = "ASAKUSA_HOME";
 
+    static final String ENV_PATH = "PATH";
+
+    static final String ENV_HADOOP_CMD = "HADOOP_CMD";
+
+    static final String ENV_HADOOP_HOME = "HADOOP_HOME";
+
     static final String PATH_VERSION = "VERSION";
+
+    static final String PATH_HADOOP_CMD = "bin/hadoop";
+
+    static final String PATH_EMBED_HADOOP = "hadoop/lib";
 
     static final String KEY_VERSION = "asakusafw.version";
 
@@ -96,13 +114,13 @@ public class VersionCommand implements Runnable {
                     "error occurred while reading version info: {0}",
                     file), e);
         }
-        String version = lines.stream()
+        Map<String, String> pairs = lines.stream()
                 .map(String::trim)
                 .map(it -> it.split("[=:]", 2))
                 .filter(it -> it.length == 2)
-                .filter(it -> it[0].equals(KEY_VERSION))
-                .map(it -> it[1].trim())
-                .findAny()
+                .collect(Collectors.toMap(it -> it[0].trim(), it -> it[1].trim()));
+
+        String version = Optional.ofNullable(pairs.get(KEY_VERSION))
                 .orElseThrow(() -> new CommandConfigurationException(MessageFormat.format(
                         "framework installation may be broken (missing \"{1}\"): {0}",
                         home,
@@ -111,11 +129,50 @@ public class VersionCommand implements Runnable {
         try (PrintWriter writer = outputParameter.open()) {
             writer.println(version);
             if (verboseParameter.isRequired()) {
-                writer.printf("ASAKUSA_HOME=%s%n", home);
+                writer.printf("ASAKUSA_HOME: %s%n", home);
+                writer.printf("Hadoop: %s%n", findHadoop(home).map(Path::toString).orElse("N/A"));
                 for (String k : VERBOSE_SYSTEM_PROPERTIES) {
-                    writer.printf("%s=%s%n", k, System.getProperty(k, "N/A"));
+                    writer.printf("%s: %s%n", k, System.getProperty(k, "N/A"));
                 }
             }
         }
+    }
+
+    private static Optional<Path> findHadoop(Path home) {
+        Path embed = home.resolve(PATH_EMBED_HADOOP);
+        if (Files.isDirectory(embed)) {
+            return Optional.of(embed);
+        }
+        Optional<Path> hadoopCmd = findPath(ENV_HADOOP_CMD)
+                .filter(Files::isExecutable);
+        if (hadoopCmd.isPresent()) {
+            return hadoopCmd;
+        }
+        Optional<Path> hadoopHomeCmd = findPath(ENV_HADOOP_HOME)
+                .filter(Files::isDirectory)
+                .map(it -> it.resolve(PATH_HADOOP_CMD))
+                .filter(Files::isRegularFile)
+                .filter(Files::isExecutable);
+        if (hadoopHomeCmd.isPresent()) {
+            return hadoopHomeCmd;
+        }
+        return Optional.ofNullable(System.getenv(ENV_PATH))
+                .map(it -> Arrays.stream(it.split(Pattern.quote(File.pathSeparator))))
+                .orElse(Stream.empty())
+                .map(String::trim)
+                .filter(s -> s.isEmpty())
+                .map(Paths::get)
+                .filter(Files::isDirectory)
+                .map(it -> it.resolve(PATH_HADOOP_CMD))
+                .filter(Files::isRegularFile)
+                .filter(Files::isExecutable)
+                .findFirst();
+    }
+
+    private static Optional<Path> findPath(String key) {
+        return Optional.ofNullable(System.getenv(key))
+                .map(String::trim)
+                .filter(s -> s.isEmpty() == false)
+                .map(Paths::get);
     }
 }
