@@ -51,6 +51,7 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 
 configurations {
+    backports
     deployerJars
 }
 
@@ -68,6 +69,7 @@ dependencies {
     compile gradleApi()
     testCompile gradleTestKit()
     testCompile 'junit:junit:4.12'
+    backports "org.codehaus.groovy:groovy-backports-compat23:${GroovySystem.version}"
     deployerJars 'org.springframework.build:aws-maven:5.0.0.RELEASE'
 }
 
@@ -105,27 +107,18 @@ processResources {
     }
 }
 
+jar {
+    from({ configurations.backports.collect { zipTree(it) } }) {
+        exclude '**/META-INF/MANIFEST.MF'
+    }
+}
+
 uploadArchives {
     repositories {
         mavenDeployer {
             configuration = project.configurations.deployerJars
             repository id: 'com.asakusafw.releases', url: 's3://asakusafw/maven/releases'
             snapshotRepository id: 'com.asakusafw.snapshots', url: 's3://asakusafw/maven/snapshots'
-        }
-    }
-}
-
-if (GradleVersion.current() >= GradleVersion.version('2.0')) {
-    logger.lifecycle "introducing backport-compat23 (${GradleVersion.current()})"
-    configurations {
-        backports
-    }
-    dependencies {
-        backports "org.codehaus.groovy:groovy-backports-compat23:${GroovySystem.version}"
-    }
-    jar {
-        from({ configurations.backports.collect { zipTree(it) } }) {
-            exclude '**/META-INF/MANIFEST.MF'
         }
     }
 }
