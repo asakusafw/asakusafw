@@ -476,12 +476,27 @@ public final class HadoopDataSourceUtil {
      * @throws IOException if I/O error was occurred
      */
     public static Path getSystemDir(Configuration conf) throws IOException {
+        return getSystemDir(conf, true);
+    }
+
+    /**
+     * Returns the system directory.
+     * @param conf the current configuration
+     * @param resolve {@code true} to resolve the result path, otherwise {@code false}
+     * @return the system directory
+     * @throws IOException if I/O error was occurred
+     * @since 0.10.0
+     */
+    public static Path getSystemDir(Configuration conf, boolean resolve) throws IOException {
         if (conf == null) {
             throw new IllegalArgumentException("conf must not be null"); //$NON-NLS-1$
         }
         String working = conf.get(KEY_SYSTEM_DIR, DEFAULT_SYSTEM_DIR);
         Path path = new Path(working);
-        return path.getFileSystem(conf).makeQualified(path);
+        if (resolve) {
+            path = path.getFileSystem(conf).makeQualified(path);
+        }
+        return path;
     }
 
     private static Path getTransactionInfoDir(Configuration conf) throws IOException {

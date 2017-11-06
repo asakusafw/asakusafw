@@ -15,9 +15,11 @@
  */
 package com.asakusafw.operation.tools.directio.conf;
 
+import org.apache.hadoop.fs.FileSystem;
 import org.junit.Test;
 
 import com.asakusafw.operation.tools.directio.DirectIoToolsTestRoot;
+import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 
 /**
  * Test for {@link ConfigurationSystemCommand}.
@@ -38,5 +40,39 @@ public class ConfigurationSystemCommandTest extends DirectIoToolsTestRoot {
     @Test
     public void help() {
         invoke("configuration", "system", "--help");
+    }
+
+    /**
+     * w/ invalid file system.
+     */
+    @Test
+    public void invalid_filesystem() {
+        getConf().set(FileSystem.FS_DEFAULT_NAME_KEY, "invalid:///");
+        addEntry("root", "/", "here");
+        invoke("configuration", "system");
+        // w/o error
+    }
+
+    /**
+     * w/ invalid source conf.
+     */
+    @Test
+    public void invalid_datasource() {
+        getConf().set(HadoopDataSourceUtil.KEY_SYSTEM_DIR, "invalid:///testing");
+        addEntry("invalid", "/", "testing");
+        invoke("configuration", "system");
+        // w/o error
+    }
+
+    /**
+     * w/ invalid source conf but system dir is valid.
+     */
+    @Test
+    public void invalid_pair() {
+        getConf().set(FileSystem.FS_DEFAULT_NAME_KEY, "invalid:///");
+        getConf().set(HadoopDataSourceUtil.KEY_SYSTEM_DIR, "file:///testing");
+        addEntry("invalid", "/", "testing");
+        invoke("configuration", "system");
+        // w/o error
     }
 }
