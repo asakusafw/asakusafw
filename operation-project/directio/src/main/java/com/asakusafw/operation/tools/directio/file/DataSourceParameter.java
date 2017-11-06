@@ -197,8 +197,9 @@ public class DataSourceParameter {
             return path.getFileSystem(getConfiguration());
         } catch (IOException e) {
             throw new CommandConfigurationException(MessageFormat.format(
-                    "error occurred while resolving Hadoop path: {0}",
-                    path), e);
+                    "error occurred while resolving Hadoop path: {0} ({1})",
+                    path,
+                    Optional.ofNullable(e.getMessage()).orElseGet(() -> e.toString())), e);
         }
     }
 

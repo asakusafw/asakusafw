@@ -18,6 +18,7 @@ package com.asakusafw.operation.tools.directio.conf;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.Optional;
 
 import org.apache.hadoop.conf.Configuration;
@@ -64,7 +65,7 @@ public class ConfigurationSystemCommand implements Runnable {
         Configuration conf = configurationParameter.getConfiguration();
         try (PrintWriter writer = outputParameter.open()) {
             try {
-                org.apache.hadoop.fs.Path systemDir = HadoopDataSourceUtil.getSystemDir(conf);
+                org.apache.hadoop.fs.Path systemDir = getSystemDir(conf);
                 org.apache.hadoop.fs.Path localTemp = HadoopDataSourceUtil.getLocalTemporaryDirectory(
                         FileSystem.getLocal(conf));
                 writer.printf("configuration: %s%n", configurationParameter.getPath()
@@ -77,6 +78,19 @@ public class ConfigurationSystemCommand implements Runnable {
             } catch (IOException e) {
                 LOG.warn("error occurred while loading system configuration", e);
             }
+        }
+    }
+
+    private static org.apache.hadoop.fs.Path getSystemDir(Configuration conf) throws IOException {
+        try {
+            return HadoopDataSourceUtil.getSystemDir(conf, true);
+        } catch (IOException e) {
+            org.apache.hadoop.fs.Path raw = HadoopDataSourceUtil.getSystemDir(conf, false);
+            LOG.warn(MessageFormat.format(
+                    "cannot resolve Direct I/O system directory: {0} ({1})",
+                    raw,
+                    Optional.ofNullable(e.getMessage()).orElseGet(() -> e.toString())));
+            return raw;
         }
     }
 }

@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import org.apache.hadoop.fs.FileSystem;
 import org.junit.Test;
 
 import com.asakusafw.operation.tools.directio.DirectIoToolsTestRoot;
@@ -96,5 +97,26 @@ public class ConfigurationListCommandTest extends DirectIoToolsTestRoot {
     @Test(expected = RuntimeException.class)
     public void missing_datasource() {
         invoke("configuration", "list", "MISSING");
+    }
+
+    /**
+     * w/ invalid source conf.
+     */
+    @Test
+    public void invalid_datasource() {
+        addEntry("invalid", "/", "invalid:testing");
+        invoke("configuration", "list", "-v");
+        // w/o error
+    }
+
+    /**
+     * w/ invalid file system.
+     */
+    @Test
+    public void invalid_filesystem() {
+        getConf().set(FileSystem.FS_DEFAULT_NAME_KEY, "invalid:///");
+        addEntry("root", "/", "here");
+        invoke("configuration", "list", "-v");
+        // w/o error
     }
 }

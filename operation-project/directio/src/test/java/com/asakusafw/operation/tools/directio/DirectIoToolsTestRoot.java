@@ -74,22 +74,29 @@ public abstract class DirectIoToolsTestRoot {
      * @param resources the resources
      * @return the mapped directory
      */
-    public File add(
-            String id,
-            String basePath,
-            String... resources) {
+    public File add(String id, String basePath, String... resources) {
         try {
             File base = folder.newFolder();
             for (String s : resources) {
                 touch(base, s);
             }
-            conf.set(key(id), HadoopDataSource.class.getName());
-            conf.set(key(id, HadoopDataSourceUtil.KEY_PATH), basePath);
-            conf.set(key(id, HadoopDataSourceProfile.KEY_PATH), base.toURI().toString());
+            addEntry(id, basePath, base.toURI().toString());
             return base;
         } catch (IOException e) {
             throw new AssertionError(e);
         }
+    }
+
+    /**
+     * Adds a Direct I/O entry.
+     * @param id the data source ID
+     * @param basePath the base path
+     * @param targetPath the target file system path
+     */
+    public void addEntry(String id, String basePath, String targetPath) {
+        conf.set(key(id), HadoopDataSource.class.getName());
+        conf.set(key(id, HadoopDataSourceUtil.KEY_PATH), basePath);
+        conf.set(key(id, HadoopDataSourceProfile.KEY_PATH), targetPath);
     }
 
     /**
