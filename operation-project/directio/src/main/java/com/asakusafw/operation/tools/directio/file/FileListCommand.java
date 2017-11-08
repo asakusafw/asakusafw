@@ -69,7 +69,7 @@ public class FileListCommand implements Runnable {
     final DataSourceParameter dataSourceParameter = new DataSourceParameter();
 
     @Parameter(
-            description = "resource-pattern..",
+            description = "[directio-path..]",
             required = false
     )
     List<String> paths = new ArrayList<>();

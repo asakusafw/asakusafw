@@ -67,7 +67,7 @@ public class FileDeleteCommand implements Runnable {
     final ExecutorParameter executorParameter = new ExecutorParameter();
 
     @Parameter(
-            description = "resource-pattern..",
+            description = "directio-path..",
             required = false
     )
     List<String> paths = new ArrayList<>();
