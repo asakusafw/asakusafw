@@ -28,7 +28,8 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(
         commandNames = "generate",
-        commandDescription = "Generates resources from DSL information."
+        commandDescriptionKey = "command.generate",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class GenerateGroup extends GroupUsageCommand implements CommandProvider {
 

@@ -16,11 +16,13 @@
 package com.asakusafw.utils.jcommander.common;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Provides help flag.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.utils.jcommander.common.jcommander")
 public class HelpParameter {
 
     /**
@@ -28,7 +30,7 @@ public class HelpParameter {
      */
     @Parameter(
             names = { "-h", "--help", },
-            description = "Displays help message.",
+            descriptionKey = "parameter.help",
             help = true,
             required = false
     )

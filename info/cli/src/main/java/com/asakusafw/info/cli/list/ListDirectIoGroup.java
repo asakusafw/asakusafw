@@ -24,7 +24,8 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(
         commandNames = "directio",
-        commandDescription = "Displays Direct I/O information."
+        commandDescriptionKey = "command.generate-list-directio",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListDirectIoGroup extends GroupUsageCommand {
     // no special members

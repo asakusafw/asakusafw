@@ -29,18 +29,20 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.info.hive.LocationInfo;
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
 import com.beust.jcommander.DynamicParameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Handles parameters about table locations.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.info.cli.jcommander")
 public class LocationParameter {
 
     static final Logger LOG = LoggerFactory.getLogger(LocationParameter.class);
 
     @DynamicParameter(
             names = { "-L", "--location" },
-            description = "Table location mapping (base/path/prefix=hdfs://path/to/prefix)")
+            descriptionKey = "parameter.location")
     Map<String, String> locations = new LinkedHashMap<>();
 
     private LocationMapper mapper;

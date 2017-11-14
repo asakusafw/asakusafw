@@ -26,7 +26,8 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(
         commandNames = "ddl",
-        commandDescription = "Generates DDL scripts."
+        commandDescriptionKey = "command.generate-ddl",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class DdlGroup extends GroupUsageCommand implements CommandProvider {
 

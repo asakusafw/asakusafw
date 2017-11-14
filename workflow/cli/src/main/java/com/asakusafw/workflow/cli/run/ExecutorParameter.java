@@ -32,11 +32,13 @@ import com.asakusafw.workflow.executor.basic.BasicJobflowExecutor;
 import com.asakusafw.workflow.hadoop.BridgeDeleteTaskExecutor;
 import com.asakusafw.workflow.hadoop.BridgeHadoopTaskExecutor;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Handles parameters about executors.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.workflow.cli.jcommander")
 public class ExecutorParameter {
 
     /**
@@ -44,13 +46,15 @@ public class ExecutorParameter {
      */
     @Parameter(
             names = { "-O", "--output-style" },
-            description = "Output style."
+            descriptionKey = "parameter.output-style",
+            required = false
     )
     public BasicCommandLauncher.Output outputStyle = BasicCommandLauncher.Output.STANDARD;
 
     @Parameter(
             names = { "--no-parameter-check" },
-            description = "Skips batch parameter validation"
+            descriptionKey = "parameter.no-parameter-check",
+            required = false
     )
     boolean skipParameterCheck = false;
 

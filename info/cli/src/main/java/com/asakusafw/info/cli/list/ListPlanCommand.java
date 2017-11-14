@@ -46,7 +46,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "plan",
-        commandDescription = "Displays execution plan."
+        commandDescriptionKey = "command.generate-list-plan",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListPlanCommand implements Runnable {
 

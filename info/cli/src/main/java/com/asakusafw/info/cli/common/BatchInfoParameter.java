@@ -28,6 +28,7 @@ import com.asakusafw.info.BatchInfo;
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
 import com.asakusafw.utils.jcommander.common.LocalPath;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,6 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Provides the batch information.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.info.cli.jcommander")
 public class BatchInfoParameter {
 
     /**

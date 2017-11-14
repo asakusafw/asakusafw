@@ -37,7 +37,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "jobflow",
-        commandDescription = "Displays list of jobflows."
+        commandDescriptionKey = "command.generate-list-jobflow",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListJobflowCommand implements Runnable {
 

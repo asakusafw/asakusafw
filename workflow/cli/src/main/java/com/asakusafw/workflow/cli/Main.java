@@ -35,7 +35,7 @@ import com.beust.jcommander.Parameters;
  * @since 0.10.0
  */
 @Parameters(
-        commandDescription = "An Asakusa Framework information viewer tool."
+        commandDescription = "An Asakusa Framework workflow tool."
 )
 public final class Main extends GroupUsageCommand {
 

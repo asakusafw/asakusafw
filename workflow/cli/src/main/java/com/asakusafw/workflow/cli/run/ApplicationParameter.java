@@ -19,11 +19,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.beust.jcommander.DynamicParameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Handles parameters about applications.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.workflow.cli.jcommander")
 public class ApplicationParameter {
 
     /**
@@ -31,7 +33,8 @@ public class ApplicationParameter {
      */
     @DynamicParameter(
             names = { "-A", "--batch-argument" },
-            description = "Defines a batch argument."
+            descriptionKey = "parameter.batch-argument",
+            required = false
     )
     // NOTE: never final for JCommander
     public Map<String, String> batchArguments = new LinkedHashMap<>();

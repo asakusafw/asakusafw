@@ -43,7 +43,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = { "run" },
-        commandDescription = "Runs a batch application."
+        commandDescriptionKey = "command.run",
+        resourceBundle = "com.asakusafw.workflow.cli.jcommander"
 )
 public class RunCommand implements Runnable, CommandProvider {
 

@@ -19,29 +19,28 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.beust.jcommander.DynamicParameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Provides graphviz DOT options.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.info.cli.jcommander")
 public class DotParameter {
 
     @DynamicParameter(
             names = { "-G", "--graph-option" },
-            description = "Puts a graph option."
-    )
+            descriptionKey = "parameter.graph-option")
     Map<String, String> graphOptions = new LinkedHashMap<>();
 
     @DynamicParameter(
             names = { "-N", "--node-option" },
-            description = "Puts a node option."
-            )
+            descriptionKey = "parameter.node-option")
     Map<String, String> nodeOptions = new LinkedHashMap<>();
 
     @DynamicParameter(
             names = { "-E", "--edge-option" },
-            description = "Puts a edge option."
-            )
+            descriptionKey = "parameter.edge-option")
     Map<String, String> edgeOptions = new LinkedHashMap<>();
 
     /**

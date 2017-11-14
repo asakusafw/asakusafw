@@ -31,12 +31,14 @@ import com.asakusafw.info.hive.LocationInfo;
 import com.asakusafw.info.hive.TableInfo;
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 
 /**
  * Provides Direct I/O Hive table information.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.info.cli.jcommander")
 public class HiveTableParameter {
 
     static final Logger LOG = LoggerFactory.getLogger(HiveTableParameter.class);
@@ -49,7 +51,7 @@ public class HiveTableParameter {
 
     @Parameter(
             names = { "--table" },
-            description = "Target table name pattern ('*' as wildcard character).",
+            descriptionKey = "parameter.table",
             required = false)
     String tableNamePatternString = "*";
 
@@ -57,7 +59,7 @@ public class HiveTableParameter {
 
     @Parameter(
             names = { "--direction" },
-            description = "Target port direction.",
+            descriptionKey = "parameter.direction",
             required = false)
     Direction direction = Direction.AUTO;
 

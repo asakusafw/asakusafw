@@ -47,7 +47,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "jobflow",
-        commandDescription = "Generates jobflow graph as Graphviz DOT script"
+        commandDescriptionKey = "command.generate-dot-jobflow",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class DrawJobflowCommand implements Runnable {
 
@@ -70,14 +71,14 @@ public class DrawJobflowCommand implements Runnable {
 
     @Parameter(
             names = { "--show-task", },
-            description = "Displays task graph.",
+            descriptionKey = "parameter.show-task",
             arity = 0,
             required = false)
     boolean showTask = false;
 
     @Parameter(
             names = { "--show-type", },
-            description = "Displays description type.",
+            descriptionKey = "parameter.show-description-type",
             arity = 0,
             required = false)
     boolean showType = false;

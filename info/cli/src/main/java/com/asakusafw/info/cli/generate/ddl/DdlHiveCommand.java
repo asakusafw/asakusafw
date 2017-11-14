@@ -50,7 +50,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "hive",
-        commandDescription = "Generates Hive DDL."
+        commandDescriptionKey = "command.generate-ddl-hive",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class DdlHiveCommand implements Runnable {
 
@@ -75,25 +76,25 @@ public class DdlHiveCommand implements Runnable {
 
     @Parameter(
             names = { "--database" },
-            description = "Database name.",
+            descriptionKey = "parameter.database",
             required = false)
     String databaseParameter = null;
 
     @Parameter(
             names = { "--external" },
-            description = "Add \"EXTERNAL\" for tables.",
+            descriptionKey = "parameter.external",
             required = false)
     boolean externalParameter = false;
 
     @Parameter(
             names = { "--if-not-exists" },
-            description = "Add \"IF NOT EXISTS\" for tables.",
+            descriptionKey = "parameter.if-not-exists",
             required = false)
     boolean ifNotExistsParameter = false;
 
     @Parameter(
             names = { "--on-error" },
-            description = "Action for errors.",
+            descriptionKey = "parameter.on-error",
             required = false)
     ErrorAction errorAction = ErrorAction.FAIL;
 

@@ -16,11 +16,13 @@
 package com.asakusafw.info.cli.generate.dot;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Provides verbose flag for draw group.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.info.cli.jcommander")
 public class ShowAllParameter {
 
     /**
@@ -28,7 +30,7 @@ public class ShowAllParameter {
      */
     @Parameter(
             names = { "-v", "--verbose", "--show-all", },
-            description = "Displays all optional information.",
+            descriptionKey = "parameter.show-all",
             required = false
     )
     public boolean required = false;

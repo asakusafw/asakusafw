@@ -35,12 +35,14 @@ import com.asakusafw.workflow.executor.ExecutionContext;
 import com.asakusafw.workflow.executor.TaskExecutors;
 import com.asakusafw.workflow.model.BatchInfo;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Handles parameters about workflow script.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.workflow.cli.jcommander")
 public class WorkflowParameter {
 
     static final Logger LOG = LoggerFactory.getLogger(WorkflowParameter.class);

@@ -38,7 +38,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "output",
-        commandDescription = "Displays WindGate output definitions."
+        commandDescriptionKey = "command.generate-list-windgate-output",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListWindGateOutputCommand implements Runnable {
 
