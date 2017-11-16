@@ -123,7 +123,7 @@ public class ConfigurationProvider {
         if (conf == null) {
             // show warning only the first time
             if (SAW_HADOOP_CONF_MISSING.compareAndSet(false, true)) {
-                LOG.warn("Hadoop configuration path is not found");
+                LOG.info("Hadoop configuration path is not found");
             }
             return null;
         }
