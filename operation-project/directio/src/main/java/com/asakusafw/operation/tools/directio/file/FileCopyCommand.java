@@ -24,13 +24,14 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(
         commandNames = "copy",
-        commandDescription = "Copies files on Direct I/O data source."
+        commandDescriptionKey = "command.file-copy",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class FileCopyCommand extends AbstractFileCopyCommand {
 
     @Parameter(
             names = { "-r", "--recursive" },
-            description = "Copy directories recursively.",
+            descriptionKey = "parameter.recursive-copy",
             required = false)
     boolean recursive = false;
 

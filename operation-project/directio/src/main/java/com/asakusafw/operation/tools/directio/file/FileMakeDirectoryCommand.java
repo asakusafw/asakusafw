@@ -46,7 +46,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "mkdir",
-        commandDescription = "Creates directories on Direct I/O data source."
+        commandDescriptionKey = "command.file-mkdir",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class FileMakeDirectoryCommand implements Runnable {
 

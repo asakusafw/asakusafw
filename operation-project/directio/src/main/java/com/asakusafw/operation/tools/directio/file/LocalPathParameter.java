@@ -22,18 +22,20 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.utils.jcommander.common.LocalPath;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Handles parameters about local file system path.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.operation.tools.directio.jcommander")
 public class LocalPathParameter {
 
     static final Logger LOG = LoggerFactory.getLogger(LocalPathParameter.class);
 
     @Parameter(
             names = { "--working-directory" },
-            description = "base path of local files (only for testing).",
+            descriptionKey = "parameter.working-directory",
             required = false,
             hidden = true)
     Path workingDirectory;

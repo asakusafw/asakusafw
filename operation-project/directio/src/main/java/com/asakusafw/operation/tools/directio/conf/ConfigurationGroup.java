@@ -26,7 +26,9 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(
         commandNames = "configuration",
-        commandDescription = "Displays Direct I/O configuration."
+        commandDescription = "Displays Direct I/O configuration.",
+        commandDescriptionKey = "command.configuration",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class ConfigurationGroup extends GroupUsageCommand implements CommandProvider {
 

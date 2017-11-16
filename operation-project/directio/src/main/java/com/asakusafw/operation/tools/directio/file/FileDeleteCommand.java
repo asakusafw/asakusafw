@@ -45,7 +45,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "delete",
-        commandDescription = "Removes Direct I/O resources."
+        commandDescriptionKey = "command.file-delete",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class FileDeleteCommand implements Runnable {
 
@@ -74,7 +75,7 @@ public class FileDeleteCommand implements Runnable {
 
     @Parameter(
             names = { "-r", "--recursive" },
-            description = "Delete directories recursively",
+            descriptionKey = "parameter.recursive-delete",
             required = false)
     boolean recursive = false;
 

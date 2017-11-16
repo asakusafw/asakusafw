@@ -13,33 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.operation.tools.directio.transaction;
+package com.asakusafw.operation.tools.directio.file;
 
-import java.util.Optional;
-
-import com.asakusafw.utils.jcommander.CommandConfigurationException;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 /**
- * Handles parameters about transaction ID.
+ * Handles parameters whether or not overwrite target resources.
  * @since 0.10.0
  */
 @Parameters(resourceBundle = "com.asakusafw.operation.tools.directio.jcommander")
-public class TransactionIdParameter {
+public class OverwriteParameter {
 
     @Parameter(
-            description = "execution-ID",
+            names = { "-w", "--overwrite" },
+            descriptionKey = "parameter.overwrite",
             required = false)
-    String transactionId;
+    boolean overwrite = false;
 
     /**
-     * Returns the transaction ID.
-     * @return the transaction ID
+     * Returns whether or not the operation may overwrite destination files.
+     * @return {@code true} to overwrite, otherwise {@code false}
      */
-    public String getId() {
-        return Optional.ofNullable(transactionId)
-                .orElseThrow(() -> new CommandConfigurationException(
-                        "transaction ID (execution ID of the target jobflow) must be specified"));
+    public boolean isEnabled() {
+        return overwrite;
     }
 }

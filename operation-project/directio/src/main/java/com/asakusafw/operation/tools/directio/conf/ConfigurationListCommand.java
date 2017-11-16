@@ -43,7 +43,8 @@ import com.google.common.base.Objects;
  */
 @Parameters(
         commandNames = "list",
-        commandDescription = "Displays list of Direct I/O data sources."
+        commandDescriptionKey = "command.configuration-list",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class ConfigurationListCommand implements Runnable {
 

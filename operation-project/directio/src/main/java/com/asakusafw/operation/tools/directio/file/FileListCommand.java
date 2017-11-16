@@ -48,7 +48,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "list",
-        commandDescription = "Displays list of Direct I/O resources."
+        commandDescriptionKey = "command.file-list",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class FileListCommand implements Runnable {
 

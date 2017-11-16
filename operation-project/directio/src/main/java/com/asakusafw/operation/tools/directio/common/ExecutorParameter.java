@@ -22,18 +22,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Handles parameters about task execution.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.operation.tools.directio.jcommander")
 public class ExecutorParameter {
 
     static final Logger LOG = LoggerFactory.getLogger(ExecutorParameter.class);
 
     @Parameter(
             names = { "-p", "--parallel" },
-            description = "Enable parallel operation.")
+            descriptionKey = "parameter.parallel")
     boolean forkJoin = false;
 
     /**

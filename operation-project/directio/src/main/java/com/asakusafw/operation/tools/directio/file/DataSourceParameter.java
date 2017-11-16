@@ -38,12 +38,14 @@ import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceCore;
 import com.asakusafw.runtime.directio.hadoop.HadoopDataSourceUtil;
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 
 /**
  * Handles parameters about Direct I/O data source.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.operation.tools.directio.jcommander")
 public class DataSourceParameter {
 
     static final Logger LOG = LoggerFactory.getLogger(DataSourceParameter.class);
@@ -55,7 +57,7 @@ public class DataSourceParameter {
 
     @Parameter(
             names = { "-s", "--data-source", },
-            description = "Data source ID instead of inferring from path.",
+            descriptionKey = "parameter.data-source",
             required = false
     )
     String id;

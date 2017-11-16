@@ -40,7 +40,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "system",
-        commandDescription = "Displays Direct I/O system configuration."
+        commandDescriptionKey = "command.configuration-system",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class ConfigurationSystemCommand implements Runnable {
 

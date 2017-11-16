@@ -23,7 +23,8 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(
         commandNames = "move",
-        commandDescription = "Renames files on Direct I/O data source."
+        commandDescriptionKey = "command.file-move",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class FileMoveCommand extends AbstractFileCopyCommand {
 

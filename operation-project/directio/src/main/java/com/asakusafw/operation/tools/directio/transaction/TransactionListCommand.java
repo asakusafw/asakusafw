@@ -35,7 +35,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "list",
-        commandDescription = "Displays list of incomplete Direct I/O transactions."
+        commandDescriptionKey = "command.transaction-list",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class TransactionListCommand implements Runnable {
 
@@ -55,14 +56,12 @@ public class TransactionListCommand implements Runnable {
 
     @Parameter(
             names = { "-C", "--committed" },
-            description = "Only displays committed transactions.",
-            required = false)
+            descriptionKey = "parameter.committed-list")
     boolean committed;
 
     @Parameter(
             names = { "-U", "--uncommitted" },
-            description = "Only displays uncommitted transactions.",
-            required = false)
+            descriptionKey = "parameter.uncommitted-list")
     boolean uncommitted;
 
     @Override

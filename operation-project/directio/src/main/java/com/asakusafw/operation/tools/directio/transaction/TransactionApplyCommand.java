@@ -39,7 +39,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "apply",
-        commandDescription = "Applies incomplete Direct I/O transactions."
+        commandDescriptionKey = "command.transaction-apply",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class TransactionApplyCommand implements Runnable {
 
@@ -62,7 +63,7 @@ public class TransactionApplyCommand implements Runnable {
 
     @Parameter(
             names = { "-q", "--quiet" },
-            description = "Skips if the target committed transaction is not available.")
+            descriptionKey = "parameter.quiet-apply")
     boolean quiet;
 
     @Override

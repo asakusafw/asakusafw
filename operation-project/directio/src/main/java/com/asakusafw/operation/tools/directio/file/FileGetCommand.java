@@ -52,7 +52,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "get",
-        commandDescription = "Copies Direct I/O resources onto local file system."
+        commandDescriptionKey = "command.file-get",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class FileGetCommand implements Runnable {
 
@@ -76,6 +77,9 @@ public class FileGetCommand implements Runnable {
     @ParametersDelegate
     final ExecutorParameter executorParameter = new ExecutorParameter();
 
+    @ParametersDelegate
+    final OverwriteParameter overwriteParameter = new OverwriteParameter();
+
     @Parameter(
             description = "directio-path.. local-path",
             required = false)
@@ -83,15 +87,9 @@ public class FileGetCommand implements Runnable {
 
     @Parameter(
             names = { "-r", "--recursive" },
-            description = "Copy directories recursively.",
+            descriptionKey = "parameter.recursive-copy",
             required = false)
     boolean recursive = false;
-
-    @Parameter(
-            names = { "-w", "--overwrite" },
-            description = "Overwrite destination files.",
-            required = false)
-    boolean overwrite = false;
 
     @Override
     public void run() {
@@ -153,7 +151,7 @@ public class FileGetCommand implements Runnable {
                                         .collect(Collectors.joining(", "))));
                     }
                     ResourceInfo src = v.get(0);
-                    if (overwrite == false && Files.exists(dst)) {
+                    if (overwriteParameter.isEnabled() == false && Files.exists(dst)) {
                         throw new CommandConfigurationException(MessageFormat.format(
                                 "destination file already exists: {0} ({1})",
                                 dst,
@@ -209,7 +207,7 @@ public class FileGetCommand implements Runnable {
 
     private java.nio.file.Path getDestination() {
         java.nio.file.Path destination = localPathParameter.resolve(paths.get(paths.size() - 1));
-        if (overwrite == false && Files.isRegularFile(destination)) {
+        if (overwriteParameter.isEnabled() == false && Files.isRegularFile(destination)) {
             throw new CommandConfigurationException(MessageFormat.format(
                     "destination file already exists: {0}",
                     destination));

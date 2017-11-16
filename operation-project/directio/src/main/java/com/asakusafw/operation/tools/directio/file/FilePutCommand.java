@@ -51,7 +51,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "put",
-        commandDescription = "Copies local files onto Direct I/O data source."
+        commandDescriptionKey = "command.file-put",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class FilePutCommand implements Runnable {
 
@@ -75,6 +76,9 @@ public class FilePutCommand implements Runnable {
     @ParametersDelegate
     final ExecutorParameter executorParameter = new ExecutorParameter();
 
+    @ParametersDelegate
+    final OverwriteParameter overwriteParameter = new OverwriteParameter();
+
     @Parameter(
             description = "local-path.. directio-path",
             required = false)
@@ -82,15 +86,9 @@ public class FilePutCommand implements Runnable {
 
     @Parameter(
             names = { "-r", "--recursive" },
-            description = "Copy directories recursively.",
+            descriptionKey = "parameter.recursive-copy",
             required = false)
     boolean recursive = false;
-
-    @Parameter(
-            names = { "-w", "--overwrite" },
-            description = "Overwrite destination files.",
-            required = false)
-    boolean overwrite = false;
 
     @Override
     public void run() {
@@ -108,7 +106,8 @@ public class FilePutCommand implements Runnable {
         Optional<org.apache.hadoop.fs.FileStatus> stat = stat(destination);
         if (stat.filter(it -> it.isDirectory()).isPresent()) {
             copyOnto(sources, destination);
-        } else if (stat.filter(it -> it.isDirectory() == false).isPresent() && overwrite == false) {
+        } else if (stat.filter(it -> it.isDirectory() == false).isPresent()
+                && overwriteParameter.isEnabled() == false) {
             throw new CommandConfigurationException(MessageFormat.format(
                     "destination file already exists: {0}",
                     destination));
@@ -162,7 +161,7 @@ public class FilePutCommand implements Runnable {
                                         .collect(Collectors.joining(", "))));
                     }
                     java.nio.file.Path src = v.get(0);
-                    if (overwrite == false && stat(dst).isPresent()) {
+                    if (overwriteParameter.isEnabled() == false && stat(dst).isPresent()) {
                         throw new CommandConfigurationException(MessageFormat.format(
                                 "destination file already exists: {0} ({1})",
                                 dst,
