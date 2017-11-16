@@ -7,7 +7,7 @@
   <parent>
     <artifactId>asakusa-utils-project</artifactId>
     <groupId>com.asakusafw</groupId>
-    <version>0.10.0-SNAPSHOT</version>
+    <version>0.10.0-RC1</version>
   </parent>
 
   <dependencies>
