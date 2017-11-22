@@ -64,7 +64,9 @@ public class VersionCommand implements Runnable {
 
     static final String PATH_VERSION = "VERSION";
 
-    static final String PATH_HADOOP_CMD = "bin/hadoop";
+    static final String PATH_HADOOP_CMD_NAME = "hadoop";
+
+    static final String PATH_HADOOP_CMD = "bin/" + PATH_HADOOP_CMD_NAME;
 
     static final String PATH_EMBED_HADOOP = "hadoop/lib";
 
@@ -158,10 +160,10 @@ public class VersionCommand implements Runnable {
                 .map(it -> Arrays.stream(it.split(Pattern.quote(File.pathSeparator))))
                 .orElse(Stream.empty())
                 .map(String::trim)
-                .filter(s -> s.isEmpty())
+                .filter(s -> s.isEmpty() == false)
                 .map(Paths::get)
                 .filter(Files::isDirectory)
-                .map(it -> it.resolve(PATH_HADOOP_CMD))
+                .map(it -> it.resolve(PATH_HADOOP_CMD_NAME))
                 .filter(Files::isRegularFile)
                 .filter(Files::isExecutable)
                 .findFirst();
