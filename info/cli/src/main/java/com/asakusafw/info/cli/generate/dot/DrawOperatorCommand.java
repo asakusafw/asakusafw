@@ -46,7 +46,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "operator",
-        commandDescription = "Generates operator graph as Graphviz DOT script"
+        commandDescriptionKey = "command.generate-dot-operator",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class DrawOperatorCommand implements Runnable {
 
@@ -72,42 +73,42 @@ public class DrawOperatorCommand implements Runnable {
 
     @Parameter(
             names = { "--depth", },
-            description = "Limit number of graph depth.",
+            descriptionKey = "parameter.depth",
             arity = 1,
             required = false)
     int limitDepth = Integer.MAX_VALUE;
 
     @Parameter(
             names = { "--show-argument", },
-            description = "Displays operator arguments.",
+            descriptionKey = "parameter.show-argument",
             arity = 0,
             required = false)
     boolean showArgument = false;
 
     @Parameter(
             names = { "--show-io", },
-            description = "Displays external I/O class names.",
+            descriptionKey = "parameter.show-io-class",
             arity = 0,
             required = false)
     boolean showExternalIo = false;
 
     @Parameter(
             names = { "--show-name", },
-            description = "Displays operator port names.",
+            descriptionKey = "parameter.show-operator-port-name",
             arity = 0,
             required = false)
     boolean showPortName = false;
 
     @Parameter(
             names = { "--show-key", },
-            description = "Displays grouping key of operator ports.",
+            descriptionKey = "parameter.show-group-key",
             arity = 0,
             required = false)
     boolean showPortKey = false;
 
     @Parameter(
             names = { "--show-type", },
-            description = "Displays data type of operator ports.",
+            descriptionKey = "parameter.show-data-type",
             arity = 0,
             required = false)
     boolean showPortType = false;

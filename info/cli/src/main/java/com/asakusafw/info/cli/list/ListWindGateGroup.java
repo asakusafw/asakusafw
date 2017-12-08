@@ -24,7 +24,8 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(
         commandNames = "windgate",
-        commandDescription = "Displays WindGate information."
+        commandDescriptionKey = "command.generate-list-windgate",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListWindGateGroup extends GroupUsageCommand {
     // no special members

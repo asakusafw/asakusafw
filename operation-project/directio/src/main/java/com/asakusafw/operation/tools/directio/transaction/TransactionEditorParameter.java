@@ -29,12 +29,14 @@ import com.asakusafw.operation.tools.directio.common.ConfigurationParameter;
 import com.asakusafw.runtime.directio.hadoop.DirectIoTransactionEditor;
 import com.asakusafw.runtime.directio.hadoop.DirectIoTransactionEditor.TransactionInfo;
 import com.asakusafw.utils.jcommander.CommandExecutionException;
+import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 
 /**
  * Handles parameters about Direct I/O transaction.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.operation.tools.directio.jcommander")
 public class TransactionEditorParameter {
 
     static final Logger LOG = LoggerFactory.getLogger(TransactionEditorParameter.class);

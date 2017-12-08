@@ -39,7 +39,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "abort",
-        commandDescription = "Aborts incomplete Direct I/O transactions."
+        commandDescriptionKey = "command.transaction-abort",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class TransactionAbortCommand implements Runnable {
 
@@ -62,12 +63,12 @@ public class TransactionAbortCommand implements Runnable {
 
     @Parameter(
             names = { "-f", "--force" },
-            description = "Force abort committed transactions.")
+            descriptionKey = "parameter.force-abort")
     boolean force;
 
     @Parameter(
             names = { "-q", "--quiet" },
-            description = "Skips if the target transaction is not available.")
+            descriptionKey = "parameter.quiet-abort")
     boolean quiet;
 
     @Override

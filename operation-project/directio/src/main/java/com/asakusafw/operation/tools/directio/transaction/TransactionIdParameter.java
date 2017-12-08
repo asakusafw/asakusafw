@@ -19,11 +19,13 @@ import java.util.Optional;
 
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Handles parameters about transaction ID.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.operation.tools.directio.jcommander")
 public class TransactionIdParameter {
 
     @Parameter(

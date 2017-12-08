@@ -28,11 +28,13 @@ import com.asakusafw.info.operator.view.OperatorGraphView;
 import com.asakusafw.info.operator.view.OperatorView;
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Selects flow-part.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.info.cli.jcommander")
 public class FlowPartSelectorParameter {
 
     /**
@@ -40,7 +42,7 @@ public class FlowPartSelectorParameter {
      */
     @Parameter(
             names = { "--flow-part", "--flowpart" },
-            description = "Target flow-part class name.",
+            descriptionKey = "parameter.flow-part-class",
             required = false
     )
     public String name;

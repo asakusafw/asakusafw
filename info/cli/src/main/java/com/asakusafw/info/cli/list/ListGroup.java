@@ -26,7 +26,8 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(
         commandNames = "list",
-        commandDescription = "Displays DSL information as list style."
+        commandDescriptionKey = "command.generate-list",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListGroup extends GroupUsageCommand implements CommandProvider {
 

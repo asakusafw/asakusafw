@@ -22,11 +22,13 @@ import com.asakusafw.workflow.executor.ExecutionContext;
 import com.asakusafw.workflow.executor.TaskExecutors;
 import com.asakusafw.workflow.executor.basic.BasicExecutionContext;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Handles parameters about execution context.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.workflow.cli.jcommander")
 public class ExecutionContextParameter {
 
     static final Logger LOG = LoggerFactory.getLogger(ExecutionContextParameter.class);
@@ -36,7 +38,7 @@ public class ExecutionContextParameter {
      */
     @Parameter(
             names = { "-B", "--batchapps" },
-            description = "Batch application base directory (ASAKUSA_BATCHAPPS_HOME).",
+            descriptionKey = "parameter.batchapps",
             required = false
     )
     public String batchappsPath;

@@ -26,7 +26,8 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(
         commandNames = "dot",
-        commandDescription = "Generates information graph as Graphviz DOT scripts."
+        commandDescriptionKey = "command.generate-dot",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class DotGroup extends GroupUsageCommand implements CommandProvider {
 

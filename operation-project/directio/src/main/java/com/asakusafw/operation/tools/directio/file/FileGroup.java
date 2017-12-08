@@ -26,7 +26,9 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(
         commandNames = "file",
-        commandDescription = "Manipulates Direct I/O resources."
+        commandDescription = "Manipulates Direct I/O resources.",
+        commandDescriptionKey = "command.file",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class FileGroup extends GroupUsageCommand implements CommandProvider {
 

@@ -26,7 +26,8 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(
         commandNames = "transaction",
-        commandDescription = "Manipulates Direct I/O transactions."
+        commandDescriptionKey = "command.transaction",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class TransactionGroup extends GroupUsageCommand implements CommandProvider {
 

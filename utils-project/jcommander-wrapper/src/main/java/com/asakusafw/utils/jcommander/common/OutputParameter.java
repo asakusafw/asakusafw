@@ -26,11 +26,13 @@ import java.util.Objects;
 
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Provides output target.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.utils.jcommander.common.jcommander")
 public class OutputParameter {
 
     /**
@@ -43,10 +45,9 @@ public class OutputParameter {
      */
     @Parameter(
             names = { "-o", "--output" },
-            description = "Output file path (\"-\" as standard output).",
+            descriptionKey = "parameter.output",
             arity = 1,
-            required = false
-    )
+            required = false)
     public String output = DEFAULT_OUTPUT;
 
     /**
@@ -54,10 +55,9 @@ public class OutputParameter {
      */
     @Parameter(
             names = { "-e", "--encoding" },
-            description = "Output charset encoding.",
+            descriptionKey = "parameter.encoding",
             arity = 1,
-            required = false
-            )
+            required = false)
     public String encoding = Charset.defaultCharset().name();
 
     /**

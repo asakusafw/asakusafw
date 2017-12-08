@@ -48,33 +48,34 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "version",
-        commandDescription = "Displays Asakusa Framework version."
+        commandDescriptionKey = "command.version",
+        resourceBundle = "com.asakusafw.operation.tools.portal.jcommander"
 )
 public class VersionCommand implements Runnable {
 
     static final Logger LOG = LoggerFactory.getLogger(ListBatchCommand.class);
 
-    static final String ENV_ASAKUSA_HOME = "ASAKUSA_HOME";
+    static final String ENV_ASAKUSA_HOME = "ASAKUSA_HOME"; //$NON-NLS-1$
 
-    static final String ENV_PATH = "PATH";
+    static final String ENV_PATH = "PATH"; //$NON-NLS-1$
 
-    static final String ENV_HADOOP_CMD = "HADOOP_CMD";
+    static final String ENV_HADOOP_CMD = "HADOOP_CMD"; //$NON-NLS-1$
 
-    static final String ENV_HADOOP_HOME = "HADOOP_HOME";
+    static final String ENV_HADOOP_HOME = "HADOOP_HOME"; //$NON-NLS-1$
 
-    static final String PATH_VERSION = "VERSION";
+    static final String PATH_VERSION = "VERSION"; //$NON-NLS-1$
 
     static final String PATH_HADOOP_CMD_NAME = "hadoop";
 
-    static final String PATH_HADOOP_CMD = "bin/" + PATH_HADOOP_CMD_NAME;
+    static final String PATH_HADOOP_CMD = "bin/" + PATH_HADOOP_CMD_NAME; //$NON-NLS-1$
 
-    static final String PATH_EMBED_HADOOP = "hadoop/lib";
+    static final String PATH_EMBED_HADOOP = "hadoop/lib"; //$NON-NLS-1$
 
-    static final String KEY_VERSION = "asakusafw.version";
+    static final String KEY_VERSION = "asakusafw.version"; //$NON-NLS-1$
 
     static final String[] VERBOSE_SYSTEM_PROPERTIES = {
-            "java.version",
-            "java.vendor",
+            "java.version", //$NON-NLS-1$
+            "java.vendor", //$NON-NLS-1$
     };
 
     @ParametersDelegate
@@ -88,21 +89,21 @@ public class VersionCommand implements Runnable {
 
     @Override
     public void run() {
-        LOG.debug("starting {}", getClass().getSimpleName());
+        LOG.debug("starting {}", getClass().getSimpleName()); //$NON-NLS-1$
         Path home = Optional.ofNullable(System.getenv(ENV_ASAKUSA_HOME))
                 .map(Paths::get)
                 .orElseThrow(() -> new CommandConfigurationException(MessageFormat.format(
-                        "environment variable \"{0}\" must be defined",
+                        Messages.getString("VersionCommand.errorMissingEnvironmentVariable"), //$NON-NLS-1$
                         ENV_ASAKUSA_HOME)));
         if (Files.isDirectory(home) == false) {
             throw new CommandConfigurationException(MessageFormat.format(
-                    "framework installation is not found: {0}",
+                    Messages.getString("VersionCommand.errorMissingFrameworkInstallation"), //$NON-NLS-1$
                     home));
         }
         Path file = home.resolve(PATH_VERSION);
         if (Files.isRegularFile(file) == false) {
             throw new CommandConfigurationException(MessageFormat.format(
-                    "framework installation may be broken (missing \"{1}\"): {0}",
+                    Messages.getString("VersionCommand.errorBrokenFrameworkInstallation"), //$NON-NLS-1$
                     home,
                     PATH_VERSION));
         }
@@ -111,7 +112,7 @@ public class VersionCommand implements Runnable {
             lines = Files.readAllLines(file);
         } catch (IOException e) {
             throw new CommandException(MessageFormat.format(
-                    "error occurred while reading version info: {0}",
+                    Messages.getString("VersionCommand.errorInvalidVersionFile"), //$NON-NLS-1$
                     file), e);
         }
         Map<String, String> pairs = lines.stream()
@@ -130,9 +131,9 @@ public class VersionCommand implements Runnable {
             writer.println(version);
             if (verboseParameter.isRequired()) {
                 writer.printf("ASAKUSA_HOME: %s%n", home);
-                writer.printf("Hadoop: %s%n", findHadoop(home).map(Path::toString).orElse("N/A"));
+                writer.printf("Hadoop: %s%n", findHadoop(home).map(Path::toString).orElse("N/A")); //$NON-NLS-2$
                 for (String k : VERBOSE_SYSTEM_PROPERTIES) {
-                    writer.printf("%s: %s%n", k, System.getProperty(k, "N/A"));
+                    writer.printf("%s: %s%n", k, System.getProperty(k, "N/A")); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }

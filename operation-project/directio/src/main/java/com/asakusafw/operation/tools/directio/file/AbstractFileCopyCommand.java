@@ -76,16 +76,13 @@ public abstract class AbstractFileCopyCommand implements Runnable {
     @ParametersDelegate
     final ExecutorParameter executorParameter = new ExecutorParameter();
 
+    @ParametersDelegate
+    final OverwriteParameter overwriteParameter = new OverwriteParameter();
+
     @Parameter(
             description = "source-directio-path.. destination-directio-path",
             required = false)
     List<String> paths = new ArrayList<>();
-
-    @Parameter(
-            names = { "-w", "--overwrite" },
-            description = "Overwrite destination files.",
-            required = false)
-    boolean overwrite = false;
 
     abstract Op getOp();
 
@@ -119,7 +116,8 @@ public abstract class AbstractFileCopyCommand implements Runnable {
 
         if (stat.filter(it -> it.isDirectory()).isPresent()) {
             copyOnto(files, destination);
-        } else if (stat.filter(it -> it.isDirectory() == false).isPresent() && overwrite == false) {
+        } else if (stat.filter(it -> it.isDirectory() == false).isPresent()
+                && overwriteParameter.isEnabled() == false) {
             throw new CommandConfigurationException(MessageFormat.format(
                     "destination file already exists: {0}",
                     destination));
@@ -192,7 +190,7 @@ public abstract class AbstractFileCopyCommand implements Runnable {
                                         .collect(Collectors.joining(", "))));
                     }
                     ResourceInfo src = v.get(0);
-                    if (overwrite == false && stat(dst).isPresent()) {
+                    if (overwriteParameter.isEnabled() == false && stat(dst).isPresent()) {
                         throw new CommandConfigurationException(MessageFormat.format(
                                 "destination file already exists: {0} ({1})",
                                 dst,

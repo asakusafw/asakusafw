@@ -40,7 +40,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "output",
-        commandDescription = "Displays direct file output definitions."
+        commandDescriptionKey = "command.generate-list-directio-output",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListDirectFileOutputCommand implements Runnable {
 

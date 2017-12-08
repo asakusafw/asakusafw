@@ -37,7 +37,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "output",
-        commandDescription = "Displays Hive output tables."
+        commandDescriptionKey = "command.generate-list-hive-output",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListHiveOutputCommand implements Runnable {
 

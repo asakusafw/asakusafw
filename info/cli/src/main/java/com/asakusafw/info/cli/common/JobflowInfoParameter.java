@@ -26,12 +26,14 @@ import com.asakusafw.info.BatchInfo;
 import com.asakusafw.info.JobflowInfo;
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 
 /**
  * Provides the jobflow information.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.info.cli.jcommander")
 public class JobflowInfoParameter {
 
     /**
@@ -45,7 +47,7 @@ public class JobflowInfoParameter {
      */
     @Parameter(
             names = { "--flow", "--jobflow" },
-            description = "Target flow ID.",
+            descriptionKey = "parameter.flow-id",
             required = false
     )
     public String flowId;

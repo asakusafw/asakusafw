@@ -21,7 +21,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParametersDelegate;
 
 /**
  * An abstract super class of displaying usage of the group.
@@ -30,16 +30,10 @@ import com.beust.jcommander.Parameter;
 public abstract class GroupUsageCommand implements Runnable {
 
     /**
-     * Whether or not the help message is required.
+     * Whether or not the help message is required (hidden parameter).
      */
-    @Parameter(
-            names = { "-h", "--help", },
-            description = "Displays help message.",
-            help = true,
-            hidden = true,
-            required = false
-    )
-    public boolean help = false;
+    @ParametersDelegate
+    HiddenHelpParameter helpParameter = new HiddenHelpParameter();
 
     /**
      * The context commander.
@@ -60,7 +54,7 @@ public abstract class GroupUsageCommand implements Runnable {
      * @return {@code true} if help is required, otherwise {@code false}
      */
     public boolean isHelp() {
-        return help;
+        return helpParameter.isRequired();
     }
 
     /**
@@ -68,16 +62,16 @@ public abstract class GroupUsageCommand implements Runnable {
      * @param commander the current commander
      */
     public static void print(JCommander commander) {
-        System.out.printf("Usage: %s <command> <command options>%n", commander.getProgramName());
+        System.out.printf(Messages.getString("GroupUsageCommand.title"), commander.getProgramName()); //$NON-NLS-1$
         System.out.println();
-        System.out.println("The available commands are:");
+        System.out.println(Messages.getString("GroupUsageCommand.headerCommandList")); //$NON-NLS-1$
         commander.getCommands().entrySet().stream()
                 .sorted(Comparator.comparing(Map.Entry::getKey))
-                .forEach(it -> System.out.printf("    %s - %s%n",
+                .forEach(it -> System.out.printf("    %s - %s%n", //$NON-NLS-1$
                         it.getKey(),
                         commander.getCommandDescription(it.getKey())));
         System.out.println();
-        System.out.printf("See '%s <command> --help' for more information on a specific command.%n",
+        System.out.printf(Messages.getString("GroupUsageCommand.footerCommandList"), //$NON-NLS-1$
                 commander.getProgramName());
     }
 }

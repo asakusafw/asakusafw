@@ -33,11 +33,13 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.utils.jcommander.CommandConfigurationException;
 import com.asakusafw.utils.jcommander.common.LocalPath;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Provides the batch applications directory.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.info.cli.jcommander")
 public class ApplicationBaseDirectoryParameter {
 
     static final Logger LOG = LoggerFactory.getLogger(ApplicationBaseDirectoryParameter.class);
@@ -73,7 +75,7 @@ public class ApplicationBaseDirectoryParameter {
      */
     @Parameter(
             names = { "-B", OPT_BATCHAPPS },
-            description = "Batch application base directory (ASAKUSA_BATCHAPPS_HOME).",
+            descriptionKey = "parameter.batchapps",
             required = false
     )
     public String path = ASAKUSA_BATCHAPPS_HOME;

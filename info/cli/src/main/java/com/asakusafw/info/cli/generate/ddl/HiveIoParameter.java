@@ -29,12 +29,14 @@ import com.asakusafw.info.hive.HiveIoAttribute;
 import com.asakusafw.info.hive.HivePortInfo;
 import com.asakusafw.info.hive.LocationInfo;
 import com.asakusafw.info.hive.TableInfo;
+import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 
 /**
  * Provides Direct I/O Hive inputs/outputs information.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.info.cli.jcommander")
 public class HiveIoParameter {
 
     static final Logger LOG = LoggerFactory.getLogger(HiveIoParameter.class);

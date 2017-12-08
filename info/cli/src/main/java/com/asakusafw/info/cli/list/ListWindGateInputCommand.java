@@ -43,7 +43,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "input",
-        commandDescription = "Displays WindGate input definitions."
+        commandDescriptionKey = "command.generate-list-windgate-input",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListWindGateInputCommand implements Runnable {
 

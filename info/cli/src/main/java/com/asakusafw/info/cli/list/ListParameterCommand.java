@@ -39,7 +39,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "parameter",
-        commandDescription = "Displays list of batch parameters."
+        commandDescriptionKey = "command.generate-list-parameter",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListParameterCommand implements Runnable {
 

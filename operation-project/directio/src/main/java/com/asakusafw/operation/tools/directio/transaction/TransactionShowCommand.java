@@ -36,7 +36,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "show",
-        commandDescription = "Displays incomplete Direct I/O transaction."
+        commandDescriptionKey = "command.transaction-show",
+        resourceBundle = "com.asakusafw.operation.tools.directio.jcommander"
 )
 public class TransactionShowCommand implements Runnable {
 

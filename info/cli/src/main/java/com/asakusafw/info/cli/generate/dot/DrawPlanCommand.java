@@ -48,7 +48,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "plan",
-        commandDescription = "Generates execution plan graph as Graphviz DOT script"
+        commandDescriptionKey = "command.generate-dot-plan",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class DrawPlanCommand implements Runnable {
 
@@ -74,49 +75,49 @@ public class DrawPlanCommand implements Runnable {
 
     @Parameter(
             names = { "--show-operator", },
-            description = "Displays operators in each vertice.",
+            descriptionKey = "parameter.show-operator",
             arity = 0,
             required = false)
     boolean showOperator = false;
 
     @Parameter(
             names = { "--show-argument", },
-            description = "Displays operator arguments.",
+            descriptionKey = "parameter.show-argument",
             arity = 0,
             required = false)
     boolean showArgument = false;
 
     @Parameter(
             names = { "--show-edge-operation", },
-            description = "Displays operations on edges.",
+            descriptionKey = "parameter.show-edge-operation",
             arity = 0,
             required = false)
     boolean showEdgeOperation = false;
 
     @Parameter(
             names = { "--show-io", },
-            description = "Displays external I/O class names.",
+            descriptionKey = "parameter.show-io-class",
             arity = 0,
             required = false)
     boolean showExternalIo = false;
 
     @Parameter(
             names = { "--show-name", },
-            description = "Displays operator port names.",
+            descriptionKey = "parameter.show-operator-port-name",
             arity = 0,
             required = false)
     boolean showPortName = false;
 
     @Parameter(
             names = { "--show-type", },
-            description = "Displays data types.",
+            descriptionKey = "parameter.show-data-type",
             arity = 0,
             required = false)
     boolean showType = false;
 
     @Parameter(
             names = { "--show-key", },
-            description = "Displays grouping keys.",
+            descriptionKey = "parameter.show-group-key",
             arity = 0,
             required = false)
     boolean showKey = false;

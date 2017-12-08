@@ -40,7 +40,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Parameters(
         commandNames = "batch",
-        commandDescription = "Displays list of available batch applications."
+        commandDescriptionKey = "command.generate-list-batch",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListBatchCommand implements Runnable {
 

@@ -42,7 +42,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "input",
-        commandDescription = "Displays Hive input tables."
+        commandDescriptionKey = "command.generate-list-hive-input",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListHiveInputCommand implements Runnable {
 

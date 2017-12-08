@@ -24,7 +24,8 @@ import com.beust.jcommander.Parameters;
  */
 @Parameters(
         commandNames = "hive",
-        commandDescription = "Displays Hive information."
+        commandDescriptionKey = "command.generate-list-hive",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListHiveGroup extends GroupUsageCommand {
     // no special members

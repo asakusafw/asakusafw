@@ -42,7 +42,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "operator",
-        commandDescription = "Displays list of user operators."
+        commandDescriptionKey = "command.generate-list-operator",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListOperatorCommand implements Runnable {
 

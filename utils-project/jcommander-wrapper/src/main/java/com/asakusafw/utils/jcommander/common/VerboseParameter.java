@@ -18,11 +18,13 @@ package com.asakusafw.utils.jcommander.common;
 import java.io.PrintWriter;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Provides verbose flag.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.utils.jcommander.common.jcommander")
 public class VerboseParameter {
 
     /**
@@ -30,7 +32,7 @@ public class VerboseParameter {
      */
     @Parameter(
             names = { "-v", "--verbose", },
-            description = "Displays verbose information.",
+            descriptionKey = "parameter.verbose",
             required = false
     )
     public boolean required = false;

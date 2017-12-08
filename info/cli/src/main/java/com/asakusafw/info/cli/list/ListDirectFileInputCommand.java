@@ -40,7 +40,8 @@ import com.beust.jcommander.ParametersDelegate;
  */
 @Parameters(
         commandNames = "input",
-        commandDescription = "Displays direct file input definitions."
+        commandDescriptionKey = "command.generate-list-directio-input",
+        resourceBundle = "com.asakusafw.info.cli.jcommander"
 )
 public class ListDirectFileInputCommand implements Runnable {
 

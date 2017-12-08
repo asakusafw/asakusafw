@@ -27,11 +27,13 @@ import org.slf4j.LoggerFactory;
 
 import com.asakusafw.utils.jcommander.common.LocalPath;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 /**
  * Handles parameters about Hadoop configuration.
  * @since 0.10.0
  */
+@Parameters(resourceBundle = "com.asakusafw.operation.tools.directio.jcommander")
 public class ConfigurationParameter {
 
     static final Logger LOG = LoggerFactory.getLogger(ConfigurationParameter.class);
@@ -42,7 +44,7 @@ public class ConfigurationParameter {
 
     @Parameter(
             names = { "--conf", "--configuration", },
-            description = "Hadoop custom configuration file path.",
+            descriptionKey = "parameter.configuration",
             required = false
     )
     String path = Optional.ofNullable(System.getenv(ENV_ASAKUSA_HOME))
