@@ -17,7 +17,6 @@ package com.asakusafw.gradle.tasks.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserDataException
-import org.gradle.api.Nullable
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.tasks.options.Option
 import org.gradle.api.tasks.Input
@@ -38,13 +37,11 @@ abstract class AbstractTestToolTask extends DefaultTask {
     /**
      * The logback configuration for the tool.
      */
-    @Nullable
     File logbackConf
 
     /**
      * The max heap size for the tool.
      */
-    @Nullable
     String maxHeapSize
 
     /**

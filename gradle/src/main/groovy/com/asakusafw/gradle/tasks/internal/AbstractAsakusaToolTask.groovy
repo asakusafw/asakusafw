@@ -16,7 +16,6 @@
 package com.asakusafw.gradle.tasks.internal
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.Nullable
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -32,13 +31,11 @@ abstract class AbstractAsakusaToolTask extends DefaultTask {
     /**
      * The logback configuration for the tool.
      */
-    @Nullable
     File logbackConf
 
     /**
      * The max heap size for the tool.
      */
-    @Nullable
     String maxHeapSize
 
     /**
