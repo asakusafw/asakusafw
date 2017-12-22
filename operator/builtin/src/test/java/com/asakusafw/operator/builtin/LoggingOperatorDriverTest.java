@@ -27,6 +27,7 @@ import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.OperatorDescription;
 import com.asakusafw.operator.model.OperatorDescription.Node;
 import com.asakusafw.operator.model.OperatorElement;
+import com.asakusafw.vocabulary.flow.graph.Connectivity;
 import com.asakusafw.vocabulary.operator.Logging;
 
 /**
@@ -69,6 +70,7 @@ public class LoggingOperatorDriverTest extends OperatorDriverTestRoot {
                 Node output = description.getOutputs().get(0);
                 assertThat(output.getName(), is(defaultName(Logging.class, "outputPort")));
                 assertThat(output.getType(), is(sameType("com.example.Model")));
+                assertThat(output.getAttributes(), hasItem(Descriptions.valueOf(Connectivity.OPTIONAL)));
             }
         });
     }

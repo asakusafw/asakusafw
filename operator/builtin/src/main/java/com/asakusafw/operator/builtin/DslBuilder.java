@@ -92,12 +92,20 @@ final class DslBuilder {
     static final ClassDescription TYPE_OBSERVATION_COUNT =
             new ClassDescription("com.asakusafw.vocabulary.flow.graph.ObservationCount"); //$NON-NLS-1$
 
+    static final ClassDescription TYPE_CONNECTIVITY =
+            new ClassDescription("com.asakusafw.vocabulary.flow.graph.Connectivity"); //$NON-NLS-1$
+
     static final ClassDescription TYPE_VIEW_INFO =
             new ClassDescription("com.asakusafw.vocabulary.attribute.ViewInfo"); //$NON-NLS-1$
 
     static final String NAME_FLAT_VIEW_INFO_FACTORY = "flat"; //$NON-NLS-1$
 
     static final String NAME_GROUP_VIEW_INFO_FACTORY = "groupOf"; //$NON-NLS-1$
+
+    static final String NAME_CONNECTIVITY_OPTIONAL = "OPTIONAL";
+
+    static final EnumConstantDescription ENUM_CONNECTIVITY_OPTIONAL =
+            new EnumConstantDescription(TYPE_CONNECTIVITY, NAME_CONNECTIVITY_OPTIONAL);
 
     private final List<Node> parameters = new ArrayList<>();
 
