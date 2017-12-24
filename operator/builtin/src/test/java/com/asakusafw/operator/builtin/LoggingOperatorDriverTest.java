@@ -28,6 +28,7 @@ import com.asakusafw.operator.model.OperatorDescription;
 import com.asakusafw.operator.model.OperatorDescription.Node;
 import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.vocabulary.flow.graph.Connectivity;
+import com.asakusafw.vocabulary.flow.graph.ObservationCount;
 import com.asakusafw.vocabulary.operator.Logging;
 
 /**
@@ -62,6 +63,7 @@ public class LoggingOperatorDriverTest extends OperatorDriverTestRoot {
                 assertThat(description.getInputs().size(), is(1));
                 assertThat(description.getOutputs().size(), is(1));
                 assertThat(description.getArguments().size(), is(0));
+                assertThat(description.getAttributes(), hasItem(Descriptions.valueOf(ObservationCount.AT_LEAST_ONCE)));
 
                 Node input = description.getInputs().get(0);
                 assertThat(input.getName(), is("model"));

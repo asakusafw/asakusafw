@@ -137,6 +137,8 @@ final class DslBuilder {
 
     private final ElementRef unknownRef;
 
+    private boolean defaultSticky;
+
     DslBuilder(OperatorDriver.Context context) {
         Objects.requireNonNull(context, "context must not be null"); //$NON-NLS-1$
         this.environment = context.getEnvironment();
@@ -211,6 +213,10 @@ final class DslBuilder {
 
     public void setSupport(ExecutableElement newValue) {
         this.support = newValue;
+    }
+
+    public void setSticky(boolean newValue) {
+        this.defaultSticky = newValue;
     }
 
     public void addAttribute(ValueDescription attribute) {
@@ -372,7 +378,7 @@ final class DslBuilder {
 
     private EnumConstantDescription computeObservationCount() {
         boolean isVolatile = false;
-        boolean isSticky = false;
+        boolean isSticky = defaultSticky;
         DeclaredType volatileType = environment.findDeclaredType(TYPE_VOLATILE);
         DeclaredType stickyType = environment.findDeclaredType(TYPE_STICKY);
         Types types = environment.getProcessingEnvironment().getTypeUtils();

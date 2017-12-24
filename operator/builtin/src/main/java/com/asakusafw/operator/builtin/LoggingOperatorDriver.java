@@ -69,6 +69,7 @@ public class LoggingOperatorDriver implements OperatorDriver {
             }
         }
         dsl.addAttribute(dsl.annotation().constant(LOG_LEVEL));
+        dsl.setSticky(true);
         return dsl.toDescription();
     }
 }
