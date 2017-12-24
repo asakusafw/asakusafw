@@ -63,6 +63,7 @@ public class LoggingOperatorDriverTest extends OperatorDriverTestRoot {
                 assertThat(description.getInputs().size(), is(1));
                 assertThat(description.getOutputs().size(), is(1));
                 assertThat(description.getArguments().size(), is(0));
+                assertThat(description.getAttributes(), hasItem(Descriptions.valueOf(Connectivity.OPTIONAL)));
                 assertThat(description.getAttributes(), hasItem(Descriptions.valueOf(ObservationCount.AT_LEAST_ONCE)));
 
                 Node input = description.getInputs().get(0);
