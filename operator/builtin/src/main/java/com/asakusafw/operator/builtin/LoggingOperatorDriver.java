@@ -57,7 +57,8 @@ public class LoggingOperatorDriver implements OperatorDriver {
                             Document.text(Messages.getString("LoggingOperatorDriver.javadocOutput")), //$NON-NLS-1$
                             dsl.annotation().string(OUTPUT_PORT),
                             p.type().mirror(),
-                            p.reference());
+                            p.reference(),
+                            DslBuilder.ENUM_CONNECTIVITY_OPTIONAL);
                 } else {
                     p.error(Messages.getString("LoggingOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
                 }
@@ -68,6 +69,8 @@ public class LoggingOperatorDriver implements OperatorDriver {
             }
         }
         dsl.addAttribute(dsl.annotation().constant(LOG_LEVEL));
+        dsl.addAttribute(DslBuilder.ENUM_CONNECTIVITY_OPTIONAL);
+        dsl.setSticky(true);
         return dsl.toDescription();
     }
 }

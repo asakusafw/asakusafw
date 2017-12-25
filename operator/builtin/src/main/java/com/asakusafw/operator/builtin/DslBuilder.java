@@ -92,12 +92,20 @@ final class DslBuilder {
     static final ClassDescription TYPE_OBSERVATION_COUNT =
             new ClassDescription("com.asakusafw.vocabulary.flow.graph.ObservationCount"); //$NON-NLS-1$
 
+    static final ClassDescription TYPE_CONNECTIVITY =
+            new ClassDescription("com.asakusafw.vocabulary.flow.graph.Connectivity"); //$NON-NLS-1$
+
     static final ClassDescription TYPE_VIEW_INFO =
             new ClassDescription("com.asakusafw.vocabulary.attribute.ViewInfo"); //$NON-NLS-1$
 
     static final String NAME_FLAT_VIEW_INFO_FACTORY = "flat"; //$NON-NLS-1$
 
     static final String NAME_GROUP_VIEW_INFO_FACTORY = "groupOf"; //$NON-NLS-1$
+
+    static final String NAME_CONNECTIVITY_OPTIONAL = "OPTIONAL";
+
+    static final EnumConstantDescription ENUM_CONNECTIVITY_OPTIONAL =
+            new EnumConstantDescription(TYPE_CONNECTIVITY, NAME_CONNECTIVITY_OPTIONAL);
 
     private final List<Node> parameters = new ArrayList<>();
 
@@ -128,6 +136,8 @@ final class DslBuilder {
     private final ElementRef resultRef;
 
     private final ElementRef unknownRef;
+
+    private boolean defaultSticky;
 
     DslBuilder(OperatorDriver.Context context) {
         Objects.requireNonNull(context, "context must not be null"); //$NON-NLS-1$
@@ -203,6 +213,10 @@ final class DslBuilder {
 
     public void setSupport(ExecutableElement newValue) {
         this.support = newValue;
+    }
+
+    public void setSticky(boolean newValue) {
+        this.defaultSticky = newValue;
     }
 
     public void addAttribute(ValueDescription attribute) {
@@ -364,7 +378,7 @@ final class DslBuilder {
 
     private EnumConstantDescription computeObservationCount() {
         boolean isVolatile = false;
-        boolean isSticky = false;
+        boolean isSticky = defaultSticky;
         DeclaredType volatileType = environment.findDeclaredType(TYPE_VOLATILE);
         DeclaredType stickyType = environment.findDeclaredType(TYPE_STICKY);
         Types types = environment.getProcessingEnvironment().getTypeUtils();
