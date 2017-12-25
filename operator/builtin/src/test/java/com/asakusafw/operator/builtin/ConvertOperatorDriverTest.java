@@ -29,6 +29,7 @@ import com.asakusafw.operator.model.OperatorDescription;
 import com.asakusafw.operator.model.OperatorDescription.Node;
 import com.asakusafw.operator.model.OperatorDescription.Reference;
 import com.asakusafw.operator.model.OperatorElement;
+import com.asakusafw.vocabulary.flow.graph.Connectivity;
 import com.asakusafw.vocabulary.operator.Convert;
 
 /**
@@ -73,12 +74,14 @@ public class ConvertOperatorDriverTest extends OperatorDriverTestRoot {
                 assertThat(orig.getName(), is(defaultName(Convert.class, "originalPort")));
                 assertThat(orig.getType(), is(sameType("com.example.Model")));
                 assertThat(orig.getReference(), is((Reference) Reference.parameter(0)));
+                assertThat(orig.getAttributes(), hasItem(Descriptions.valueOf(Connectivity.OPTIONAL)));
 
                 Node out = description.getOutputs().get(Convert.ID_OUTPUT_CONVERTED);
                 assertThat(out, is(notNullValue()));
                 assertThat(out.getName(), is(defaultName(Convert.class, "convertedPort")));
                 assertThat(out.getType(), is(sameType("com.example.Proceeded")));
                 assertThat(out.getReference(), is(Reference.returns()));
+                assertThat(out.getAttributes(), not(hasItem(Descriptions.valueOf(Connectivity.OPTIONAL))));
             }
         });
     }
