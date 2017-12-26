@@ -20,6 +20,7 @@ import java.text.MessageFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.ParametersDelegate;
@@ -50,6 +52,7 @@ import com.beust.jcommander.ParametersDelegate;
  * </ul>
  * @param <T> the command interface
  * @since 0.10.0
+ * @version 0.10.1
  */
 public class JCommanderWrapper<T> implements CommandBuilder<T> {
 
@@ -319,6 +322,41 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
                     LOG.warn("error occurred while analyzing arguments: {}", object, e);
                 }
             }
+        }
+    }
+
+    /**
+     * Handles {@link ParameterException} of JCommander.
+     * @param exception the exception object
+     * @param sink error message sink
+     * @since 0.10.1
+     */
+    public static void handle(ParameterException exception, Consumer<? super String> sink) {
+        String programName = Optional.ofNullable(exception.getJCommander())
+                .map(JCommander::getProgramName)
+                .orElse("N/A");
+        if (exception instanceof MissingCommandException) {
+            sink.accept(MessageFormat.format(
+                    "{0} \"{1}\" is not defined.",
+                    programName,
+                    ((MissingCommandException) exception).getUnknownCommand()));
+            Set<String> candidates = Optional.ofNullable(exception.getJCommander())
+                    .map(it -> it.getCommands().keySet())
+                    .orElse(Collections.emptySet());
+            if (candidates.isEmpty() == false) {
+                sink.accept(MessageFormat.format(
+                        "Available commands are: {0}",
+                        candidates.stream()
+                                .sorted()
+                                .map(it -> String.format("\"%s\"", it))
+                                .collect(Collectors.joining(", "))));
+            }
+        } else {
+            sink.accept(MessageFormat.format(
+                    "{0} ({1})",
+                    Optional.ofNullable(exception.getMessage())
+                            .orElseGet(exception::toString),
+                    programName));
         }
     }
 
