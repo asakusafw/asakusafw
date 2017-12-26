@@ -1,0 +1,15 @@
+/.classpath
+/.factorypath
+/.project
+/.settings
+/.gradle
+/.groovy
+/.idea
+*.iml
+*.ipr
+*.iws
+/build
+/target
+/bin
+/out
+
