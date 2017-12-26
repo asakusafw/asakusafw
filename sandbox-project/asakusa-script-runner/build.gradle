@@ -1,0 +1,32 @@
+group 'com.asakusafw.sandbox'
+version '0.1-SNAPSHOT'
+
+apply plugin: 'maven'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+task sourcesJar(type: Jar) {
+    classifier 'sources'
+    from project.sourceSets.main.allJava
+}
+
+artifacts {
+    archives project.tasks.sourcesJar
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class' : 'com.asakusafw.tools.delegate.Delegate'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion '2.1'
+}
