@@ -57,7 +57,8 @@ public class ConvertOperatorDriver implements OperatorDriver {
                             Document.text(Messages.getString("ConvertOperatorDriver.javadocOriginalOutput")), //$NON-NLS-1$
                             dsl.annotation().string(ORIGINAL_PORT),
                             p.type().mirror(),
-                            p.reference());
+                            p.reference(),
+                            DslBuilder.ENUM_CONNECTIVITY_OPTIONAL);
                 } else {
                     p.error(Messages.getString("ConvertOperatorDriver.errorInputTooMany")); //$NON-NLS-1$
                 }
