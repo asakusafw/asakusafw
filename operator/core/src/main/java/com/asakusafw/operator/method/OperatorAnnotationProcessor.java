@@ -47,7 +47,7 @@ public class OperatorAnnotationProcessor extends AbstractOperatorAnnotationProce
     static final Logger LOG = Logger.get(OperatorAnnotationProcessor.class);
 
     static final Collection<CompileEnvironment.Support> FEATURES = Collections.unmodifiableSet(EnumSet.of(
-            CompileEnvironment.Support.STRICT_PARAMETER_ORDER,
+            CompileEnvironment.Support.STRICT_OPTIONAL_OUTPUT_CONNECTIVITY,
             CompileEnvironment.Support.FORCE_REGENERATE_RESOURCES,
             CompileEnvironment.Support.FORCE_GENERATE_IMPLEMENTATION,
             CompileEnvironment.Support.FORCE_NORMALIZE_MEMBER_NAME));
