@@ -37,6 +37,7 @@ import com.beust.jcommander.ParameterException;
 public class DirectIo extends GroupUsageCommand {
 
     static {
+        SimpleLoggerUtil.configure();
         WindowsConfigurator.install();
     }
 
