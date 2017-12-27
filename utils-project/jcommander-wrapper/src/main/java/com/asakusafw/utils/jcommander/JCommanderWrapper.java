@@ -142,14 +142,14 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
                 .flatMap(it -> Arrays.stream(it.getParameter().names()))
                 .collect(Collectors.toSet());
         for (String arg : args) {
-            if (arg.equals("--")) {
+            if (arg.equals("--")) { //$NON-NLS-1$
                 break;
             }
-            if (arg.startsWith("-")) {
+            if (arg.startsWith("-")) { //$NON-NLS-1$
                 if (statics.contains(arg) == false
                         && dynamics.stream().anyMatch(arg::startsWith) == false) {
                     ParameterException exc = new ParameterException(MessageFormat.format(
-                            "unknown option: {0}",
+                            Messages.getString("JCommanderWrapper.errorUnknownOption"), //$NON-NLS-1$
                             arg));
                     exc.setJCommander(commander);
                     throw exc;
@@ -180,19 +180,19 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
                 if (isShortNameOption(arg)
                         && arg.length() > 2
                         && dynamics.stream().anyMatch(arg::startsWith) == false) {
-                    LOG.debug("expand option: {}", arg);
+                    LOG.debug("expand option: {}", arg); //$NON-NLS-1$
                     for (int i = 1, n = arg.length(); i < n; i++) {
                         sawExpand = true;
-                        results.add("-" + arg.charAt(i));
+                        results.add("-" + arg.charAt(i)); //$NON-NLS-1$
                     }
                 } else {
-                    sawEscape |= arg.equals("--");
+                    sawEscape |= arg.equals("--"); //$NON-NLS-1$
                     results.add(arg);
                 }
             }
         }
         if (sawExpand) {
-            LOG.debug("expanded command line: {}", results);
+            LOG.debug("expanded command line: {}", results); //$NON-NLS-1$
             return results.toArray(new String[results.size()]);
         }
         return args;
@@ -226,7 +226,7 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
     }
 
     private static boolean isShortNameOption(String arg) {
-        return arg.startsWith("-") && arg.startsWith("--") == false;
+        return arg.startsWith("-") && arg.startsWith("--") == false; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private static Object getActiveCommand(JCommander commander) {
@@ -265,7 +265,7 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
                         }
                     }
                 } catch (ReflectiveOperationException e) {
-                    LOG.warn("error occurred while searching for help option: {}", object, e);
+                    LOG.warn("error occurred while searching for help option: {}", object, e); //$NON-NLS-1$
                     return false;
                 }
             }
@@ -290,8 +290,8 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
                         inject(delegate, commander);
                     }
                 } catch (ReflectiveOperationException e) {
-                    throw new CommandConfigurationException(MessageFormat.format(
-                            "error occurred while injecting JCommander object: {0}#{1}",
+                    throw new IllegalStateException(MessageFormat.format(
+                            "error occurred while injecting JCommander object: {0}#{1}", //$NON-NLS-1$
                             object.getClass().getName(),
                             f.getName()), e);
                 }
@@ -319,7 +319,7 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
                         collectParams(results, delegate);
                     }
                 } catch (ReflectiveOperationException e) {
-                    LOG.warn("error occurred while analyzing arguments: {}", object, e);
+                    LOG.warn("error occurred while analyzing arguments: {}", object, e); //$NON-NLS-1$
                 }
             }
         }
@@ -334,10 +334,10 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
     public static void handle(ParameterException exception, Consumer<? super String> sink) {
         String programName = Optional.ofNullable(exception.getJCommander())
                 .map(JCommander::getProgramName)
-                .orElse("N/A");
+                .orElse("N/A"); //$NON-NLS-1$
         if (exception instanceof MissingCommandException) {
             sink.accept(MessageFormat.format(
-                    "{0} \"{1}\" is not defined.",
+                    Messages.getString("JCommanderWrapper.errorUnknownCommand"), //$NON-NLS-1$
                     programName,
                     ((MissingCommandException) exception).getUnknownCommand()));
             Set<String> candidates = Optional.ofNullable(exception.getJCommander())
@@ -345,15 +345,15 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
                     .orElse(Collections.emptySet());
             if (candidates.isEmpty() == false) {
                 sink.accept(MessageFormat.format(
-                        "Available commands are: {0}",
+                        Messages.getString("JCommanderWrapper.hintAvailableCommands"), //$NON-NLS-1$
                         candidates.stream()
                                 .sorted()
-                                .map(it -> String.format("\"%s\"", it))
-                                .collect(Collectors.joining(", "))));
+                                .map(it -> String.format("\"%s\"", it)) //$NON-NLS-1$
+                                .collect(Collectors.joining(", ")))); //$NON-NLS-1$
             }
         } else {
             sink.accept(MessageFormat.format(
-                    "{0} ({1})",
+                    Messages.getString("JCommanderWrapper.errorCommandParameter"), //$NON-NLS-1$
                     Optional.ofNullable(exception.getMessage())
                             .orElseGet(exception::toString),
                     programName));
@@ -420,7 +420,7 @@ public class JCommanderWrapper<T> implements CommandBuilder<T> {
             JCommander next = commander.getCommands().get(name);
             next.setProgramName(Stream.concat(
                     Arrays.stream(nameSequence),
-                    Stream.of(name)).collect(Collectors.joining(" ")));
+                    Stream.of(name)).collect(Collectors.joining(" "))); //$NON-NLS-1$
             return next;
         }
     }

@@ -15,23 +15,23 @@
  */
 package com.asakusafw.utils.jcommander;
 
-import java.text.MessageFormat;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import com.beust.jcommander.Parameters;
+final class Messages {
 
-final class Util {
+    private static final String BUNDLE_NAME = "com.asakusafw.utils.jcommander.messages"; //$NON-NLS-1$
 
-    private Util() {
-        return;
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+
+    private Messages() {
     }
 
-    static String getCommandName(Object command) {
-        Parameters parameters = command.getClass().getAnnotation(Parameters.class);
-        if (parameters == null || parameters.commandNames().length != 1) {
-            throw new IllegalStateException(MessageFormat.format(
-                    "there are no valid command name information: {0}", //$NON-NLS-1$
-                    command.getClass().getName()));
+    public static String getString(String key) {
+        try {
+            return RESOURCE_BUNDLE.getString(key);
+        } catch (MissingResourceException e) {
+            return '!' + key + '!';
         }
-        return parameters.commandNames()[0];
     }
 }
