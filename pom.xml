@@ -461,11 +461,18 @@ encoding/<project>=UTF-8
               <include>src/**/*.jj</include>
               <include>src/**/*.sh</include>
               <include>src/**/*.cmd</include>
+              <include>src/main/dist/**/bin/*</include>
+              <include>src/main/dist/**/libexec/**/*</include>
             </includes>
             <encoding>UTF-8</encoding>
             <mapping>
               <flex>JAVADOC_STYLE</flex>
               <jj>JAVADOC_STYLE</jj>
+              <asakusa>SCRIPT_STYLE</asakusa>
+              <directio>SCRIPT_STYLE</directio>
+              <finalize>SCRIPT_STYLE</finalize>
+              <process>SCRIPT_STYLE</process>
+              <hadoop-bridge>SCRIPT_STYLE</hadoop-bridge>
             </mapping>
           </configuration>
         </plugin>
