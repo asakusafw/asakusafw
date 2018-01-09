@@ -126,7 +126,7 @@ public class MasterJoinOperatorDriver implements OperatorDriver {
                     Document.text(Messages.getString("MasterJoinOperatorDriver.javadocMissOutput")), //$NON-NLS-1$
                     dsl.annotation().string(MISSED_PORT),
                     txInput.getType(),
-                    txInput.getReference());
+                    txInput.getReference()).with(dsl::processOptionalOutput);
         } else {
             if (dsl.sawError() == false) {
                 List<TypeRef> types = new ArrayList<>();

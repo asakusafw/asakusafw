@@ -18,13 +18,16 @@ package com.asakusafw.operator.builtin;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.ExecutableElement;
 
 import org.junit.Test;
 
+import com.asakusafw.operator.CompileEnvironment;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.OperatorDescription;
 import com.asakusafw.operator.model.OperatorElement;
+import com.asakusafw.vocabulary.flow.graph.Connectivity;
 import com.asakusafw.vocabulary.operator.MasterJoinUpdate;
 
 /**
@@ -59,6 +62,13 @@ public class MasterKindOperatorHelperTest extends OperatorDriverTestRoot {
                 assertThat(description.getInputs().size(), is(2));
                 assertThat(description.getOutputs().size(), is(2));
                 assertThat(description.getArguments().size(), is(0));
+
+                assertThat(
+                        description.getOutputs().get(MasterJoinUpdate.ID_OUTPUT_UPDATED).getAttributes(),
+                        not(hasItem(Descriptions.valueOf(Connectivity.OPTIONAL))));
+                assertThat(
+                        description.getOutputs().get(MasterJoinUpdate.ID_OUTPUT_MISSED).getAttributes(),
+                        not(hasItem(Descriptions.valueOf(Connectivity.OPTIONAL))));
             }
         });
     }
@@ -234,6 +244,32 @@ public class MasterKindOperatorHelperTest extends OperatorDriverTestRoot {
                 assertThat(selector.getSimpleName().toString(), is("selector"));
                 assertThat(selector.getParameters(), hasSize(3));
                 assertThat(description.getInputs().get(2).getAttributes(), hasItem(groupView("=id")));
+            }
+        });
+    }
+
+    /**
+     * w/ {@code STRICT_OPTIONAL_OUTPUT_CONNECTIVITY=false}.
+     */
+    @Test
+    public void optional_connectivity() {
+        this.
+        compile(new Action("com.example.Simple") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getOutputs().size(), is(2));
+                assertThat(
+                        description.getOutputs().get(MasterJoinUpdate.ID_OUTPUT_UPDATED).getAttributes(),
+                        not(hasItem(Descriptions.valueOf(Connectivity.OPTIONAL))));
+                assertThat(
+                        description.getOutputs().get(MasterJoinUpdate.ID_OUTPUT_MISSED).getAttributes(),
+                        hasItem(Descriptions.valueOf(Connectivity.OPTIONAL)));
+            }
+            @Override
+            protected CompileEnvironment createCompileEnvironment(ProcessingEnvironment processingEnv) {
+                return super.createCompileEnvironment(processingEnv)
+                        .withStrictOptionalOutputConnectivity(false);
             }
         });
     }

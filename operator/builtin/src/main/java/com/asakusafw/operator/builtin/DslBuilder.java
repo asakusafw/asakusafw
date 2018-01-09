@@ -65,7 +65,7 @@ import com.asakusafw.operator.util.AnnotationHelper;
 /**
  * Helper for built-in operators.
  * @since 0.9.0
- * @version 0.9.1
+ * @version 0.10.1
  */
 final class DslBuilder {
 
@@ -217,6 +217,12 @@ final class DslBuilder {
 
     public void setSticky(boolean newValue) {
         this.defaultSticky = newValue;
+    }
+
+    public void processOptionalOutput(Node node) {
+        if (environment.isStrictOptionalOutputConnectivity() == false) {
+            node.withAttribute(ENUM_CONNECTIVITY_OPTIONAL);
+        }
     }
 
     public void addAttribute(ValueDescription attribute) {

@@ -39,7 +39,6 @@ public class FlowPartAnnotationProcessor extends AbstractOperatorAnnotationProce
     static final Logger LOG = Logger.get(FlowPartAnnotationProcessor.class);
 
     static final Collection<CompileEnvironment.Support> FEATURES = Collections.unmodifiableSet(EnumSet.of(
-            CompileEnvironment.Support.STRICT_PARAMETER_ORDER,
             CompileEnvironment.Support.FORCE_REGENERATE_RESOURCES,
             CompileEnvironment.Support.FLOWPART_EXTERNAL_IO));
 

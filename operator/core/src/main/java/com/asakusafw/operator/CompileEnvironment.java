@@ -46,6 +46,8 @@ import com.asakusafw.utils.java.model.util.Models;
 
 /**
  * Represents operator compiler environment.
+ * @since 0.9.0
+ * @version 0.10.1
  */
 public class CompileEnvironment {
 
@@ -70,6 +72,8 @@ public class CompileEnvironment {
     private volatile boolean forceNormalizeMemberName = true;
 
     private volatile boolean strictOperatorParameterOrder = false;
+
+    private volatile boolean strictOptionalOutputConnectivity = true;
 
     /**
      * Creates a new instance.
@@ -423,6 +427,26 @@ public class CompileEnvironment {
     }
 
     /**
+     * Returns whether or not the operator outputs must not be opened even if they are optional.
+     * @return {@code true} if it is strict, otherwise {@code false}
+     * @since 0.10.1
+     */
+    public boolean isStrictOptionalOutputConnectivity() {
+        return strictOptionalOutputConnectivity;
+    }
+
+    /**
+     * Sets whether or not the operator outputs must not be opened even if they are optional.
+     * @param newValue {@code true} if it must be strict, otherwise {@code false}
+     * @return this
+     * @since 0.10.1
+     */
+    public CompileEnvironment withStrictOptionalOutputConnectivity(boolean newValue) {
+        this.strictOptionalOutputConnectivity = newValue;
+        return this;
+    }
+
+    /**
      * Returns whether or not the member names must be normalized.
      * @return {@code true} is normalized, otherwise {@code false}
      */
@@ -459,6 +483,12 @@ public class CompileEnvironment {
          * Operator method parameters must be strict ordered.
          */
         STRICT_PARAMETER_ORDER(CompileEnvironment::withStrictOperatorParameterOrder),
+
+        /**
+         * Operator outputs must not be opened even if they are optional.
+         * @since 0.10.1
+         */
+        STRICT_OPTIONAL_OUTPUT_CONNECTIVITY(CompileEnvironment::withStrictOptionalOutputConnectivity),
 
         /**
          * Forcibly regenerates resources.

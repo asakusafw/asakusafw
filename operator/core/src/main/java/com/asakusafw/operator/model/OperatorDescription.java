@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -547,7 +548,7 @@ public class OperatorDescription implements AttributeContainer {
     /**
      * Represents input/output/argument.
      * @since 0.9.0
-     * @version 0.9.1
+     * @version 0.10.1
      */
     public static final class Node implements AttributeContainer {
 
@@ -582,6 +583,17 @@ public class OperatorDescription implements AttributeContainer {
             this.document = Objects.requireNonNull(document, "document must not be null"); //$NON-NLS-1$
             this.type = Objects.requireNonNull(type, "type must not be null"); //$NON-NLS-1$
             this.reference = Objects.requireNonNull(reference, "reference must not be null"); //$NON-NLS-1$
+        }
+
+        /**
+         * Processes this node.
+         * @param action the action
+         * @return this
+         * @since 0.10.1
+         */
+        public Node with(Consumer<? super Node> action) {
+            action.accept(this);
+            return this;
         }
 
         /**

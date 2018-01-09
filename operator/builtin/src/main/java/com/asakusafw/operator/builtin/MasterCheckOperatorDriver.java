@@ -74,7 +74,7 @@ public class MasterCheckOperatorDriver implements OperatorDriver {
                     Document.text(Messages.getString("MasterCheckOperatorDriver.javadocMissOutput")), //$NON-NLS-1$
                     dsl.annotation().string(MISSED_PORT),
                     txInput.getType(),
-                    Reference.special(String.valueOf(false)));
+                    Reference.special(String.valueOf(false))).with(dsl::processOptionalOutput);
         }
         dsl.setSupport(selector);
         dsl.requireShuffle();
