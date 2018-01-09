@@ -33,9 +33,9 @@ public final class LocalPath {
 
     static final Logger LOG = LoggerFactory.getLogger(LocalPath.class);
 
-    static final String KEY_WORKING_DIRECTORY = "cli.cwd";
+    static final String KEY_WORKING_DIRECTORY = "cli.cwd"; //$NON-NLS-1$
 
-    static final String ENV_WORKING_DIRECTORY = "CALLER_CWD";
+    static final String ENV_WORKING_DIRECTORY = "CALLER_CWD"; //$NON-NLS-1$
 
     private static final Path WORKING_DIRECTORY;
 
@@ -67,7 +67,7 @@ public final class LocalPath {
      * @throws CommandConfigurationException if the path cannot be resolved
      */
     public static Path of(String path) {
-        return of(path, Paths.get("."));
+        return of(path, Paths.get(".")); //$NON-NLS-1$
     }
 
     /**
@@ -88,7 +88,7 @@ public final class LocalPath {
                         WORKING_DIRECTORY));
             }
             Path result = WORKING_DIRECTORY.resolve(path);
-            LOG.debug("resolve local path: {} -> {}", path, result);
+            LOG.debug("resolve local path: {} -> {}", path, result); //$NON-NLS-1$
             return result;
         } else if (defaultWorkingDirectory != null) {
             return defaultWorkingDirectory.resolve(path).toAbsolutePath();

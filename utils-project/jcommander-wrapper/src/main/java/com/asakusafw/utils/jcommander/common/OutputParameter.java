@@ -38,7 +38,7 @@ public class OutputParameter {
     /**
      * The default output name (standard output).
      */
-    public static final String DEFAULT_OUTPUT = "-";
+    public static final String DEFAULT_OUTPUT = "-"; //$NON-NLS-1$
 
     /**
      * The output target file, or {@link #DEFAULT_OUTPUT}.

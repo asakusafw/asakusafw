@@ -16,10 +16,8 @@
 package com.asakusafw.operation.tools.portal;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +27,6 @@ import com.asakusafw.utils.jcommander.CommandExecutionException;
 import com.asakusafw.utils.jcommander.JCommanderWrapper;
 import com.asakusafw.utils.jcommander.common.CommandProvider;
 import com.asakusafw.utils.jcommander.common.GroupUsageCommand;
-import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 
@@ -68,10 +65,6 @@ public final class AsakusaPortal extends GroupUsageCommand {
             handle(e);
             LOG.debug("configuration error detail: {}", Arrays.toString(args), e);
             System.exit(2);
-        } catch (MissingCommandException e) {
-            handle(e);
-            LOG.debug("parameter error detail: {}", Arrays.toString(args), e);
-            System.exit(3);
         } catch (ParameterException e) {
             handle(e);
             LOG.debug("parameter error detail: {}", Arrays.toString(args), e);
@@ -99,22 +92,6 @@ public final class AsakusaPortal extends GroupUsageCommand {
     }
 
     private static void handle(ParameterException e) {
-        LOG.error("{} ({})",
-                e.getMessage(),
-                e.getJCommander().getProgramName());
-    }
-
-    private static void handle(MissingCommandException e) {
-        LOG.error("{} \"{}\" is not defined.",
-                e.getJCommander().getProgramName(),
-                e.getUnknownCommand());
-        List<String> candidates = e.getJCommander().getCommands().keySet().stream()
-                .sorted()
-                .collect(Collectors.toList());
-        if (candidates.isEmpty() == false) {
-            LOG.error("Available commands are: {}", candidates.stream()
-                    .map(it -> String.format("\"%s\"", it))
-                    .collect(Collectors.joining(", ")));
-        }
+        JCommanderWrapper.handle(e, s -> LOG.error("{}", s)); //$NON-NLS-1$
     }
 }

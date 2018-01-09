@@ -37,6 +37,7 @@ import com.beust.jcommander.ParameterException;
 public class DirectIo extends GroupUsageCommand {
 
     static {
+        SimpleLoggerUtil.configure();
         WindowsConfigurator.install();
     }
 
@@ -61,7 +62,7 @@ public class DirectIo extends GroupUsageCommand {
             LOG.debug("configuration error detail: {}", Arrays.toString(args), e);
             System.exit(2);
         } catch (ParameterException e) {
-            LOG.error("cannot recognize arguments: {}", Arrays.toString(args), e);
+            JCommanderWrapper.handle(e, s -> LOG.error("{}", s)); //$NON-NLS-1$
             System.exit(3);
         }
     }

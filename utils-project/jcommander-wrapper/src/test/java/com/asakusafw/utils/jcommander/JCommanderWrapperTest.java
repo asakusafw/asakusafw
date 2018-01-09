@@ -30,6 +30,7 @@ import org.junit.Test;
 import com.asakusafw.utils.jcommander.JCommanderWrapper;
 import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
@@ -160,19 +161,46 @@ public class JCommanderWrapperTest {
     /**
      * w/ unknown command.
      */
-    @Test(expected = ParameterException.class)
+    @Test
     public void unknown_command() {
         JCommanderWrapper<Supplier<String>> commander = new JCommanderWrapper<>("PG", new Cmd("R"));
-        commander.parse("UNKNOWN").map(Supplier::get);
+        try {
+            commander.parse("UNKNOWN").map(Supplier::get);
+            fail();
+        } catch (ParameterException e) {
+            JCommanderWrapper.handle(e, System.out::println);
+        }
+    }
+
+    /**
+     * w/ unknown command.
+     */
+    @Test
+    public void unknown_command_with_subs() {
+        JCommanderWrapper<Supplier<String>> commander = new JCommanderWrapper<>("PG", new Cmd("R"));
+        commander.addCommand("a", new Cmd("OK"));
+        try {
+            commander.parse("UNKNOWN").map(Supplier::get);
+            fail();
+        } catch (MissingCommandException e) {
+            JCommanderWrapper.handle(e, System.out::println);
+        }
     }
 
     /**
      * w/ unknown option.
      */
-    @Test(expected = ParameterException.class)
+    @Test
     public void unknown_option() {
         JCommanderWrapper<Supplier<String>> commander = new JCommanderWrapper<>("PG", new Cmd("R"));
-        commander.parse("--unknown").map(Supplier::get);
+        try {
+            commander.parse("--unknown").map(Supplier::get);
+            fail();
+        } catch (MissingCommandException e) {
+            throw e;
+        } catch (ParameterException e) {
+            JCommanderWrapper.handle(e, System.out::println);
+        }
     }
 
     /**
