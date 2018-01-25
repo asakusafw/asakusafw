@@ -54,12 +54,15 @@ import com.asakusafw.operator.model.OperatorDescription.Reference;
 import com.asakusafw.operator.model.OperatorElement;
 import com.asakusafw.operator.util.AnnotationHelper;
 import com.asakusafw.operator.util.ElementHelper;
+import com.asakusafw.operator.util.Logger;
 import com.asakusafw.operator.util.TypeHelper;
 
 /**
  * Analyzes flow-part classes.
  */
 public class FlowPartAnalyzer {
+
+    static final Logger LOG = Logger.get(FlowPartAnalyzer.class);
 
     private final CompileEnvironment environment;
 
@@ -368,32 +371,35 @@ public class FlowPartAnalyzer {
     }
 
     private void warn(Element element, String pattern, Object... arguments) {
-        assert element != null;
-        assert pattern != null;
-        assert arguments != null;
-        String message = arguments.length == 0 ? pattern : MessageFormat.format(pattern, arguments);
-        Diagnostic.Kind level = getWarningLevel();
-        environment.getProcessingEnvironment().getMessager().printMessage(level, message, element);
-    }
-
-    private Diagnostic.Kind getWarningLevel() {
         switch (environment.getWarningAction()) {
         case IGNORE:
-            return Diagnostic.Kind.NOTE;
+            message(Diagnostic.Kind.NOTE, element, pattern, arguments);
+            break;
         case REPORT:
-            return Diagnostic.Kind.WARNING;
+            message(Diagnostic.Kind.WARNING, element, pattern, arguments);
+            break;
         case FAIL:
-            return Diagnostic.Kind.ERROR;
+            message(Diagnostic.Kind.ERROR, element, pattern, arguments);
+            break;
         default:
             throw new AssertionError();
         }
     }
 
     private void error(Element element, String pattern, Object... arguments) {
+        message(Diagnostic.Kind.ERROR, element, pattern, arguments);
+    }
+
+    private void message(Diagnostic.Kind kind, Element element, String pattern, Object... arguments) {
+        assert kind != null;
         assert element != null;
         assert pattern != null;
         assert arguments != null;
         String message = arguments.length == 0 ? pattern : MessageFormat.format(pattern, arguments);
-        environment.getProcessingEnvironment().getMessager().printMessage(Diagnostic.Kind.ERROR, message, element);
+        if (kind == Diagnostic.Kind.NOTE) {
+            LOG.debug(message);
+        } else {
+            environment.getProcessingEnvironment().getMessager().printMessage(kind, message, element);
+        }
     }
 }
