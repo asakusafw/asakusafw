@@ -208,14 +208,12 @@ public class FlowPartAnalyzer {
             AnnotationMirror exporter = AnnotationHelper.findAnnotation(environment, exportType, param);
             if (environment.isFlowpartExternalIo() == false) {
                 if (importer != null) {
-                    error(param, Messages.getString("FlowPartAnalyzer.errorConstructorImportAnnoattion")); //$NON-NLS-1$
-                    valid = false;
-                    continue;
+                    warn(param, Messages.getString("FlowPartAnalyzer.errorConstructorImportAnnoattion")); //$NON-NLS-1$
+                    importer = null;
                 }
                 if (exporter != null) {
-                    error(param, Messages.getString("FlowPartAnalyzer.errorConstructorExportAnnotation")); //$NON-NLS-1$
-                    valid = false;
-                    continue;
+                    warn(param, Messages.getString("FlowPartAnalyzer.errorConstructorExportAnnotation")); //$NON-NLS-1$
+                    exporter = null;
                 }
             }
             boolean in = TypeHelper.isIn(environment, type);
@@ -343,13 +341,13 @@ public class FlowPartAnalyzer {
             TypeMirror type = param.asType();
             if (TypeHelper.isIn(environment, type)) {
                 AnnotationMirror importer = AnnotationHelper.findAnnotation(environment, importType, param);
-                ExternMirror extern = importer == null ? null : ExternMirror.parse(environment, importer, param);
+                ExternMirror extern = analyzeExtern(param, importer);
                 TypeMirror component = TypeHelper.getInType(environment, type);
                 parameters.add(new Node(Kind.INPUT, name, Document.reference(reference), component, reference)
                         .withExtern(extern));
             } else if (TypeHelper.isOut(environment, type)) {
                 AnnotationMirror exporter = AnnotationHelper.findAnnotation(environment, exportType, param);
-                ExternMirror extern = exporter == null ? null : ExternMirror.parse(environment, exporter, param);
+                ExternMirror extern = analyzeExtern(param, exporter);
                 TypeMirror component = TypeHelper.getOutType(environment, type);
                 outputs.add(new Node(Kind.OUTPUT, name, Document.reference(reference), component, reference)
                         .withExtern(extern));
@@ -360,6 +358,35 @@ public class FlowPartAnalyzer {
         OperatorDescription description = new OperatorDescription(
                 Document.reference(Reference.method()), parameters, outputs);
         return description;
+    }
+
+    private ExternMirror analyzeExtern(VariableElement param, AnnotationMirror extern) {
+        if (extern == null || environment.isFlowpartExternalIo() == false) {
+            return null;
+        }
+        return ExternMirror.parse(environment, extern, param);
+    }
+
+    private void warn(Element element, String pattern, Object... arguments) {
+        assert element != null;
+        assert pattern != null;
+        assert arguments != null;
+        String message = arguments.length == 0 ? pattern : MessageFormat.format(pattern, arguments);
+        Diagnostic.Kind level = getWarningLevel();
+        environment.getProcessingEnvironment().getMessager().printMessage(level, message, element);
+    }
+
+    private Diagnostic.Kind getWarningLevel() {
+        switch (environment.getWarningAction()) {
+        case IGNORE:
+            return Diagnostic.Kind.NOTE;
+        case REPORT:
+            return Diagnostic.Kind.WARNING;
+        case FAIL:
+            return Diagnostic.Kind.ERROR;
+        default:
+            throw new AssertionError();
+        }
     }
 
     private void error(Element element, String pattern, Object... arguments) {
