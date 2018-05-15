@@ -215,7 +215,11 @@ class AsakusaSdkPlugin implements Plugin<Project> {
                     }
 
                     if (features.operator) {
-                        compile "com.asakusafw.operator:asakusa-operator-all:${base.frameworkVersion}"
+                        if (PluginUtils.compareGradleVersion('4.6') >= 0) {
+                            annotationProcessor "com.asakusafw.operator:asakusa-operator-all:${base.frameworkVersion}"
+                        } else {
+                            compile "com.asakusafw.operator:asakusa-operator-all:${base.frameworkVersion}"
+                        }
                     }
                     if (features.directio) {
                         compile "com.asakusafw:asakusa-directio-vocabulary:${base.frameworkVersion}"
