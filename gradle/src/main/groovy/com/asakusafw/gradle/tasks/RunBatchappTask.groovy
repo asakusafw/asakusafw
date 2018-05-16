@@ -15,7 +15,7 @@
  */
 package com.asakusafw.gradle.tasks
 
-import org.gradle.api.internal.tasks.options.Option
+import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
