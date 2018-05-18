@@ -110,17 +110,27 @@ class EclipsePluginEnhancement {
                 noExportConfigurations += [project.configurations.provided, project.configurations.embedded]
             }
         }
-        project.eclipseClasspath.doFirst {
-            makeGeneratedSourceDir()
-        }
-    }
-
-    private void makeGeneratedSourceDir() {
-        if (!project.file(project.asakusafw.modelgen.modelgenSourceDirectory).exists()) {
-            project.mkdir(project.asakusafw.modelgen.modelgenSourceDirectory)
-        }
-        if (!project.file(project.asakusafw.javac.annotationSourceDirectory).exists()) {
-            project.mkdir(project.asakusafw.javac.annotationSourceDirectory)
+        PluginUtils.afterEvaluate(project) {
+            AsakusafwPluginConvention sdk =  project.asakusafw
+            if (sdk.sdk.dmdl) {
+                project.tasks.eclipseClasspath {
+                    shouldRunAfter(project.tasks.compileDMDL)
+                    doFirst {
+                        if (!project.file(sdk.modelgen.modelgenSourceDirectory).exists()) {
+                            project.mkdir(sdk.modelgen.modelgenSourceDirectory)
+                        }
+                    }
+                }
+            }
+            if (sdk.sdk.operator) {
+                project.tasks.eclipseClasspath {
+                    doFirst {
+                        if (!project.file(sdk.javac.annotationSourceDirectory).exists()) {
+                            project.mkdir(sdk.javac.annotationSourceDirectory)
+                        }
+                    }
+                }
+            }
         }
     }
 
