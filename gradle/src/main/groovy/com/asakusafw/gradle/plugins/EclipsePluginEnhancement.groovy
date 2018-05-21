@@ -96,6 +96,16 @@ class EclipsePluginEnhancement {
     }
 
     private void extendEclipseClasspath() {
+        AsakusafwPluginConvention sdk =  project.asakusafw
+        def modelgenSrc = project.relativePath(sdk.modelgen.modelgenSourceDirectory ?: '').replace('\\', '/')
+        def annotationSrc = project.relativePath(sdk.javac.annotationSourceDirectory ?: '').replace('\\', '/')
+        def putAttribute = { attrs, name, value ->
+            attrs.collect {
+                it.children().find { it.name() == 'attribute' && it.@name == name } ?: it.appendNode('attribute', [name: name])
+            }.each {
+                it.@value = value
+            }
+        }
         project.eclipse.classpath {
             file {
                 whenMerged { classpath ->
@@ -104,23 +114,43 @@ class EclipsePluginEnhancement {
                     }
                     classpath.entries.unique()
                 }
+                withXml { provider ->
+                    def genSrcAttributes = provider.asNode().children().findAll {
+                        it.name() == 'classpathentry' && it.@kind == 'src' \
+                        && it.@path \
+                        && (it.@path == modelgenSrc || it.@path == annotationSrc)
+                    }.collect {
+                        it.children().find { it.name() == 'attributes' } ?: it.appendNode('attributes')
+                    }
+                    putAttribute(genSrcAttributes, 'optional', 'true')
+                    putAttribute(genSrcAttributes, 'ignore_optional_problems', 'true')
+                }
             }
             plusConfigurations += [project.configurations.provided, project.configurations.embedded]
             if (PluginUtils.compareGradleVersion('2.5-rc-1') < 0) {
                 noExportConfigurations += [project.configurations.provided, project.configurations.embedded]
             }
         }
-        project.eclipseClasspath.doFirst {
-            makeGeneratedSourceDir()
-        }
-    }
-
-    private void makeGeneratedSourceDir() {
-        if (!project.file(project.asakusafw.modelgen.modelgenSourceDirectory).exists()) {
-            project.mkdir(project.asakusafw.modelgen.modelgenSourceDirectory)
-        }
-        if (!project.file(project.asakusafw.javac.annotationSourceDirectory).exists()) {
-            project.mkdir(project.asakusafw.javac.annotationSourceDirectory)
+        PluginUtils.afterEvaluate(project) {
+            if (sdk.sdk.dmdl) {
+                project.tasks.eclipseClasspath {
+                    shouldRunAfter(project.tasks.compileDMDL)
+                    doFirst {
+                        if (!project.file(sdk.modelgen.modelgenSourceDirectory).exists()) {
+                            project.mkdir(sdk.modelgen.modelgenSourceDirectory)
+                        }
+                    }
+                }
+            }
+            if (sdk.sdk.operator) {
+                project.tasks.eclipseClasspath {
+                    doFirst {
+                        if (!project.file(sdk.javac.annotationSourceDirectory).exists()) {
+                            project.mkdir(sdk.javac.annotationSourceDirectory)
+                        }
+                    }
+                }
+            }
         }
     }
 
