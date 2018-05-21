@@ -118,7 +118,7 @@ class EclipsePluginEnhancement {
                     def genSrcAttributes = provider.asNode().children().findAll {
                         it.name() == 'classpathentry' && it.@kind == 'src' \
                         && it.@path \
-                        && ( it.@path == modelgenSrc ||it.@path == annotationSrc )
+                        && (it.@path == modelgenSrc || it.@path == annotationSrc)
                     }.collect {
                         it.children().find { it.name() == 'attributes' } ?: it.appendNode('attributes')
                     }
