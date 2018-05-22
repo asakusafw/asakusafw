@@ -75,6 +75,8 @@ public class ConfigurationProvider {
 
     private static final String PATH_CONF_DIR_PACKAGE = "etc/hadoop"; //$NON-NLS-1$
 
+    private static final String PATH_CONF_DIR_IGNORE = "-"; //$NON-NLS-1$
+
     private static final String CLASS_EXTENSION = ".class"; //$NON-NLS-1$
 
     private static final String PATH_SUBPROC_OUTPUT = "result"; //$NON-NLS-1$
@@ -125,6 +127,12 @@ public class ConfigurationProvider {
             if (SAW_HADOOP_CONF_MISSING.compareAndSet(false, true)) {
                 LOG.info("Hadoop configuration path is not found");
             }
+            return null;
+        }
+        if (conf.getPath().equals(PATH_CONF_DIR_IGNORE)) {
+            LOG.debug(MessageFormat.format(
+                    "Special character [{0}] for ignoring environment Hadoop configuration was set", //$NON-NLS-1$
+                    PATH_CONF_DIR_IGNORE));
             return null;
         }
         if (conf.isDirectory() == false) {
