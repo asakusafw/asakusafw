@@ -6,7 +6,7 @@
   <parent>
     <artifactId>asakusa-yaess-project</artifactId>
     <groupId>com.asakusafw</groupId>
-    <version>0.10.1</version>
+    <version>0.10.2-SNAPSHOT</version>
   </parent>
 
   <packaging>jar</packaging>
