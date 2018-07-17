@@ -68,7 +68,7 @@ public class ProcessBootstrap {
         // application
         Path application = getApplication(environment, context.getBatchId());
         cp.add(getAppJobflowLibFile(application, context.getFlowId()), true);
-        cp.add(application.resolve(PATH_APP_USER_LIB_DIR), false);
+        cp.addEntries(application.resolve(PATH_APP_USER_LIB_DIR), false);
 
         // framework
         Path home = getHome(environment);
