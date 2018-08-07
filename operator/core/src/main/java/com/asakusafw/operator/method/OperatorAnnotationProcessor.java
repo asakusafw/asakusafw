@@ -50,7 +50,8 @@ public class OperatorAnnotationProcessor extends AbstractOperatorAnnotationProce
             CompileEnvironment.Support.STRICT_OPTIONAL_OUTPUT_CONNECTIVITY,
             CompileEnvironment.Support.FORCE_REGENERATE_RESOURCES,
             CompileEnvironment.Support.FORCE_GENERATE_IMPLEMENTATION,
-            CompileEnvironment.Support.FORCE_NORMALIZE_MEMBER_NAME));
+            CompileEnvironment.Support.FORCE_NORMALIZE_MEMBER_NAME,
+            CompileEnvironment.Support.ENUM_CONSTANT_PARAMETER));
 
     @Override
     protected CompileEnvironment createCompileEnvironment(ProcessingEnvironment processingEnv) {

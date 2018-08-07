@@ -771,7 +771,7 @@ final class DslBuilder {
         }
 
         public boolean isExtra() {
-            return isPrimitive() || isString() || isViewLike();
+            return isBasic() || isViewLike();
         }
 
         public boolean isViewLike() {
@@ -787,7 +787,7 @@ final class DslBuilder {
         }
 
         public boolean isBasic() {
-            return isPrimitive() || isString();
+            return isPrimitive() || isString() || (environment.isEnumConstantParameter() && isEnum());
         }
 
         public boolean isBoolean() {

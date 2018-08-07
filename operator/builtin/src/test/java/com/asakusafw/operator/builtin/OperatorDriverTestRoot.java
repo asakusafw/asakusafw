@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -64,6 +65,11 @@ public class OperatorDriverTestRoot extends OperatorCompilerTestRoot {
      * Target operator driver.
      */
     protected final OperatorDriver driver;
+
+    /**
+     * Edits {@link CompileEnvironment}.
+     */
+    protected final List<Consumer<? super CompileEnvironment>> edits = new ArrayList<>();
 
     final List<String> dataModelNames;
 
@@ -236,6 +242,7 @@ public class OperatorDriverTestRoot extends OperatorCompilerTestRoot {
 
         @Override
         protected void test() {
+            edits.forEach(it -> it.accept(env));
             TypeElement element = env.findTypeElement(new ClassDescription(className));
             assertThat(className, element, is(notNullValue()));
             while (element.getEnclosingElement().getKind() != ElementKind.PACKAGE) {

@@ -167,6 +167,35 @@ public class ExtractOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
+     * w/ enum constant arguments.
+     */
+    @Test
+    public void with_argument_enum() {
+        edits.add(it -> it.withEnumConstantParameter(true));
+        compile(new Action("com.example.WithEnumArgument") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(1));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(1));
+
+                Node input = description.getInputs().get(0);
+                assertThat(input.getName(), is("in"));
+                assertThat(input.getType(), is(sameType("com.example.Model")));
+
+                Node output = description.getOutputs().get(0);
+                assertThat(output.getName(), is("out"));
+                assertThat(output.getType(), is(sameType("com.example.Proceeded")));
+
+                Node argument = description.getArguments().get(0);
+                assertThat(argument.getName(), is("select"));
+                assertThat(argument.getType(), is(sameType("com.example.WithEnumArgument.Select")));
+            }
+        });
+    }
+
+    /**
      * violates method is not abstract.
      */
     @Test
@@ -228,5 +257,14 @@ public class ExtractOperatorDriverTest extends OperatorDriverTestRoot {
     @Test
     public void violate_output_inferable() {
         violate("com.example.ViolateOutputInferable");
+    }
+
+    /**
+     * w/ enum constant arguments.
+     */
+    @Test
+    public void violate_argument_enum() {
+        edits.add(it -> it.withEnumConstantParameter(false));
+        violate("com.example.WithEnumArgument");
     }
 }

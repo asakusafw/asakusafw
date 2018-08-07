@@ -1,0 +1,16 @@
+package com.example;
+
+import java.util.List;
+import com.asakusafw.runtime.core.Result;
+import com.asakusafw.vocabulary.operator.*;
+
+public abstract class $s {
+
+    @Extract
+    public void method(Model in, Result<Proceeded> out, Select select) {
+    }
+
+    public enum Select {
+        A, B, C,
+    }
+}
