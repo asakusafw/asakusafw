@@ -202,6 +202,13 @@ public class MasterKindOperatorHelperTest extends OperatorDriverTestRoot {
                 assertThat(selector.getSimpleName().toString(), is("selector"));
                 assertThat(selector.getParameters(), hasSize(3));
                 assertThat(description.getInputs().get(2).getAttributes(), hasItem(flatView()));
+
+                assertThat(description.getInputs().get(0).getType(), isType("Side"));
+                assertThat(description.getInputs().get(1).getType(), isType("Model"));
+                assertThat(description.getInputs().get(2).getType(), isType("ViewSide"));
+
+                assertThat(description.getOutputs().get(0).getType(), isType("Model"));
+                assertThat(description.getOutputs().get(1).getType(), isType("Model"));
             }
         });
     }
@@ -223,6 +230,13 @@ public class MasterKindOperatorHelperTest extends OperatorDriverTestRoot {
                 assertThat(selector.getSimpleName().toString(), is("selector"));
                 assertThat(selector.getParameters(), hasSize(3));
                 assertThat(description.getInputs().get(2).getAttributes(), hasItem(groupView("=id")));
+
+                assertThat(description.getInputs().get(0).getType(), isType("Side"));
+                assertThat(description.getInputs().get(1).getType(), isType("Model"));
+                assertThat(description.getInputs().get(2).getType(), isType("ViewSide"));
+
+                assertThat(description.getOutputs().get(0).getType(), isType("Model"));
+                assertThat(description.getOutputs().get(1).getType(), isType("Model"));
             }
         });
     }
@@ -244,6 +258,13 @@ public class MasterKindOperatorHelperTest extends OperatorDriverTestRoot {
                 assertThat(selector.getSimpleName().toString(), is("selector"));
                 assertThat(selector.getParameters(), hasSize(3));
                 assertThat(description.getInputs().get(2).getAttributes(), hasItem(groupView("=id")));
+
+                assertThat(description.getInputs().get(0).getType(), isType("Side"));
+                assertThat(description.getInputs().get(1).getType(), isType("Model"));
+                assertThat(description.getInputs().get(2).getType(), isType("ViewSide"));
+
+                assertThat(description.getOutputs().get(0).getType(), isType("Model"));
+                assertThat(description.getOutputs().get(1).getType(), isType("Model"));
             }
         });
     }

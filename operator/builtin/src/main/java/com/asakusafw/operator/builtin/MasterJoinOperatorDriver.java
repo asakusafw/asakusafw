@@ -114,9 +114,8 @@ public class MasterJoinOperatorDriver implements OperatorDriver {
             dsl.method().error(Messages.getString("MasterJoinOperatorDriver.errorInputInvalidCount")); //$NON-NLS-1$
         }
         if (terms.isEmpty()) {
-            List<Node> inputs = dsl.getInputs();
-            assert inputs.isEmpty() == false;
-            Node txInput = inputs.get(inputs.size() - 1);
+            assert MasterKindOperatorHelper.hasMandatoryInputs(dsl);
+            Node txInput = dsl.getInputs().get(MasterKindOperatorHelper.INDEX_TX);
             dsl.addOutput(
                     dsl.result().document(),
                     dsl.annotation().string(JOINED_PORT),

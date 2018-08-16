@@ -9,11 +9,11 @@ import com.asakusafw.vocabulary.operator.*;
 public abstract class $s {
 
     @MasterJoinUpdate(selection = "selector")
-    public void method(@Key(group = "id") Side side, @Key(group = "key") Model model, View<Side> view) {
+    public void method(@Key(group = "id") Side side, @Key(group = "key") Model model, View<ViewSide> view) {
     }
 
     @MasterSelection
-    public Side selector(List<Side> sides, Model model, View<Side> view) {
+    public Side selector(List<Side> sides, Model model, View<ViewSide> view) {
         return null;
     }
 }

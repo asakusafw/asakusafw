@@ -48,8 +48,16 @@ final class MasterKindOperatorHelper {
 
     private static final String NO_SELECTION = "-"; //$NON-NLS-1$
 
+    static final int INDEX_MASTER = 0;
+
+    static final int INDEX_TX = 1;
+
+    static final int INDEX_EXTRA_START = 2;
+
+    private static final int SIZE_INPUT_MANDATORY = 2;
+
     public static void consumeMaster(DslBuilder dsl) {
-        ElementRef p = dsl.parameter(0);
+        ElementRef p = dsl.parameter(INDEX_MASTER);
         TypeRef type = p.type();
         if (type.isDataModel()) {
             KeyRef key = p.resolveKey(type);
@@ -60,7 +68,7 @@ final class MasterKindOperatorHelper {
     }
 
     public static void consumeTx(DslBuilder dsl) {
-        ElementRef p = dsl.parameter(1);
+        ElementRef p = dsl.parameter(INDEX_TX);
         TypeRef type = p.type();
         if (type.isDataModel()) {
             KeyRef key = p.resolveKey(type);
@@ -157,9 +165,9 @@ final class MasterKindOperatorHelper {
         List<? extends VariableElement> operatorParams = operatorMethod.getParameters();
         List<? extends VariableElement> selectorParams = selectorMethod.getParameters();
         checkParameterCount(operatorMethod, selectorMethod);
-        DataModelMirror operatorMaster = environment.findDataModel(operatorParams.get(0).asType());
+        DataModelMirror operatorMaster = environment.findDataModel(operatorParams.get(INDEX_MASTER).asType());
         DataModelMirror selectorMaster = extractSelectorMaster(
-                environment, selectorMethod, selectorParams.get(0).asType());
+                environment, selectorMethod, selectorParams.get(INDEX_MASTER).asType());
         DataModelMirror selectorResult = environment.findDataModel(selectorMethod.getReturnType());
         if (isValidResult(operatorMaster, selectorMaster, selectorResult) == false) {
             throw new ResolveException(MessageFormat.format(
@@ -173,20 +181,20 @@ final class MasterKindOperatorHelper {
                     selectorMethod.getSimpleName(),
                     operatorMaster));
         }
-        checkRedundantKey(environment, selectorMethod, selectorParams.get(0));
-        if (selectorParams.size() == 1) {
+        checkRedundantKey(environment, selectorMethod, selectorParams.get(INDEX_MASTER));
+        if (selectorParams.size() <= INDEX_TX) {
             return;
         }
-        DataModelMirror operatorTx = environment.findDataModel(operatorParams.get(1).asType());
-        DataModelMirror selectorTx = environment.findDataModel(selectorParams.get(1).asType());
+        DataModelMirror operatorTx = environment.findDataModel(operatorParams.get(INDEX_TX).asType());
+        DataModelMirror selectorTx = environment.findDataModel(selectorParams.get(INDEX_TX).asType());
         if (isValidTx(operatorTx, selectorTx) == false) {
             throw new ResolveException(MessageFormat.format(
                     Messages.getString("MasterKindOperatorHelper.errorSelectorMethodTransactionInputInconsistentType"), //$NON-NLS-1$
                     selectorMethod.getSimpleName(),
                     operatorTx));
         }
-        checkRedundantKey(environment, selectorMethod, selectorParams.get(1));
-        for (int i = 2, n = selectorParams.size(); i < n; i++) {
+        checkRedundantKey(environment, selectorMethod, selectorParams.get(INDEX_TX));
+        for (int i = INDEX_EXTRA_START, n = selectorParams.size(); i < n; i++) {
             TypeMirror expected = operatorParams.get(i).asType();
             TypeMirror actual = selectorParams.get(i).asType();
             if (environment.getProcessingEnvironment().getTypeUtils().isSubtype(expected, actual) == false) {
@@ -293,6 +301,14 @@ final class MasterKindOperatorHelper {
         }
         TypeMirror selectorElement = list.getTypeArguments().get(0);
         return environment.findDataModel(selectorElement);
+    }
+
+    public static List<ElementRef> consumeExtras(DslBuilder dsl) {
+        return dsl.parametersFrom(INDEX_EXTRA_START);
+    }
+
+    public static boolean hasMandatoryInputs(DslBuilder dsl) {
+        return dsl.getInputs().size() >= SIZE_INPUT_MANDATORY;
     }
 
     private MasterKindOperatorHelper() {

@@ -50,19 +50,19 @@ public class MasterBranchOperatorDriver implements OperatorDriver {
         }
         MasterKindOperatorHelper.consumeMaster(dsl);
         MasterKindOperatorHelper.consumeTx(dsl);
-        for (ElementRef p : dsl.parametersFrom(2)) {
+        for (ElementRef p : MasterKindOperatorHelper.consumeExtras(dsl)) {
             if (p.type().isExtra()) {
                 dsl.consumeExtraParameter(p);
             } else {
                 p.error(Messages.getString("MasterBranchOperatorDriver.errorExtraParameterInvalidType")); //$NON-NLS-1$
             }
         }
-        if (dsl.getInputs().isEmpty() == false && enumResult) {
+        if (MasterKindOperatorHelper.hasMandatoryInputs(dsl) && enumResult) {
             List<ElementRef> constants = dsl.result().type().enumConstants();
             if (constants.isEmpty()) {
                 dsl.result().error(Messages.getString("MasterBranchOperatorDriver.errorReturnEmptyEnumType")); //$NON-NLS-1$
             } else {
-                Node txInput = dsl.getInputs().get(dsl.getInputs().size() - 1);
+                Node txInput = dsl.getInputs().get(MasterKindOperatorHelper.INDEX_TX);
                 for (ElementRef constant : constants) {
                     JavaName name = JavaName.of(constant.name());
                     dsl.addOutput(
