@@ -134,10 +134,43 @@ public class MasterJoinOperatorDriverTest extends OperatorDriverTestRoot {
     }
 
     /**
+     * w/ view.
+     */
+    @Test
+    public void with_view() {
+        addDataModel("JModel");
+        addDataModel("LModel");
+        addDataModel("RModel");
+        compile(new Action("com.example.WithView") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(3));
+                assertThat(description.getOutputs().size(), is(2));
+                assertThat(description.getArguments().size(), is(0));
+
+                ExecutableElement support = description.getSupport();
+                assertThat(support, is(notNullValue()));
+                assertThat(support.getSimpleName().toString(), is("selector"));
+
+                assertThat(description.getInputs().get(0).getType(), isType("LModel"));
+                assertThat(description.getInputs().get(1).getType(), isType("RModel"));
+                assertThat(description.getInputs().get(2).getType(), isType("ViewSide"));
+
+                assertThat(description.getOutputs().get(0).getType(), isType("JModel"));
+                assertThat(description.getOutputs().get(1).getType(), isType("RModel"));
+            }
+        });
+    }
+
+    /**
      * violates extra parameters should be with selector.
      */
     @Test
     public void violate_extra_parameter_with_selection() {
-        violate("com.example.ViolateExtraParameterWithSelection");
+        addDataModel("JModel");
+        addDataModel("LModel");
+        addDataModel("RModel");
+        violate("com.example.ViolateExtraParameterWithoutSelection");
     }
 }

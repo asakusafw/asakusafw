@@ -110,7 +110,7 @@ public class MasterJoinOperatorDriver implements OperatorDriver {
                 p.error(Messages.getString("MasterJoinOperatorDriver.errorExtraParameterInvalidType")); //$NON-NLS-1$
             }
         }
-        if (dsl.getInputs().size() != 2) {
+        if (MasterKindOperatorHelper.hasMandatoryInputs(dsl) == false) {
             dsl.method().error(Messages.getString("MasterJoinOperatorDriver.errorInputInvalidCount")); //$NON-NLS-1$
         }
         if (terms.isEmpty()) {
