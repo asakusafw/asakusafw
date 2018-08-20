@@ -32,6 +32,9 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 
 import org.hamcrest.BaseMatcher;
@@ -141,6 +144,7 @@ public class OperatorDriverTestRoot extends OperatorCompilerTestRoot {
     protected void addModels() {
         addDataModel("Model", "package com.example; public class Model { public int key; public String content; }");
         addDataModel("Side", "package com.example; public class Side { public int id; }");
+        addDataModel("ViewSide", "package com.example; public class ViewSide { public int id; }");
         addDataModel("Proceeded", "package com.example; public class Proceeded { public int proceeded; }");
         addDataModel("Projective", "package com.example; public class Projective { public String content; }");
     }
@@ -201,6 +205,31 @@ public class OperatorDriverTestRoot extends OperatorCompilerTestRoot {
             }
         };
     }
+
+    /**
+     * Returns a matcher that tests whether or not the type has the given simple name.
+     * @param simpleName simple name of the target type
+     * @return the matcher
+     */
+    public Matcher<TypeMirror> isType(String simpleName) {
+        return new BaseMatcher<TypeMirror>() {
+            @Override
+            public boolean matches(Object item) {
+                TypeMirror type = (TypeMirror) item;
+                if (type.getKind() != TypeKind.DECLARED) {
+                    return false;
+                }
+                DeclaredType d = (DeclaredType) type;
+                String name = d.asElement().getSimpleName().toString();
+                return simpleName.equals(name);
+            }
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("is ").appendText(simpleName);
+            }
+        };
+    }
+
 
     /**
      * Test action.

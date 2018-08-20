@@ -53,7 +53,7 @@ public class MasterCheckOperatorDriver implements OperatorDriver {
         MasterKindOperatorHelper.consumeMaster(dsl);
         MasterKindOperatorHelper.consumeTx(dsl);
         ExecutableElement selector = MasterKindOperatorHelper.extractMasterSelection(dsl);
-        for (ElementRef p : dsl.parametersFrom(2)) {
+        for (ElementRef p : MasterKindOperatorHelper.consumeExtras(dsl)) {
             if (p.type().isExtra()) {
                 dsl.consumeExtraParameter(p);
                 if (selector == null) {
@@ -63,8 +63,8 @@ public class MasterCheckOperatorDriver implements OperatorDriver {
                 p.error(Messages.getString("MasterCheckOperatorDriver.errorExtraParameterInvalidType")); //$NON-NLS-1$
             }
         }
-        if (dsl.getInputs().isEmpty() == false) {
-            Node txInput = dsl.getInputs().get(dsl.getInputs().size() - 1);
+        if (MasterKindOperatorHelper.hasMandatoryInputs(dsl)) {
+            Node txInput = dsl.getInputs().get(MasterKindOperatorHelper.INDEX_TX);
             dsl.addOutput(
                     Document.text(Messages.getString("MasterCheckOperatorDriver.javadocJoinOutput")), //$NON-NLS-1$
                     dsl.annotation().string(JOINED_PORT),

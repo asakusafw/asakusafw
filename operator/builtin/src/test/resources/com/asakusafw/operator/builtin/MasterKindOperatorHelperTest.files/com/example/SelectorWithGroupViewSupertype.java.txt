@@ -12,11 +12,11 @@ public abstract class $s {
     public void method(
             @Key(group = "id") Side side,
             @Key(group = "key") Model model,
-            @Key(group = "id") GroupView<Side> view) {
+            @Key(group = "id") GroupView<ViewSide> view) {
     }
 
     @MasterSelection
-    public Side selector(List<Side> sides, Model model, View<Side> view) {
+    public Side selector(List<Side> sides, Model model, View<ViewSide> view) {
         return null;
     }
 }
