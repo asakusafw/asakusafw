@@ -15,32 +15,119 @@
  */
 package com.asakusafw.dmdl.java.emitter.driver;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.asakusafw.dmdl.java.emitter.EmitContext;
 import com.asakusafw.dmdl.java.spi.JavaDataModelDriver;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.ModelSymbol;
 import com.asakusafw.dmdl.semantics.trait.ProjectionsTrait;
+import com.asakusafw.dmdl.semantics.trait.ReferencesTrait;
 import com.asakusafw.utils.java.model.syntax.Type;
 
 /**
- * Enables models projectable.
+ * Make models inherit their projective models.
+ * @since 0.1.0
+ * @version 0.10.2
  */
 public class ProjectionDriver extends JavaDataModelDriver {
 
+    static final String PREFIX_KEY = "com.asakusafw.dmdl.java.emitter.driver.ProjectionDriver"; //$NON-NLS-1$
+
+    static final String KEY_INDIRECT_INHERIT = PREFIX_KEY + ".indirect"; //$NON-NLS-1$
+
+    static final boolean DEFAULT_INDIRECT_INHERIT = true;
+
+    static final boolean INDIRECT_INHERIT = Optional.ofNullable(System.getProperty(KEY_INDIRECT_INHERIT))
+            .map(Boolean::parseBoolean)
+            .orElse(DEFAULT_INDIRECT_INHERIT);
+
     @Override
     public List<Type> getInterfaces(EmitContext context, ModelDeclaration model) {
-        ProjectionsTrait trait = model.getTrait(ProjectionsTrait.class);
-        if (trait == null) {
+        return collect(context, model).stream()
+                .map(context::resolve)
+                .collect(Collectors.toList());
+    }
+
+    private List<ModelSymbol> collect(EmitContext context, ModelDeclaration model) {
+        if (model.getTrait(ReferencesTrait.class) == null) {
             return Collections.emptyList();
         }
-        List<Type> results = new ArrayList<>();
-        for (ModelSymbol projection : trait.getProjections()) {
-            results.add(context.resolve(projection));
+        List<ModelSymbol> projections = collectProjections(context, model)
+                .distinct()
+                .collect(Collectors.toList());
+        return proneDuplications(context, projections);
+    }
+
+    private Stream<ModelSymbol> collectProjections(EmitContext context, ModelDeclaration model) {
+        Set<ModelSymbol> projections = model.findTrait(ProjectionsTrait.class)
+                .map(ProjectionsTrait::getProjections)
+                .<Set<ModelSymbol>>map(HashSet::new)
+                .orElse(Collections.emptySet());
+        List<ModelSymbol> descendants = model.findTrait(ReferencesTrait.class)
+                .map(ReferencesTrait::getReferences)
+                .orElse(Collections.emptyList());
+        return descendants.stream()
+                .flatMap(it -> {
+                    if (projections.contains(it)) {
+                        // projective models inherits others by using Java mechanism
+                        return Stream.of(it);
+                    } else if (INDIRECT_INHERIT) {
+                        // inherit descendant projective models instead of non-projective
+                        // because we cannot inherit non-projective models in Java mechanism
+                        ModelDeclaration decl = it.findDeclaration();
+                        if (decl == null) {
+                            return Stream.empty();
+                        }
+                        return collectProjections(context, decl);
+                    } else {
+                        return Stream.empty();
+                    }
+                });
+    }
+
+    private List<ModelSymbol> proneDuplications(EmitContext context, List<ModelSymbol> projections) {
+        if (projections.size() < 2) {
+            return projections;
         }
-        return results;
+        assert projections.size() == projections.stream().distinct().count();
+        ModelSymbol[] a = projections.toArray(new ModelSymbol[projections.size()]);
+        for (int i = 0; i < a.length; i++) {
+            if (a[i] == null) {
+                continue;
+            }
+            Set<ModelSymbol> desc = collectDescendants(context, a[i]).collect(Collectors.toSet());
+            if (desc.isEmpty()) {
+                continue;
+            }
+            for (int j = 0; j < a.length; j++) {
+                if (i == j || a[j] == null) {
+                    continue;
+                }
+                if (desc.contains(a[j])) {
+                    a[j] = null;
+                }
+            }
+        }
+        return Arrays.stream(a).filter(it -> it != null).collect(Collectors.toList());
+    }
+
+    private Stream<ModelSymbol> collectDescendants(EmitContext context, ModelSymbol symbol) {
+        ModelDeclaration decl = symbol.findDeclaration();
+        if (decl == null) {
+            return Stream.empty();
+        }
+        return decl.findTrait(ProjectionsTrait.class)
+                .map(ProjectionsTrait::getProjections)
+                .orElse(Collections.emptyList())
+                .stream()
+                .flatMap(it -> Stream.concat(Stream.of(it), collectDescendants(context, it)));
     }
 }

@@ -16,6 +16,7 @@
 package com.asakusafw.dmdl.semantics;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstDescription;
@@ -23,6 +24,8 @@ import com.asakusafw.dmdl.model.AstSimpleName;
 
 /**
  * Super interface of the all declarations.
+ * @since 0.1.0
+ * @version 0.10.2
  */
 public interface Declaration extends Element {
 
@@ -55,6 +58,18 @@ public interface Declaration extends Element {
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
     <T extends Trait<T>> T getTrait(Class<T> kind);
+
+    /**
+     * Returns the specified trait of this declaration.
+     * @param <T> type of trait
+     * @param kind the kind of trait
+     * @return the trait, or empty if not put
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     * @since 0.10.2
+     */
+    default <T extends Trait<T>> Optional<T> findTrait(Class<T> kind) {
+        return Optional.ofNullable(getTrait(kind));
+    }
 
     /**
      * Puts a trait into this declaration.

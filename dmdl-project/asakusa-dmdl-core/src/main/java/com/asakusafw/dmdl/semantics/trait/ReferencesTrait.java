@@ -22,26 +22,26 @@ import com.asakusafw.dmdl.semantics.ModelSymbol;
 import com.asakusafw.dmdl.semantics.Trait;
 
 /**
- * Projections in use.
+ * Referred models.
  */
-public class ProjectionsTrait implements Trait<ProjectionsTrait> {
+public class ReferencesTrait implements Trait<ReferencesTrait> {
 
     private final AstNode originalAst;
 
-    private final List<ModelSymbol> projections;
+    private final List<ModelSymbol> references;
 
     /**
      * Creates and returns a new instance.
      * @param originalAst the original AST, or {@code null} if this is an ad-hoc element
-     * @param projections each projective model in references
+     * @param references each referred model
      * @throws IllegalArgumentException if some parameters were {@code null}
      */
-    public ProjectionsTrait(AstNode originalAst, List<ModelSymbol> projections) {
-        if (projections == null) {
-            throw new IllegalArgumentException("projectives must not be null"); //$NON-NLS-1$
+    public ReferencesTrait(AstNode originalAst, List<ModelSymbol> references) {
+        if (references == null) {
+            throw new IllegalArgumentException("references must not be null"); //$NON-NLS-1$
         }
         this.originalAst = originalAst;
-        this.projections = projections;
+        this.references = references;
     }
 
     @Override
@@ -50,10 +50,10 @@ public class ProjectionsTrait implements Trait<ProjectionsTrait> {
     }
 
     /**
-     * Returns owned projective models.
-     * @return the projections
+     * Returns referred models.
+     * @return the referred models
      */
-    public List<ModelSymbol> getProjections() {
-        return projections;
+    public List<ModelSymbol> getReferences() {
+        return references;
     }
 }

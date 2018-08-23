@@ -39,16 +39,19 @@ final class PropertyDeclarationProcessor extends AbstractVisitor<ModelDeclaratio
 
     private final Context context;
 
-    private final List<ModelSymbol> projections = new ArrayList<>();
+    final List<ModelSymbol> references = new ArrayList<>();
+
+    final List<ModelSymbol> projections = new ArrayList<>();
 
     private PropertyDeclarationProcessor(Context context) {
         this.context = context;
     }
 
-    static List<ModelSymbol> resolve(Context context, ModelDeclaration model, AstExpression<AstRecord> node) {
+    static PropertyDeclarationProcessor resolve(
+            Context context, ModelDeclaration model, AstExpression<AstRecord> node) {
         PropertyDeclarationProcessor resolver = new PropertyDeclarationProcessor(context);
         node.accept(model, resolver);
-        return resolver.projections;
+        return resolver;
     }
 
     @Override
@@ -94,8 +97,10 @@ final class PropertyDeclarationProcessor extends AbstractVisitor<ModelDeclaratio
                     property.getDescription(),
                     property.getAttributes());
         }
+        ModelSymbol ref = context.getWorld().createModelSymbol(node.name);
+        references.add(ref);
         if (decl.getOriginalAst().kind == ModelDefinitionKind.PROJECTIVE) {
-            projections.add(context.getWorld().createModelSymbol(node.name));
+            projections.add(ref);
         }
         return null;
     }

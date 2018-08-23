@@ -54,6 +54,7 @@ import com.asakusafw.dmdl.semantics.trait.JoinTrait;
 import com.asakusafw.dmdl.semantics.trait.MappingFactor;
 import com.asakusafw.dmdl.semantics.trait.ProjectionsTrait;
 import com.asakusafw.dmdl.semantics.trait.ReduceTerm;
+import com.asakusafw.dmdl.semantics.trait.ReferencesTrait;
 import com.asakusafw.dmdl.semantics.trait.SummarizeTrait;
 
 final class ModelDeclarationProcessor {
@@ -99,9 +100,11 @@ final class ModelDeclarationProcessor {
         assert model != null;
         assert node != null;
         LOG.debug("resolving record: {}", model.getName()); //$NON-NLS-1$
-        List<ModelSymbol> projections = PropertyDeclarationProcessor.resolve(context, model, node.expression);
-        LOG.debug("record {} has projections: {}", model.getName(), projections); //$NON-NLS-1$
-        model.putTrait(ProjectionsTrait.class, new ProjectionsTrait(node.expression, projections));
+        PropertyDeclarationProcessor refs = PropertyDeclarationProcessor.resolve(context, model, node.expression);
+        LOG.debug("record {} has references: {}", model.getName(), refs.references); //$NON-NLS-1$
+        LOG.debug("record {} has projections: {}", model.getName(), refs.projections); //$NON-NLS-1$
+        model.putTrait(ReferencesTrait.class, new ReferencesTrait(node.expression, refs.references));
+        model.putTrait(ProjectionsTrait.class, new ProjectionsTrait(node.expression, refs.projections));
 
         if (context.hasError()) {
             return;
