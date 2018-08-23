@@ -47,7 +47,7 @@ import com.asakusafw.utils.java.model.util.Models;
 /**
  * Represents operator compiler environment.
  * @since 0.9.0
- * @version 0.10.1
+ * @version 0.10.2
  */
 public class CompileEnvironment {
 
@@ -74,6 +74,8 @@ public class CompileEnvironment {
     private volatile boolean strictOperatorParameterOrder = false;
 
     private volatile boolean strictOptionalOutputConnectivity = true;
+
+    private volatile boolean enumConstantParameter = false;
 
     /**
      * Creates a new instance.
@@ -465,6 +467,26 @@ public class CompileEnvironment {
     }
 
     /**
+     * Returns whether or not the operators can accept enum constants as value parameter.
+     * @return {@code true} if operators can accept enum constants, otherwise {@code false}
+     * @since 0.10.2
+     */
+    public boolean isEnumConstantParameter() {
+        return enumConstantParameter;
+    }
+
+    /**
+     * Sets whether or not the operators can accept enum constants as value parameter.
+     * @param newValue {@code true} to accept enum constants, otherwise {@code false}
+     * @return this
+     * @since 0.10.2
+     */
+    public CompileEnvironment withEnumConstantParameter(boolean newValue) {
+        this.enumConstantParameter = newValue;
+        return this;
+    }
+
+    /**
      * Represents kind of supported features in {@link CompileEnvironment}.
      */
     public enum Support {
@@ -504,6 +526,12 @@ public class CompileEnvironment {
          * Always uses the normalized member name for operator factory methods.
          */
         FORCE_NORMALIZE_MEMBER_NAME(CompileEnvironment::withForceNormalizeMemberName),
+
+        /**
+         * Accepts enum constant as operator parameter.
+         * @since 0.10.2
+         */
+        ENUM_CONSTANT_PARAMETER(CompileEnvironment::withEnumConstantParameter),
 
         /**
          * Supports external I/O ports in flow parts.
