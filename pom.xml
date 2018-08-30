@@ -99,6 +99,7 @@
 
     <!-- fragile artifacts -->
     <httpclient.version>4.2.6</httpclient.version>
+    <httpcore.version>4.2.5</httpcore.version>
     <commons.cli.version>1.2</commons.cli.version>
     <commons.io.version>2.4</commons.io.version>
     <commons.lang.version>2.6</commons.lang.version>
