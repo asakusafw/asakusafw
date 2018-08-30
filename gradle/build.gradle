@@ -29,6 +29,7 @@ ext.parentPom = { f ->
         'jsch-version' : props['jsch.version'].text(),
         'gson-version' : props['gson.version'].text(),
         'http-client-version' : props['httpclient.version'].text(),
+        'http-core-version' : props['httpcore.version'].text(),
         'commons-cli-version' : props['commons.cli.version'].text(),
         'commons-codec-version' : props['commons.codec.version'].text(),
         'commons-io-version' : props['commons.io.version'].text(),

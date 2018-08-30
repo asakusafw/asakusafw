@@ -74,6 +74,11 @@ class AsakusafwBaseExtension {
     String httpClientVersion
 
     /**
+     * The default HTTP Core version.
+     */
+    String httpCoreVersion
+
+    /**
      * The default Commons CLI version.
      */
     String commonsCliVersion

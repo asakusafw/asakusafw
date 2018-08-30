@@ -146,7 +146,7 @@ class AsakusafwOrganizer extends AbstractOrganizer {
                 ],
                 YaessJobQueueLib : [
                     "com.asakusafw:asakusa-yaess-jobqueue:${base.frameworkVersion}@jar",
-                    "org.apache.httpcomponents:httpcore:${base.httpClientVersion}@jar",
+                    "org.apache.httpcomponents:httpcore:${base.httpCoreVersion}@jar",
                     "org.apache.httpcomponents:httpclient:${base.httpClientVersion}@jar",
                     "com.google.code.gson:gson:${base.gsonVersion}@jar",
                     "commons-codec:commons-codec:${base.commonsCodecVersion}@jar",

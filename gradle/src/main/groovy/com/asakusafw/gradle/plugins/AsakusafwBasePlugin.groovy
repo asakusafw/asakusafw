@@ -95,6 +95,7 @@ class AsakusafwBasePlugin implements Plugin<Project> {
             'jsch-version': 'JSch',
             'gson-version': 'GSON',
             'http-client-version': 'Commons HTTP Client',
+            'http-core-version': 'Commons HTTP Core',
             'commons-cli-version': 'Commons CLI',
             'commons-io-version': 'Commons IO',
             'commons-lang-version': 'Commons Lang',
