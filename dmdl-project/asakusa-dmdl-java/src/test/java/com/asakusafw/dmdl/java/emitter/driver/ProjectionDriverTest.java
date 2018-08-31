@@ -67,6 +67,104 @@ public class ProjectionDriverTest extends GeneratorTesterRoot {
         assertThat(d.getInterfaces(), includes(c));
     }
 
+    /**
+     * only inherits explicit projections via projective models.
+     */
+    @Test
+    public void projection_thin() {
+        ModelLoader loader = generate(new String[] {
+                "projective a = { key : INT; };",
+                "projective b = a;",
+                "c = b;",
+        });
+        Class<?> a = loader.modelType("A");
+        Class<?> b = loader.modelType("B");
+        Class<?> c = loader.modelType("C");
+
+        assertThat(b.getInterfaces(), includes(a));
+        assertThat(c.getInterfaces(), not(includes(a)));
+        assertThat(c.getInterfaces(), includes(b));
+        assertThat(a.isAssignableFrom(c), is(true));
+        assertThat(b.isAssignableFrom(c), is(true));
+    }
+
+    /**
+     * also inherit indirect projections via record models.
+     */
+    @Test
+    public void projection_indirect() {
+        ModelLoader loader = generate(new String[] {
+                "projective a = { key : INT; };",
+                "b = a;",
+                "c = b;",
+        });
+        Class<?> a = loader.modelType("A");
+        Class<?> b = loader.modelType("B");
+        Class<?> c = loader.modelType("C");
+
+        assertThat(b.getInterfaces(), includes(a));
+        assertThat(c.getInterfaces(), includes(a));
+        assertThat(a.isAssignableFrom(c), is(true));
+        assertThat(b.isAssignableFrom(c), is(false));
+    }
+
+    /**
+     * also inherit indirect projections via record models.
+     */
+    @Test
+    public void projection_indirect_projective() {
+        ModelLoader loader = generate(new String[] {
+                "projective a = { key : INT; };",
+                "b = a;",
+                "projective c = b;",
+        });
+        Class<?> a = loader.modelType("A");
+        Class<?> b = loader.modelType("B");
+        Class<?> c = loader.modelType("C");
+
+        assertThat(b.getInterfaces(), includes(a));
+        assertThat(c.getInterfaces(), includes(a));
+        assertThat(a.isAssignableFrom(c), is(true));
+        assertThat(b.isAssignableFrom(c), is(false));
+    }
+
+    /**
+     * prune duplicated interfaces.
+     */
+    @Test
+    public void prune_duplicated() {
+        ModelLoader loader = generate(new String[] {
+                "projective a = { key : INT; };",
+                "b = a;",
+                "c = b;",
+                "d = b + c;",
+        });
+        Class<?> a = loader.modelType("A");
+        Class<?> d = loader.modelType("D");
+
+        assertThat(d.getInterfaces(), includes(a));
+    }
+
+    /**
+     * prune indirect inherited.
+     */
+    @Test
+    public void prune_descendants() {
+        ModelLoader loader = generate(new String[] {
+                "projective a = { key : INT; };",
+                "projective b = a;",
+                "c = a;",
+                "d = b;",
+                "e = c + d;",
+        });
+        Class<?> a = loader.modelType("A");
+        Class<?> b = loader.modelType("B");
+        Class<?> e = loader.modelType("E");
+
+        assertThat(e.getInterfaces(), includes(b));
+        assertThat(e.getInterfaces(), not(includes(a)));
+    }
+
     private Matcher<Object[]> includes(Object object) {
         return hasItemInArray(object);
     }

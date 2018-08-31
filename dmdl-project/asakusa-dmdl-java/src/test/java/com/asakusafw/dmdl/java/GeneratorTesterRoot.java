@@ -19,14 +19,20 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
@@ -83,8 +89,9 @@ public class GeneratorTesterRoot {
      * Expects that DMDL scripts have syntax/semantics errors.
      */
     protected void shouldAnalyzerError() {
+        DmdlSourceRepository source = collectInput(currentTestName.getMethodName());
         try {
-            analyze(currentTestName.getMethodName());
+            analyze(source);
             fail("DMDL scripts should have errors");
         } catch (IOException e) {
             // ok.
@@ -105,7 +112,41 @@ public class GeneratorTesterRoot {
      * @return generated classes
      */
     protected ModelLoader generate(String name) {
-        List<VolatileJavaFile> files = emit(name);
+        DmdlSourceRepository source = collectInput(name);
+        List<VolatileJavaFile> files = emit(source);
+        ClassLoader loaded = compile(files);
+        return new ModelLoader(loaded);
+    }
+
+    /**
+     * Generate Java model classes from specified DMDL and returns compile and load results.
+     * @param lines source contents
+     * @return generated classes
+     */
+    protected ModelLoader generate(String[] lines) {
+        AtomicBoolean first = new AtomicBoolean(true);
+        DmdlSourceRepository source = () -> new DmdlSourceRepository.Cursor() {
+            @Override
+            public URI getIdentifier() throws IOException {
+                return URI.create("input");
+            }
+            @Override
+            public Reader openResource() throws IOException {
+                return new StringReader(Arrays.stream(lines)
+                        .map(s -> s.replace('\'', '"'))
+                        .map(s -> s.replace('`', '"'))
+                        .collect(Collectors.joining(System.lineSeparator())));
+            }
+            @Override
+            public boolean next() throws IOException {
+                return first.compareAndSet(true, false);
+            }
+            @Override
+            public void close() throws IOException {
+                return;
+            }
+        };
+        List<VolatileJavaFile> files = emit(source);
         ClassLoader loaded = compile(files);
         return new ModelLoader(loaded);
     }
@@ -144,19 +185,18 @@ public class GeneratorTesterRoot {
         return compiler.getClassLoader();
     }
 
-    private List<VolatileJavaFile> emit(String name) {
+    private List<VolatileJavaFile> emit(DmdlSourceRepository source) {
         VolatileEmitter emitter;
         try {
-            emitter = analyze(name);
+            emitter = analyze(source);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
         return emitter.getEmitted();
     }
 
-    private VolatileEmitter analyze(String name) throws IOException {
+    private VolatileEmitter analyze(DmdlSourceRepository source) throws IOException {
         ModelFactory factory = Models.getModelFactory();
-        DmdlSourceRepository source = collectInput(name);
         VolatileEmitter emitter = new VolatileEmitter();
         Configuration conf = new Configuration(
                 factory,
