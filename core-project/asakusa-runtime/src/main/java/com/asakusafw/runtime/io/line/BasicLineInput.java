@@ -206,7 +206,7 @@ public class BasicLineInput extends LineInput {
         cs.limit(cs.position() + len);
         while (true) {
             bs.clear();
-            CoderResult result = encoder.encode(cs, bs, true);
+            CoderResult result = encoder.encode(cs, bs, false);
             if (result.isError() == false) {
                 bs.flip();
                 entity.append(bs.array(), bs.position(), bs.limit());
