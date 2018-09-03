@@ -29,6 +29,7 @@ import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.ModelSymbol;
 import com.asakusafw.dmdl.semantics.trait.ProjectionsTrait;
+import com.asakusafw.dmdl.semantics.trait.ReferencesTrait;
 
 /**
  * Test for {@link AutoProjectionDriver}.
@@ -56,6 +57,10 @@ public class AutoProjectionDriverTest extends DmdlTesterRoot {
         List<ModelSymbol> projections = projections(model);
         assertThat(projections.size(), is(1));
         assertThat(projections, has(model("p1")));
+
+        List<ModelSymbol> references = references(model);
+        assertThat(references.size(), is(1));
+        assertThat(references, has(model("p1")));
     }
 
     /**
@@ -70,6 +75,10 @@ public class AutoProjectionDriverTest extends DmdlTesterRoot {
         List<ModelSymbol> projections = projections(model);
         assertThat(projections.size(), is(1));
         assertThat(projections, has(model("p1")));
+
+        List<ModelSymbol> references = references(model);
+        assertThat(references.size(), is(1));
+        assertThat(references, has(model("p1")));
     }
 
     /**
@@ -83,6 +92,9 @@ public class AutoProjectionDriverTest extends DmdlTesterRoot {
 
         List<ModelSymbol> projections = projections(model);
         assertThat(projections.size(), is(0));
+
+        List<ModelSymbol> references = references(model);
+        assertThat(references.size(), is(0));
     }
 
     /**
@@ -96,6 +108,9 @@ public class AutoProjectionDriverTest extends DmdlTesterRoot {
 
         List<ModelSymbol> projections = projections(model);
         assertThat(projections.size(), is(0));
+
+        List<ModelSymbol> references = references(model);
+        assertThat(references.size(), is(0));
     }
 
     /**
@@ -109,6 +124,9 @@ public class AutoProjectionDriverTest extends DmdlTesterRoot {
 
         List<ModelSymbol> projections = projections(model);
         assertThat(projections.size(), is(0));
+
+        List<ModelSymbol> references = references(model);
+        assertThat(references.size(), is(0));
     }
 
     /**
@@ -124,6 +142,11 @@ public class AutoProjectionDriverTest extends DmdlTesterRoot {
         assertThat(projections.size(), is(2));
         assertThat(projections, has(model("p1")));
         assertThat(projections, has(model("p2")));
+
+        List<ModelSymbol> references = references(model);
+        assertThat(references.size(), is(2));
+        assertThat(references, has(model("p1")));
+        assertThat(references, has(model("p2")));
     }
 
     /**
@@ -138,6 +161,10 @@ public class AutoProjectionDriverTest extends DmdlTesterRoot {
         List<ModelSymbol> projections = projections(model);
         assertThat(projections.size(), is(1));
         assertThat(projections, has(model("total")));
+
+        List<ModelSymbol> references = references(model);
+        assertThat(references.size(), is(1));
+        assertThat(references, has(model("total")));
     }
 
     /**
@@ -236,11 +263,15 @@ public class AutoProjectionDriverTest extends DmdlTesterRoot {
         shouldSemanticError();
     }
 
-    private List<ModelSymbol> projections(ModelDeclaration model) {
-        ProjectionsTrait trait = model.getTrait(ProjectionsTrait.class);
-        if (trait == null) {
-            return Collections.emptyList();
-        }
-        return trait.getProjections();
+    private static List<ModelSymbol> projections(ModelDeclaration model) {
+        return model.findTrait(ProjectionsTrait.class)
+                .map(ProjectionsTrait::getProjections)
+                .orElse(Collections.emptyList());
+    }
+
+    private static List<ModelSymbol> references(ModelDeclaration model) {
+        return model.findTrait(ReferencesTrait.class)
+                .map(ReferencesTrait::getReferences)
+                .orElse(Collections.emptyList());
     }
 }

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.ModelDefinitionKind;
@@ -31,6 +32,7 @@ import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyReferenceDeclaration;
 import com.asakusafw.dmdl.semantics.Type;
 import com.asakusafw.dmdl.semantics.trait.ProjectionsTrait;
+import com.asakusafw.dmdl.semantics.trait.ReferencesTrait;
 import com.asakusafw.dmdl.spi.ModelAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
 
@@ -61,18 +63,19 @@ public class AutoProjectionDriver extends ModelAttributeDriver {
             ModelDeclaration declaration,
             AstAttribute attribute) {
         environment.reportAll(AttributeUtil.reportInvalidElements(attribute, attribute.elements));
-        List<ModelSymbol> autoProjectios = collectProjections(environment, declaration);
+        List<ModelSymbol> implicits = collectProjections(environment, declaration);
+        List<ModelSymbol> projections = declaration.findTrait(ProjectionsTrait.class)
+                .map(it -> merge(it.getProjections(), implicits))
+                .orElse(implicits);
+        List<ModelSymbol> references = declaration.findTrait(ReferencesTrait.class)
+                .map(it -> merge(it.getReferences(), implicits))
+                .orElse(implicits);
+        declaration.putTrait(ProjectionsTrait.class, new ProjectionsTrait(declaration.getOriginalAst(), projections));
+        declaration.putTrait(ReferencesTrait.class, new ReferencesTrait(declaration.getOriginalAst(), references));
+    }
 
-        ProjectionsTrait projections = declaration.getTrait(ProjectionsTrait.class);
-        if (projections == null) {
-            projections = new ProjectionsTrait(declaration.getOriginalAst().expression, autoProjectios);
-        } else {
-            List<ModelSymbol> composite = new ArrayList<>();
-            composite.addAll(projections.getProjections());
-            composite.addAll(autoProjectios);
-            projections = new ProjectionsTrait(declaration.getOriginalAst().expression, composite);
-        }
-        declaration.putTrait(ProjectionsTrait.class, projections);
+    private static List<ModelSymbol> merge(List<ModelSymbol> a, List<ModelSymbol> b) {
+        return Stream.concat(a.stream(), b.stream()).distinct().collect(Collectors.toList());
     }
 
     private static List<ModelSymbol> collectProjections(DmdlSemantics environment, ModelDeclaration model) {
