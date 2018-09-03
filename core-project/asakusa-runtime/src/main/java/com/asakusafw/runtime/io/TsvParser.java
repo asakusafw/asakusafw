@@ -23,17 +23,16 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
-import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.hadoop.io.Text;
-
+import com.asakusafw.runtime.io.text.value.StringOptionFieldAdapter;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.DateOption;
@@ -450,54 +449,13 @@ public final class TsvParser implements RecordParser {
     }
 
     private void append(CharBuffer source, StringOption target) throws RecordFormatException {
-        if (source.hasRemaining() == false) {
-            return;
+        try {
+            StringOptionFieldAdapter.append(source, target, encoder, encodeBuffer);
+        } catch (CharacterCodingException e) {
+            throw new RecordFormatException(MessageFormat.format(
+                    "Cannot process a character string (\"{0}\")",
+                    source), e);
         }
-
-        Text text = target.get();
-        encoder.reset();
-        encodeBuffer.clear();
-        while (true) {
-            CoderResult result = encoder.encode(source, encodeBuffer, true);
-            if (result.isError()) {
-                throw new RecordFormatException(MessageFormat.format(
-                        "Cannot process a character string (\"{0}\")",
-                        result));
-            }
-            if (result.isUnderflow()) {
-                consumeEncoded(text);
-                break;
-            }
-            if (result.isOverflow()) {
-                consumeEncoded(text);
-            }
-        }
-        while (true) {
-            CoderResult result = encoder.flush(encodeBuffer);
-            if (result.isError()) {
-                throw new RecordFormatException(MessageFormat.format(
-                        "Cannot process a character string (\"{0}\")",
-                        result));
-            }
-            if (result.isUnderflow()) {
-                consumeEncoded(text);
-                break;
-            }
-            if (result.isOverflow()) {
-                consumeEncoded(text);
-            }
-        }
-    }
-
-    private void consumeEncoded(Text text) {
-        encodeBuffer.flip();
-        if (encodeBuffer.hasRemaining()) {
-            text.append(
-                    encodeBuffer.array(),
-                    encodeBuffer.position(),
-                    encodeBuffer.limit());
-        }
-        encodeBuffer.clear();
     }
 
     private char unescape(int c) throws RecordFormatException {

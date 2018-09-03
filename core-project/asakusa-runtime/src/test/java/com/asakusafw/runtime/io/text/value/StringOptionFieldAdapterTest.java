@@ -65,6 +65,19 @@ public class StringOptionFieldAdapterTest {
     }
 
     /**
+     * parse - overflow.
+     */
+    @Test
+    public void parse_overflow() {
+        StringOptionFieldAdapter adapter = StringOptionFieldAdapter.builder().build();
+        StringBuilder buf = new StringBuilder();
+        for (int i = 0; i < 257; i++) {
+            buf.append('a');
+        }
+        checkParse(adapter, buf.toString(), new StringOption(buf.toString()));
+    }
+
+    /**
      * parse - broken UTF-16.
      */
     @Test
