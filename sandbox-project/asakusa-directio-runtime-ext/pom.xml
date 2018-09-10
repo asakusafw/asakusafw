@@ -6,7 +6,7 @@
   <parent>
     <artifactId>asakusa-sandbox-project</artifactId>
     <groupId>com.asakusafw.sandbox</groupId>
-    <version>0.10.2-RC1</version>
+    <version>0.10.2-SNAPSHOT</version>
   </parent>
 
   <packaging>jar</packaging>
