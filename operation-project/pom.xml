@@ -5,7 +5,7 @@
   <parent>
     <artifactId>asakusa-parent</artifactId>
     <groupId>com.asakusafw</groupId>
-    <version>0.10.2-SNAPSHOT</version>
+    <version>0.10.2-RC1</version>
   </parent>
 
   <packaging>pom</packaging>
