@@ -24,12 +24,14 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
+import com.asakusafw.testdriver.core.DataModelSourceFilter;
+import com.asakusafw.testdriver.core.ModelTransformer;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 
 /**
  * An abstract super class of test driver inputs.
  * @since 0.2.0
- * @version 0.6.0
+ * @version 0.10.2
  * @param <T> the data model type
  */
 public abstract class DriverInputBase<T> extends DriverElementBase {
@@ -153,5 +155,16 @@ public abstract class DriverInputBase<T> extends DriverElementBase {
                     name,
                     modelType.getName()), e);
         }
+    }
+
+    /**
+     * Converts an model transformer into {@link DataModelSourceFilter}.
+     * @param transformer the data model transformer
+     * @return the filter which transforms each data model objects using the transformer
+     * @since 0.10.2
+     */
+    protected final DataModelSourceFilter toDataModelSourceFilter(ModelTransformer<? super T> transformer) {
+        DataModelDefinition<T> definition = getDataModelDefinition();
+        return toDataModelSourceFilter(definition, transformer);
     }
 }

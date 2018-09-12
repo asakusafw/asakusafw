@@ -25,14 +25,11 @@ import java.util.function.UnaryOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
-import com.asakusafw.testdriver.core.DataModelSourceFilter;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
 import com.asakusafw.testdriver.core.ModelTester;
-import com.asakusafw.testdriver.core.ModelTransformer;
 import com.asakusafw.testdriver.core.ModelVerifier;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.testdriver.core.TestRule;
@@ -199,17 +196,6 @@ public class DriverOutputBase<T> extends DriverInputBase<T> {
      */
     protected final DifferenceSinkFactory toDifferenceSinkFactory(File path) {
         return getTestTools().getDifferenceSinkFactory(path.toURI());
-    }
-
-    /**
-     * Converts an model transformer into {@link DataModelSourceFilter}.
-     * @param transformer the data model transformer
-     * @return the filter which transforms each data model objects using the transformer
-     * @since 0.7.0
-     */
-    protected final DataModelSourceFilter toDataModelSourceFilter(ModelTransformer<? super T> transformer) {
-        DataModelDefinition<T> definition = getDataModelDefinition();
-        return toDataModelSourceFilter(definition, transformer);
     }
 
     /**
