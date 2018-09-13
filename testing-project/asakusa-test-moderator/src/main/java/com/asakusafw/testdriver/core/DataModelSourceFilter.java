@@ -15,11 +15,13 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.io.IOException;
 import java.util.function.UnaryOperator;
 
 /**
  * Filters {@link DataModelSource}s.
  * @since 0.7.0
+ * @version 0.10.2
  */
 @FunctionalInterface
 public interface DataModelSourceFilter extends UnaryOperator<DataModelSource> {
@@ -31,4 +33,21 @@ public interface DataModelSourceFilter extends UnaryOperator<DataModelSource> {
      */
     @Override
     DataModelSource apply(DataModelSource source);
+
+    /**
+     * Applies this filter into the factory.
+     * @param factory the target factory
+     * @return the applied factory
+     * @since 0.10.2
+     */
+    default DataModelSourceFactory apply(DataModelSourceFactory factory) {
+        return new DataModelSourceFactory() {
+            @Override
+            public <T> DataModelSource createSource(
+                    DataModelDefinition<T> definition,
+                    TestContext context) throws IOException {
+                return DataModelSourceFilter.this.apply(factory.createSource(definition, context));
+            }
+        };
+    }
 }

@@ -16,6 +16,7 @@
 package com.asakusafw.testdriver;
 
 import java.io.File;
+import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,8 @@ import org.slf4j.LoggerFactory;
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
+import com.asakusafw.testdriver.core.DataModelSourceFilter;
+import com.asakusafw.testdriver.core.ModelTransformer;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.utils.io.Provider;
 import com.asakusafw.utils.io.Source;
@@ -66,10 +69,28 @@ public abstract class FlowDriverInput<T, S extends FlowDriverInput<T, S>> extend
      * @since 0.2.0
      */
     public S prepare(String sourcePath) {
+        return prepare(sourcePath, null);
+    }
+
+    /**
+     * Sets the test data set for this input.
+     * @param sourcePath the path to test data set
+     * @param transformer the input source transformer
+     * @return this
+     * @throws IllegalArgumentException if the source was not found on the path
+     * @since 0.10.2
+     */
+    public S prepare(String sourcePath, ModelTransformer<? super T> transformer) {
         if (sourcePath == null) {
             throw new IllegalArgumentException("sourcePath must not be null"); //$NON-NLS-1$
         }
-        return prepare(toDataModelSourceFactory(sourcePath));
+        DataModelSourceFactory factory = toDataModelSourceFactory(sourcePath);
+        if (transformer == null) {
+            return prepare(factory);
+        } else {
+            DataModelSourceFilter filter = toDataModelSourceFilter(transformer);
+            return prepare(filter.apply(factory));
+        }
     }
 
     /**
@@ -141,5 +162,18 @@ public abstract class FlowDriverInput<T, S extends FlowDriverInput<T, S>> extend
     public S prepare(Class<? extends DataFormat<? super T>> formatClass, File sourceFile) {
         DataModelDefinition<T> definition = getDataModelDefinition();
         return prepare(toDataModelSourceFactory(definition, formatClass, sourceFile));
+    }
+
+    /**
+     * Configures this object.
+     * @param configurator the configurator
+     * @return this
+     * @since 0.10.2
+     */
+    public S with(Consumer<? super S> configurator) {
+        if (configurator != null) {
+            configurator.accept(getThis());
+        }
+        return getThis();
     }
 }
