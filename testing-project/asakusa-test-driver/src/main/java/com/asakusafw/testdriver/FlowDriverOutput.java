@@ -18,13 +18,18 @@ package com.asakusafw.testdriver;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.DataModelSource;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
+import com.asakusafw.testdriver.core.DataModelSourceFilter;
 import com.asakusafw.testdriver.core.DifferenceSinkFactory;
 import com.asakusafw.testdriver.core.ModelTester;
 import com.asakusafw.testdriver.core.ModelTransformer;
@@ -43,6 +48,8 @@ import com.asakusafw.utils.io.Source;
  * @version 0.9.1
  */
 public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> extends DriverOutputBase<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FlowDriverOutput.class);
 
     /**
      * Creates a new instance.
@@ -70,10 +77,27 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
      * @since 0.6.0
      */
     public S prepare(DataModelSourceFactory factory) {
+        return prepare(factory, null);
+    }
+
+    /**
+     * Sets the test data set for this output.
+     * @param factory factory which provides test data set
+     * @param transformer the input source transformer
+     * @return this
+     * @since 0.10.2
+     */
+    public S prepare(DataModelSourceFactory factory, Consumer<? super T> transformer) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
-        setSource(factory);
+        LOG.debug("prepare - ModelType: {}", getModelType()); //$NON-NLS-1$
+        if (transformer == null) {
+            setSource(factory);
+        } else {
+            DataModelSourceFilter filter = toDataModelSourceFilter(transformer);
+            setSource(filter.apply(factory));
+        }
         return getThis();
     }
 
@@ -530,13 +554,23 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
      * Enables to transform the result data before verifying the results of this output.
      * @param transformer the data model object transformer
      * @return this
-     * @since 0.7.0
+     * @since 0.10.2
      */
-    public S transform(ModelTransformer<? super T> transformer) {
+    public S transform(Consumer<? super T> transformer) {
         if (transformer == null) {
             throw new IllegalArgumentException("transformer must not be null"); //$NON-NLS-1$
         }
         return filter(toDataModelSourceFilter(transformer));
+    }
+
+    /**
+     * Enables to transform the result data before verifying the results of this output.
+     * @param transformer the data model object transformer
+     * @return this
+     * @since 0.7.0
+     */
+    public S transform(ModelTransformer<? super T> transformer) {
+        return transform((Consumer<? super T>) transformer);
     }
 
     /**
@@ -601,5 +635,18 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
             throw new IllegalArgumentException("outputPath must not be null"); //$NON-NLS-1$
         }
         return dumpDifference(toDifferenceSinkFactory(outputPath));
+    }
+
+    /**
+     * Configures this object.
+     * @param configurator the configurator
+     * @return this
+     * @since 0.10.2
+     */
+    public S with(Consumer<? super S> configurator) {
+        if (configurator != null) {
+            configurator.accept(getThis());
+        }
+        return getThis();
     }
 }

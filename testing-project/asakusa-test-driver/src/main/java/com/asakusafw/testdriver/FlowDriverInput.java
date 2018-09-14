@@ -25,7 +25,6 @@ import com.asakusafw.runtime.directio.DataFormat;
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.DataModelSourceFilter;
-import com.asakusafw.testdriver.core.ModelTransformer;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 import com.asakusafw.utils.io.Provider;
 import com.asakusafw.utils.io.Source;
@@ -80,17 +79,12 @@ public abstract class FlowDriverInput<T, S extends FlowDriverInput<T, S>> extend
      * @throws IllegalArgumentException if the source was not found on the path
      * @since 0.10.2
      */
-    public S prepare(String sourcePath, ModelTransformer<? super T> transformer) {
+    public S prepare(String sourcePath, Consumer<? super T> transformer) {
         if (sourcePath == null) {
             throw new IllegalArgumentException("sourcePath must not be null"); //$NON-NLS-1$
         }
         DataModelSourceFactory factory = toDataModelSourceFactory(sourcePath);
-        if (transformer == null) {
-            return prepare(factory);
-        } else {
-            DataModelSourceFilter filter = toDataModelSourceFilter(transformer);
-            return prepare(filter.apply(factory));
-        }
+        return prepare(factory, transformer);
     }
 
     /**
@@ -100,13 +94,27 @@ public abstract class FlowDriverInput<T, S extends FlowDriverInput<T, S>> extend
      * @since 0.6.0
      */
     public S prepare(DataModelSourceFactory factory) {
+        return prepare(factory, null);
+    }
+
+    /**
+     * Sets the test data set for this input.
+     * @param factory factory which provides test data set
+     * @param transformer the input source transformer
+     * @return this
+     * @since 0.10.2
+     */
+    public S prepare(DataModelSourceFactory factory, Consumer<? super T> transformer) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null"); //$NON-NLS-1$
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("prepare - ModelType: {}", getModelType()); //$NON-NLS-1$
+        LOG.debug("prepare - ModelType: {}", getModelType()); //$NON-NLS-1$
+        if (transformer == null) {
+            setSource(factory);
+        } else {
+            DataModelSourceFilter filter = toDataModelSourceFilter(transformer);
+            setSource(filter.apply(factory));
         }
-        setSource(factory);
         return getThis();
     }
 
@@ -147,8 +155,25 @@ public abstract class FlowDriverInput<T, S extends FlowDriverInput<T, S>> extend
      * @since 0.9.1
      */
     public S prepare(Class<? extends DataFormat<? super T>> formatClass, String sourcePath) {
+        return prepare(formatClass, sourcePath, null);
+    }
+
+    /**
+     * Sets the test data set for this input.
+     * Note that, the original source path may be changed if tracking source file name.
+     * To keep the source file path information, please use {@link #prepare(Class, File)} instead.
+     * @param formatClass the data format class
+     * @param sourcePath the input file path on the class path
+     * @param transformer the input source transformer
+     * @return this
+     * @throws IllegalArgumentException if the source is not valid for the given data format
+     * @since 0.10.2
+     */
+    public S prepare(
+            Class<? extends DataFormat<? super T>> formatClass, String sourcePath, Consumer<? super T> transformer) {
         DataModelDefinition<T> definition = getDataModelDefinition();
-        return prepare(toDataModelSourceFactory(definition, formatClass, sourcePath));
+        DataModelSourceFactory factory = toDataModelSourceFactory(definition, formatClass, sourcePath);
+        return prepare(factory, transformer);
     }
 
     /**
@@ -160,8 +185,23 @@ public abstract class FlowDriverInput<T, S extends FlowDriverInput<T, S>> extend
      * @since 0.9.1
      */
     public S prepare(Class<? extends DataFormat<? super T>> formatClass, File sourceFile) {
+        return prepare(formatClass, sourceFile, null);
+    }
+
+    /**
+     * Sets the test data set for this input.
+     * @param formatClass the data format class
+     * @param sourceFile the input file
+     * @param transformer the input source transformer
+     * @return this
+     * @throws IllegalArgumentException if the source is not valid for the given data format
+     * @since 0.10.2
+     */
+    public S prepare(
+            Class<? extends DataFormat<? super T>> formatClass, File sourceFile, Consumer<? super T> transformer) {
         DataModelDefinition<T> definition = getDataModelDefinition();
-        return prepare(toDataModelSourceFactory(definition, formatClass, sourceFile));
+        DataModelSourceFactory factory = toDataModelSourceFactory(definition, formatClass, sourceFile);
+        return prepare(factory, transformer);
     }
 
     /**

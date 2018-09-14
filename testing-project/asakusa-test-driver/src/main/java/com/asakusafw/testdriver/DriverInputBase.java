@@ -17,6 +17,7 @@ package com.asakusafw.testdriver;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,6 @@ import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.DataModelSourceFilter;
-import com.asakusafw.testdriver.core.ModelTransformer;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
 
 /**
@@ -163,7 +163,7 @@ public abstract class DriverInputBase<T> extends DriverElementBase {
      * @return the filter which transforms each data model objects using the transformer
      * @since 0.10.2
      */
-    protected final DataModelSourceFilter toDataModelSourceFilter(ModelTransformer<? super T> transformer) {
+    protected final DataModelSourceFilter toDataModelSourceFilter(Consumer<? super T> transformer) {
         DataModelDefinition<T> definition = getDataModelDefinition();
         return toDataModelSourceFilter(definition, transformer);
     }

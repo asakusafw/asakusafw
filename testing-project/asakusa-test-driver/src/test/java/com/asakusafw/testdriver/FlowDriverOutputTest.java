@@ -454,6 +454,17 @@ public class FlowDriverOutputTest {
     }
 
     /**
+     * Test method for {@link FlowDriverOutput#transform(ModelTransformer)}.
+     */
+    @Test
+    public void transform_lambda() {
+        MockFlowDriverOutput<Text> mock = MockFlowDriverOutput.text(getClass(), tool_rule("Hello3!"));
+        mock.transform(s -> s.set(s.toString() + "!"));
+        mock.verify(list("Hello1!", "Hello2!", "Hello3!"), "data/dummy");
+        assertThat(test(mock.getVerifier(), "Hello1", "Hello2", "Hello3"), hasSize(1));
+    }
+
+    /**
      * Test method for {@link FlowDriverOutput#dumpActual(String)}.
      */
     @Test
