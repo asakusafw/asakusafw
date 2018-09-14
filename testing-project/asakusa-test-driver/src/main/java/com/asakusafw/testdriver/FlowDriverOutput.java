@@ -636,4 +636,17 @@ public abstract class FlowDriverOutput<T, S extends FlowDriverOutput<T, S>> exte
         }
         return dumpDifference(toDifferenceSinkFactory(outputPath));
     }
+
+    /**
+     * Configures this object.
+     * @param configurator the configurator
+     * @return this
+     * @since 0.10.2
+     */
+    public S with(Consumer<? super S> configurator) {
+        if (configurator != null) {
+            configurator.accept(getThis());
+        }
+        return getThis();
+    }
 }
