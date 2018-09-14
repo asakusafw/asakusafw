@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.asakusafw.runtime.core.View;
 import com.asakusafw.testdriver.core.DataModelDefinition;
@@ -87,7 +88,7 @@ public class BasicDataLoader<T> implements DataLoader<T> {
     }
 
     @Override
-    public List<T> asList() {
+    public Stream<T> asStream() {
         List<DataModelReflection> refs = new ArrayList<>();
         try (DataModelSource source = factory.createSource(definition, context)) {
             while (true) {
@@ -105,8 +106,12 @@ public class BasicDataLoader<T> implements DataLoader<T> {
         }
         return refs.stream()
                 .sequential()
-                .map(definition::toObject)
-                .collect(Collectors.toList());
+                .map(definition::toObject);
+    }
+
+    @Override
+    public List<T> asList() {
+        return asStream().collect(Collectors.toList());
     }
 
     @Override

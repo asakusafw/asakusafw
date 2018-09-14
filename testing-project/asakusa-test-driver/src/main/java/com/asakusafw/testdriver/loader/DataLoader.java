@@ -17,6 +17,7 @@ package com.asakusafw.testdriver.loader;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.asakusafw.runtime.core.View;
 import com.asakusafw.vocabulary.model.Key;
@@ -25,6 +26,7 @@ import com.asakusafw.vocabulary.model.Key;
  * Loads a dataset and organize it for operator inputs.
  * @param <T> the data type
  * @since 0.9.1
+ * @version 0.10.2
  */
 public interface DataLoader<T> {
 
@@ -54,6 +56,15 @@ public interface DataLoader<T> {
      * @throws IllegalStateException if sort order is already configured
      */
     DataLoader<T> order(Comparator<? super T> comparator);
+
+    /**
+     * Returns the loaded data as a stream.
+     * @return the organized stream
+     * @since 0.10.2
+     */
+    default Stream<T> asStream() {
+        return asList().stream();
+    }
 
     /**
      * Returns the loaded data as a list.

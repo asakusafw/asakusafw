@@ -15,19 +15,30 @@
  */
 package com.asakusafw.testdriver;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.runtime.directio.DataFormat;
+import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
+import com.asakusafw.testdriver.loader.BasicDataLoader;
+import com.asakusafw.testdriver.loader.DataLoader;
+import com.asakusafw.utils.io.Provider;
+import com.asakusafw.utils.io.Source;
 import com.asakusafw.vocabulary.external.ImporterDescription;
 
 /**
  * An abstract super class of testers.
  * @since 0.7.3
+ * @version 0.10.2
  */
 public class TesterBase extends TestDriverBase {
 
@@ -69,5 +80,97 @@ public class TesterBase extends TestDriverBase {
      */
     protected Map<ImporterDescription, DataModelSourceFactory> getExternalResources() {
         return Collections.unmodifiableMap(externalResources);
+    }
+
+    /**
+     * Returns a new data loader.
+     * @param <T> the data type
+     * @param dataType the data type
+     * @param sourcePath the path to test data set (relative from the current test case class)
+     * @return the created loader
+     * @since 0.10.2
+     */
+    public <T> DataLoader<T> loader(Class<T> dataType, String sourcePath) {
+        Objects.requireNonNull(sourcePath);
+        return loader(dataType, toDataModelSourceFactory(sourcePath));
+    }
+
+    /**
+     * Returns a new data loader.
+     * @param <T> the data type
+     * @param dataType the data type
+     * @param objects the test data objects
+     * @return the created loader
+     * @since 0.10.2
+     */
+    public <T> DataLoader<T> loader(Class<T> dataType, Iterable<? extends T> objects) {
+        Objects.requireNonNull(objects);
+        return loader(dataType, toDataModelSourceFactory(toDataModelDefinition(dataType), objects));
+    }
+
+    /**
+     * Returns a new data loader.
+     * @param <T> the data type
+     * @param dataType the data type
+     * @param provider the test data set provider
+     * @return the created loader
+     * @since 0.10.2
+     */
+    public <T> DataLoader<T> loader(Class<T> dataType, Provider<? extends Source<? extends T>> provider) {
+        Objects.requireNonNull(provider);
+        return loader(dataType, toDataModelSourceFactory(provider));
+    }
+
+    /**
+     * Returns a new data loader.
+     * Note that, the original source path may be changed if tracking source file name.
+     * To keep the source file path information, please use {@link #loader(Class, Class, File)} instead.
+     * @param <T> the data type
+     * @param dataType the data type
+     * @param formatClass the data format class
+     * @param sourcePath the input file path on the class path
+     * @return the created loader
+     * @since 0.10.2
+     */
+    public <T> DataLoader<T> loader(
+            Class<T> dataType, Class<? extends DataFormat<? super T>> formatClass, String sourcePath) {
+        return loader(dataType, toDataModelSourceFactory(toDataModelDefinition(dataType), formatClass, sourcePath));
+    }
+
+    /**
+     * Returns a new data loader.
+     * @param <T> the data type
+     * @param dataType the data type
+     * @param formatClass the data format class
+     * @param file the input file path on the class path
+     * @return the created loader
+     * @since 0.10.2
+     */
+    public <T> DataLoader<T> loader(
+            Class<T> dataType, Class<? extends DataFormat<? super T>> formatClass, File file) {
+        return loader(dataType, toDataModelSourceFactory(toDataModelDefinition(dataType), formatClass, file));
+    }
+
+    /**
+     * Returns a new data loader.
+     * @param <T> the data type
+     * @param dataType the data type
+     * @param factory factory which provides test data set
+     * @return the created loader
+     * @since 0.10.2
+     */
+    public <T> DataLoader<T> loader(Class<T> dataType, DataModelSourceFactory factory) {
+        Objects.requireNonNull(factory);
+        return new BasicDataLoader<>(getDriverContext(), toDataModelDefinition(dataType), factory);
+    }
+
+    private <T> DataModelDefinition<T> toDataModelDefinition(Class<T> dataType) {
+        try {
+            return getTestTools().toDataModelDefinition(dataType);
+        } catch (IOException e) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "failed to analyze the data model type: {0}",
+                    dataType.getName()), e);
+        }
     }
 }
