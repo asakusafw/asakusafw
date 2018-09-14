@@ -15,13 +15,21 @@
  */
 package com.asakusafw.testdriver.core;
 
+import java.util.function.Consumer;
+
 /**
  * Transforms data model objects.
  * @param <T> the data model type
  * @since 0.7.0
+ * @version 0.10.2
  */
 @FunctionalInterface
-public interface ModelTransformer<T> {
+public interface ModelTransformer<T> extends Consumer<T> {
+
+    @Override
+    default void accept(T t) {
+        transform(t);
+    }
 
     /**
      * Transforms the target data model object.

@@ -24,6 +24,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 import org.apache.hadoop.conf.Configuration;
@@ -37,7 +38,6 @@ import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.DataModelSourceFilter;
 import com.asakusafw.testdriver.core.Difference;
 import com.asakusafw.testdriver.core.IteratorDataModelSource;
-import com.asakusafw.testdriver.core.ModelTransformer;
 import com.asakusafw.testdriver.core.SourceDataModelSource;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
@@ -230,7 +230,7 @@ public abstract class DriverElementBase {
      */
     protected final <T> DataModelSourceFilter toDataModelSourceFilter(
             DataModelDefinition<T> definition,
-            ModelTransformer<? super T> transformer) {
+            Consumer<? super T> transformer) {
         return new DataModelSourceFilter() {
             @Override
             public DataModelSource apply(DataModelSource source) {
@@ -242,7 +242,7 @@ public abstract class DriverElementBase {
                             return null;
                         }
                         T object = definition.toObject(next);
-                        transformer.transform(object);
+                        transformer.accept(object);
                         return definition.toReflection(object);
                     }
                     @Override
