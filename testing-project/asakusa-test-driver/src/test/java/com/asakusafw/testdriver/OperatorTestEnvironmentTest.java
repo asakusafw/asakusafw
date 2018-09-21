@@ -34,6 +34,8 @@ import com.asakusafw.runtime.core.Report;
 import com.asakusafw.runtime.core.Report.Level;
 import com.asakusafw.runtime.core.ResourceConfiguration;
 import com.asakusafw.runtime.flow.RuntimeResourceManager;
+import com.asakusafw.testdriver.testing.dsl.SimpleOperator;
+import com.asakusafw.testdriver.testing.dsl.SimpleOperatorImpl;
 import com.asakusafw.testdriver.testing.dsl.SimpleStreamFormat;
 import com.asakusafw.testdriver.testing.model.Simple;
 
@@ -54,17 +56,13 @@ public class OperatorTestEnvironmentTest {
      */
     @Test
     public void load() throws Throwable {
-        OperatorTestEnvironment env = new OperatorTestEnvironment(getFilePath("simple.xml"));
-        env.before();
-        try {
+        exec(getFilePath("simple.xml"), env -> {
             assertThat(Collector.lastMessage, is("setup"));
 
             Report.error("hello");
             assertThat(Collector.lastLevel, is(Level.ERROR));
             assertThat(Collector.lastMessage, is("hello"));
-        } finally {
-            env.after();
-        }
+        });
         assertThat(Collector.lastMessage, is("cleanup"));
     }
 
@@ -74,17 +72,13 @@ public class OperatorTestEnvironmentTest {
      */
     @Test
     public void reload() throws Throwable {
-        OperatorTestEnvironment env = new OperatorTestEnvironment(getFilePath("simple.xml"));
-        env.before();
-        try {
+        exec(getFilePath("simple.xml"), env -> {
             assertThat(Collector.lastMessage, is("setup"));
             env.configure("testing.setup", "reload-setup");
             env.configure("testing.cleanup", "reload-cleanup");
             env.reload();
             assertThat(Collector.lastMessage, is("reload-setup"));
-        } finally {
-            env.after();
-        }
+        });
         assertThat(Collector.lastMessage, is("reload-cleanup"));
     }
 
@@ -94,15 +88,58 @@ public class OperatorTestEnvironmentTest {
      */
     @Test
     public void variable() throws Throwable {
-        OperatorTestEnvironment env = new OperatorTestEnvironment(getFilePath("simple.xml"));
-        env.before();
-        try {
+        exec(getFilePath("simple.xml"), env -> {
             env.setBatchArg("hello", "world");
             env.reload();
             assertThat(BatchContext.get("hello"), is("world"));
-        } finally {
-            env.after();
-        }
+        });
+    }
+
+    /**
+     * get implementation of operator.
+     * @throws Throwable if failed
+     */
+    @Test
+    public void new_instance() throws Throwable {
+        exec(getFilePath("simple.xml"), env -> {
+            SimpleOperator op = env.newInstance(SimpleOperator.class);
+            assertThat(op, is(instanceOf(SimpleOperatorImpl.class)));
+        });
+    }
+
+    /**
+     * get implementation of operator: pass just implementation.
+     * @throws Throwable if failed
+     */
+    @Test
+    public void new_instance_impl() throws Throwable {
+        exec(getFilePath("simple.xml"), env -> {
+            SimpleOperator op = env.newInstance(SimpleOperatorImpl.class);
+            assertThat(op, is(instanceOf(SimpleOperatorImpl.class)));
+        });
+    }
+
+    /**
+     * get implementation of operator: not operator but constructible.
+     * @throws Throwable if failed
+     */
+    @Test
+    public void new_instance_not_operator() throws Throwable {
+        exec(getFilePath("simple.xml"), env -> {
+            String obj = env.newInstance(String.class);
+            assertThat(obj, is(""));
+        });
+    }
+
+    /**
+     * get implementation of operator: not operator.
+     * @throws Throwable if failed
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void new_instance_not_operator_error() throws Throwable {
+        exec(getFilePath("simple.xml"), env -> {
+            env.newInstance(TesterTestRoot.class);
+        });
     }
 
     /**
@@ -111,15 +148,11 @@ public class OperatorTestEnvironmentTest {
      */
     @Test
     public void loader() throws Throwable {
-        OperatorTestEnvironment env = new OperatorTestEnvironment(getFilePath("simple.xml")).reset(getClass());
-        env.before();
-        try {
+        exec(getFilePath("simple.xml"), env -> {
             List<Simple> list = env.loader(Simple.class, simples("Hello, world!"))
                     .asList();
             assertThat(list, is(simples("Hello, world!")));
-        } finally {
-            env.after();
-        }
+        });
     }
 
     /**
@@ -128,15 +161,11 @@ public class OperatorTestEnvironmentTest {
      */
     @Test
     public void loader_path() throws Throwable {
-        OperatorTestEnvironment env = new OperatorTestEnvironment(getFilePath("simple.xml")).reset(getClass());
-        env.before();
-        try {
+        exec(getFilePath("simple.xml"), env -> {
             List<Simple> list = env.loader(Simple.class, "data/simple-in.json")
                     .asList();
             assertThat(list, is(simples("This is a test")));
-        } finally {
-            env.after();
-        }
+        });
     }
 
     /**
@@ -145,15 +174,11 @@ public class OperatorTestEnvironmentTest {
      */
     @Test
     public void loader_directio_path() throws Throwable {
-        OperatorTestEnvironment env = new OperatorTestEnvironment(getFilePath("simple.xml")).reset(getClass());
-        env.before();
-        try {
+        exec(getFilePath("simple.xml"), env -> {
             List<Simple> list = env.loader(Simple.class, SimpleStreamFormat.class, "directio/simple.txt")
                     .asList();
             assertThat(list, is(simples("Hello, world!")));
-        } finally {
-            env.after();
-        }
+        });
     }
 
     /**
@@ -169,15 +194,11 @@ public class OperatorTestEnvironmentTest {
             Assume.assumeNoException(e);
             throw new AssertionError(e);
         }
-        OperatorTestEnvironment env = new OperatorTestEnvironment(getFilePath("simple.xml")).reset(getClass());
-        env.before();
-        try {
+        exec(getFilePath("simple.xml"), env -> {
             List<Simple> list = env.loader(Simple.class, SimpleStreamFormat.class, file)
                     .asList();
             assertThat(list, is(simples("Hello, world!")));
-        } finally {
-            env.after();
-        }
+        });
     }
 
     private static List<Simple> simples(String... values) {
@@ -201,14 +222,10 @@ public class OperatorTestEnvironmentTest {
                 is(nullValue()));
 
         Collector.lastMessage = null;
-        OperatorTestEnvironment env = new OperatorTestEnvironment();
-        env.before();
-        try {
+        exec(env -> {
             // we can use Report API even if 'asakusa-resources.xml' does not exist
             Report.info("OK");
-        } finally {
-            env.after();
-        }
+        });
     }
 
     /**
@@ -263,6 +280,31 @@ public class OperatorTestEnvironmentTest {
         public void cleanup(ResourceConfiguration configuration) throws IOException, InterruptedException {
             lastLevel = Level.INFO;
             lastMessage = configuration.get("testing.cleanup", "cleanup");
+        }
+    }
+
+    @FunctionalInterface
+    interface Action<T extends Throwable> {
+        void perform(OperatorTestEnvironment env) throws T;
+    }
+
+    <T extends Throwable> void exec(Action<T> action) throws T {
+        OperatorTestEnvironment env = new OperatorTestEnvironment().reset(getClass());
+        env.before();
+        try {
+            action.perform(env);
+        } finally {
+            env.after();
+        }
+    }
+
+    <T extends Throwable> void exec(String configPath, Action<T> action) throws T {
+        OperatorTestEnvironment env = new OperatorTestEnvironment(configPath).reset(getClass());
+        env.before();
+        try {
+            action.perform(env);
+        } finally {
+            env.after();
         }
     }
 }

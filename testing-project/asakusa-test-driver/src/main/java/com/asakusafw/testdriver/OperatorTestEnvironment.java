@@ -17,6 +17,8 @@ package com.asakusafw.testdriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -27,6 +29,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.asakusafw.runtime.core.BatchContext;
 import com.asakusafw.runtime.core.Report;
@@ -54,32 +58,33 @@ import com.asakusafw.utils.io.Source;
  * Application developers can use this class like as following:
 <pre><code>
 &#64;Rule
-public OperatorTestEnvironment resource = new OperatorTestEnvironment();
+public OperatorTestEnvironment env = new OperatorTestEnvironment();
 </code></pre>
  * The above activates a configuration file {@code asakusa-resources.xml} on the current class-path,
  * and enables framework APIs (e.g. {@link Report Report API}) using the configuration.
  * Clients can also use alternative configuration files by specifying their paths:
 <pre><code>
 &#64;Rule
-public OperatorTestEnvironment resource = new OperatorTestEnvironment("com/example/testing.xml");
+public OperatorTestEnvironment env = new OperatorTestEnvironment("com/example/testing.xml");
 </code></pre>
  * Additionally, clients can also put batch arguments or extra configuration items:
 <pre><code>
 &#64;Rule
-public OperatorTestEnvironment resource = new OperatorTestEnvironment(...);
+public OperatorTestEnvironment env = new OperatorTestEnvironment(...);
 
 &#64;Test
 public void sometest() {
-    resource.configure("key", "value");
-    resource.setBatchArg("date", "2011/03/31");
+    env.configure("key", "value");
+    env.setBatchArg("date", "2011/03/31");
     ...
-    resource.reload();
+    env.reload();
 
-    &lt;test code&gt;
+    TheOperatorClass op = env.newInstance(TheOperatorClass.class);
+    &lt;... test code&gt;
 }
 </code></pre>
  * @since 0.1.0
- * @version 0.9.1
+ * @version 0.10.2
  */
 public class OperatorTestEnvironment extends DriverElementBase implements TestRule {
 
@@ -87,11 +92,26 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
         TestingEnvironmentConfigurator.initialize();
     }
 
+    static final Logger LOG = LoggerFactory.getLogger(OperatorTestEnvironment.class);
+
+    /**
+     * The property key of suffix name of operator implementation classes.
+     * @since 0.10.2
+     */
+    static final String KEY_IMPLEMENTATION_SUFFIX = "com.asakusafw.testdriver.operator.implementation"; //$NON-NLS-1$
+
     /**
      * The embedded default configuration file.
      * @since 0.7.0
      */
     static final String DEFAULT_CONFIGURATION_PATH = "default-asakusa-resources.xml"; //$NON-NLS-1$
+
+    /**
+     * The suffix name of operator implementation classes.
+     * @since 0.10.2
+     * @see #KEY_IMPLEMENTATION_SUFFIX
+     */
+    static final String IMPLEMENTATION_SUFFIX = System.getProperty(KEY_IMPLEMENTATION_SUFFIX, "Impl"); //$NON-NLS-1$
 
     private RuntimeResourceManager manager;
 
@@ -199,6 +219,53 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Returns an implementation of the given operator class.
+     * @param <T> the operator type
+     * @param operatorClass the operator class
+     * @return the created instance of the implementation
+     * @throws IllegalArgumentException if the method cannot detect its implementation, or cannot create an instance
+     * @since 0.10.2
+     */
+    public <T> T newInstance(Class<T> operatorClass) {
+        Class<? extends T> implementationClass = findImplementation(operatorClass);
+        try {
+            Constructor<? extends T> ctor = implementationClass.getConstructor();
+            return ctor.newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "cannot create an instance of operator implementation class: {0}",
+                    implementationClass.getName()), e);
+        }
+    }
+
+    private static <T> Class<? extends T> findImplementation(Class<T> operatorClass) {
+        String implName = operatorClass.getName() + IMPLEMENTATION_SUFFIX;
+        try {
+            Class<?> implClass = Class.forName(implName, false, operatorClass.getClassLoader());
+            if (operatorClass.isAssignableFrom(implClass)) {
+                return implClass.asSubclass(operatorClass);
+            }
+        } catch (ClassNotFoundException e) {
+            LOG.debug("cannot detect operator impl: {}", operatorClass, e);
+        }
+
+        // operator implementation may be absent if operator class is not abstract
+        int modifiers = operatorClass.getModifiers();
+        if (!operatorClass.isInterface()
+                && !operatorClass.isLocalClass()
+                && !operatorClass.isAnonymousClass()
+                && !operatorClass.isEnum()
+                && !operatorClass.isPrimitive()
+                && !Modifier.isAbstract(modifiers)) {
+            return operatorClass;
+        }
+
+        throw new IllegalArgumentException(MessageFormat.format(
+                "cannot detect implementation class: {0}",
+                operatorClass.getName()));
     }
 
     /**
