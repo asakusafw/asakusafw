@@ -202,14 +202,10 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
      */
     protected void before() {
         Configuration conf = createConfig();
-        for (Map.Entry<String, String> entry : extraConfigurations.entrySet()) {
-            conf.set(entry.getKey(), entry.getValue());
-        }
+        extraConfigurations.forEach(conf::set);
         if (batchArguments.isEmpty() == false) {
             VariableTable variables = new VariableTable(RedefineStrategy.OVERWRITE);
-            for (Map.Entry<String, String> entry : batchArguments.entrySet()) {
-                variables.defineVariable(entry.getKey(), entry.getValue());
-            }
+            variables.defineVariables(batchArguments);
             conf.set(StageConstants.PROP_ASAKUSA_BATCH_ARGS, variables.toSerialString());
         }
 
@@ -230,6 +226,9 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
      * @since 0.10.2
      */
     public <T> T newInstance(Class<T> operatorClass) {
+        if (operatorClass == null) {
+            throw new IllegalArgumentException("operatorClass must not be null"); //$NON-NLS-1$
+        }
         Class<? extends T> implementationClass = findImplementation(operatorClass);
         try {
             Constructor<? extends T> ctor = implementationClass.getConstructor();
@@ -334,9 +333,7 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
                     Messages.getString("OperatorTestEnvironment.errorMissingConfigurationFile"), //$NON-NLS-1$
                     configurationPath));
         }
-        for (Map.Entry<String, String> entry : extraConfigurations.entrySet()) {
-            conf.set(entry.getKey(), entry.getValue());
-        }
+        extraConfigurations.forEach(conf::set);
         conf.addResource(resource);
         return conf;
     }

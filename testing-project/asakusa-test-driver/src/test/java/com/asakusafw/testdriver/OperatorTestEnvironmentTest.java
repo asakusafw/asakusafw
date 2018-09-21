@@ -290,16 +290,15 @@ public class OperatorTestEnvironmentTest {
 
     <T extends Throwable> void exec(Action<T> action) throws T {
         OperatorTestEnvironment env = new OperatorTestEnvironment().reset(getClass());
-        env.before();
-        try {
-            action.perform(env);
-        } finally {
-            env.after();
-        }
+        exec0(env, action);
     }
 
     <T extends Throwable> void exec(String configPath, Action<T> action) throws T {
         OperatorTestEnvironment env = new OperatorTestEnvironment(configPath).reset(getClass());
+        exec0(env, action);
+    }
+
+    private static <T extends Throwable> void exec0(OperatorTestEnvironment env, Action<T> action) throws T {
         env.before();
         try {
             action.perform(env);
