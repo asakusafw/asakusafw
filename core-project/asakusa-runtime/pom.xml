@@ -6,7 +6,7 @@
   <parent>
     <artifactId>asakusa-core-project</artifactId>
     <groupId>com.asakusafw</groupId>
-    <version>0.10.2-SNAPSHOT</version>
+    <version>0.10.3-SNAPSHOT</version>
   </parent>
 
   <build>
