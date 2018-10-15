@@ -1,5 +1,15 @@
+# CSV
 com.asakusafw.dmdl.directio.csv.driver.CsvFormatEmitter
+
+# Formatted Text
 com.asakusafw.dmdl.directio.text.tabular.TabularTextEmitter
 com.asakusafw.dmdl.directio.text.csv.CsvTextEmitter
+
+# JSON
+com.asakusafw.dmdl.directio.json.driver.JsonFormatEmitter
+
+# Sequence File
 com.asakusafw.dmdl.directio.sequencefile.driver.SequenceFileFormatEmitter
+
+# Line
 com.asakusafw.dmdl.directio.line.driver.LineFormatEmitter

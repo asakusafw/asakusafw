@@ -33,6 +33,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.asakusafw</groupId>
+      <artifactId>asakusa-runtime-json</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>asakusa-dmdl-core</artifactId>
       <version>${project.version}</version>

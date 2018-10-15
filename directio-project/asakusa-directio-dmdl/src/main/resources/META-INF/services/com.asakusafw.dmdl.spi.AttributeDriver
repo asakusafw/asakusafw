@@ -15,6 +15,14 @@ com.asakusafw.dmdl.directio.text.TextIgnoreDriver
 com.asakusafw.dmdl.directio.text.tabular.TabularTextDriver
 com.asakusafw.dmdl.directio.text.csv.CsvTextDriver
 
+# JSON
+com.asakusafw.dmdl.directio.json.driver.JsonFormatDriver
+com.asakusafw.dmdl.directio.json.driver.JsonPropertyDriver
+com.asakusafw.dmdl.directio.json.driver.JsonFileNameDriver
+com.asakusafw.dmdl.directio.json.driver.JsonLineNumberDriver
+com.asakusafw.dmdl.directio.json.driver.JsonRecordNumberDriver
+com.asakusafw.dmdl.directio.json.driver.JsonIgnoreDriver
+
 # Sequence File
 com.asakusafw.dmdl.directio.sequencefile.driver.SequenceFileFormatDriver
 
