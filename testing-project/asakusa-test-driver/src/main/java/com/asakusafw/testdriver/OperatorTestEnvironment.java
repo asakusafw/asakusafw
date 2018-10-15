@@ -42,6 +42,9 @@ import com.asakusafw.runtime.testing.MockResult;
 import com.asakusafw.runtime.util.VariableTable;
 import com.asakusafw.runtime.util.VariableTable.RedefineStrategy;
 import com.asakusafw.testdriver.core.DataModelDefinition;
+import com.asakusafw.testdriver.core.DataModelReflection;
+import com.asakusafw.testdriver.core.DataModelSink;
+import com.asakusafw.testdriver.core.DataModelSinkFactory;
 import com.asakusafw.testdriver.core.DataModelSourceFactory;
 import com.asakusafw.testdriver.core.TestContext;
 import com.asakusafw.testdriver.core.TestDataToolProvider;
@@ -84,7 +87,7 @@ public void sometest() {
 }
 </code></pre>
  * @since 0.1.0
- * @version 0.10.2
+ * @version 0.10.3
  */
 public class OperatorTestEnvironment extends DriverElementBase implements TestRule {
 
@@ -460,6 +463,48 @@ public class OperatorTestEnvironment extends DriverElementBase implements TestRu
     public <T> DataLoader<T> loader(Class<T> dataType, DataModelSourceFactory factory) {
         Objects.requireNonNull(factory);
         return new BasicDataLoader<>(getTestContext(), toDataModelDefinition(dataType), factory);
+    }
+
+    /**
+     * Stores objects into the given sink.
+     * @param <T> the data type
+     * @param objects the source data
+     * @param dataType the data type
+     * @param formatClass the data format class
+     * @param outputPath the output path
+     * @since 0.10.3
+     */
+    public <T> void dump(
+            Class<T> dataType, Iterable<? extends T> objects,
+            Class<? extends DataFormat<? super T>> formatClass, File outputPath) {
+        DataModelDefinition<T> definition = toDataModelDefinition(dataType);
+        DataModelSinkFactory factory = toDataModelSinkFactory(definition, formatClass, outputPath);
+        dump(dataType, objects, factory);
+    }
+
+    /**
+     * Stores objects into the given sink.
+     * @param <T> the data type
+     * @param objects the source data
+     * @param dataType the data type
+     * @param factory the target sink factory
+     * @since 0.10.3
+     */
+    public <T> void dump(Class<T> dataType, Iterable<? extends T> objects, DataModelSinkFactory factory) {
+        Objects.requireNonNull(objects);
+        Objects.requireNonNull(factory);
+        DataModelDefinition<T> definition = toDataModelDefinition(dataType);
+        try (DataModelSink sink = factory.createSink(definition, getTestContext())) {
+            for (T record : objects) {
+                DataModelReflection ref = definition.toReflection(record);
+                sink.put(ref);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException(MessageFormat.format(
+                    "error occurred while saving data: {1} ({0})",
+                    dataType.getName(),
+                    factory), e);
+        }
     }
 
     private <T> DataModelDefinition<T> toDataModelDefinition(Class<T> dataType) {

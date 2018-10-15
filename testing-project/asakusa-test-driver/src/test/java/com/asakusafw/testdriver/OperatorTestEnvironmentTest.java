@@ -21,6 +21,8 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import com.asakusafw.runtime.core.BatchContext;
 import com.asakusafw.runtime.core.Report;
@@ -49,6 +52,12 @@ public class OperatorTestEnvironmentTest {
      */
     @Rule
     public final FileSystemCleaner fsCleaner = new FileSystemCleaner();
+
+    /**
+     * temporary folder.
+     */
+    @Rule
+    public final TemporaryFolder temporary = new TemporaryFolder();
 
     /**
      * test for loading configuration file.
@@ -199,6 +208,66 @@ public class OperatorTestEnvironmentTest {
                     .asList();
             assertThat(list, is(simples("Hello, world!")));
         });
+    }
+
+    /**
+     * dump.
+     * @throws Exception if failed
+     */
+    @Test
+    public void dump() throws Exception {
+        File f = new File(temporary.newFolder(), "testing.simple");
+        exec(getFilePath("simple.xml"), env -> {
+            env.dump(Simple.class, simples("Hello, world!"), SimpleStreamFormat.class, f);
+        });
+        assertThat(f.exists(), is(true));
+        List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
+        assertThat(lines, contains("Hello, world!"));
+    }
+
+    /**
+     * dump - empty.
+     * @throws Exception if failed
+     */
+    @Test
+    public void dump_empty() throws Exception {
+        File f = new File(temporary.newFolder(), "testing.simple");
+        exec(getFilePath("simple.xml"), env -> {
+            env.dump(Simple.class, simples(), SimpleStreamFormat.class, f);
+        });
+        assertThat(f.exists(), is(true));
+        List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
+        assertThat(lines, is(empty()));
+    }
+
+    /**
+     * dump - empty.
+     * @throws Exception if failed
+     */
+    @Test
+    public void dump_empty_multiple() throws Exception {
+        File f = new File(temporary.newFolder(), "testing.simple");
+        exec(getFilePath("simple.xml"), env -> {
+            env.dump(Simple.class, simples("A", "B", "C"), SimpleStreamFormat.class, f);
+        });
+        assertThat(f.exists(), is(true));
+        List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
+        assertThat(lines, contains("A", "B", "C"));
+    }
+
+    /**
+     * dump - parent directory is not prepared.
+     * @throws Exception if failed
+     */
+    @Test
+    public void dump_nested() throws Exception {
+        File f = new File(new File(temporary.getRoot(), "nested"), "testing.simple");
+        exec(getFilePath("simple.xml"), env -> {
+            env.dump(Simple.class, simples("Hello, world!"), SimpleStreamFormat.class, f);
+        });
+        assertThat(f.exists(), is(true));
+        List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
+        assertThat(lines, contains("Hello, world!"));
     }
 
     private static List<Simple> simples(String... values) {
