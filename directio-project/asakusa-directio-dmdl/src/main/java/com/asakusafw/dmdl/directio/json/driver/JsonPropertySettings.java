@@ -21,7 +21,7 @@ import java.time.ZoneId;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.asakusafw.dmdl.directio.text.AttributeAnalyzer;
+import com.asakusafw.dmdl.directio.util.AttributeAnalyzer;
 import com.asakusafw.dmdl.directio.util.ClassName;
 import com.asakusafw.dmdl.directio.util.DatePattern;
 import com.asakusafw.dmdl.directio.util.Value;

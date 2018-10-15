@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.dmdl.directio.text;
-
-import static com.asakusafw.dmdl.directio.text.TextFormatConstants.*;
+package com.asakusafw.dmdl.directio.util;
 
 import java.nio.charset.Charset;
 import java.time.DateTimeException;
@@ -31,11 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asakusafw.dmdl.Diagnostic;
-import com.asakusafw.dmdl.directio.util.ClassName;
-import com.asakusafw.dmdl.directio.util.DatePattern;
-import com.asakusafw.dmdl.directio.util.DecimalPattern;
-import com.asakusafw.dmdl.directio.util.MapValue;
-import com.asakusafw.dmdl.directio.util.Value;
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;
 import com.asakusafw.dmdl.model.AstAttributeValue;
@@ -49,11 +42,26 @@ import com.asakusafw.dmdl.semantics.DmdlSemantics;
 
 /**
  * Analyzes DMDL attributes.
- * @since 0.9.1
+ * @since 0.10.3
  */
 public class AttributeAnalyzer {
 
     static final Logger LOG = LoggerFactory.getLogger(AttributeAnalyzer.class);
+
+    /**
+     * The value name of {@code null}.
+     */
+    public static final String VALUE_NULL = "null"; //$NON-NLS-1$
+
+    /**
+     * The value name of {@code true}.
+     */
+    public static final String VALUE_TRUE = "true"; //$NON-NLS-1$
+
+    /**
+     * The value name of {@code false}.
+     */
+    public static final String VALUE_FALSE = "false"; //$NON-NLS-1$
 
     private final DmdlSemantics environment;
 
@@ -312,7 +320,7 @@ public class AttributeAnalyzer {
                 .filter(s -> s.length() == 1)
                 .map(s -> s.charAt(0))
                 .orElseGet(() -> {
-                    if (isName(entry.value, TextFormatConstants.VALUE_NULL) == false) {
+                    if (isName(entry.value, VALUE_NULL) == false) {
                         error(element, entry, Messages.getString("AttributeAnalyzer.diagnosticMapValueNotCharacter")); //$NON-NLS-1$
                     }
                     return null;

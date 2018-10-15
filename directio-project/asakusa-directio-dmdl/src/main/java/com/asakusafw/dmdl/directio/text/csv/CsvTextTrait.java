@@ -20,10 +20,10 @@ import static com.asakusafw.dmdl.directio.text.TextFormatConstants.*;
 import java.util.Optional;
 
 import com.asakusafw.dmdl.Diagnostic;
-import com.asakusafw.dmdl.directio.text.AttributeAnalyzer;
 import com.asakusafw.dmdl.directio.text.QuoteSettings;
 import com.asakusafw.dmdl.directio.text.TextFieldSettings;
 import com.asakusafw.dmdl.directio.text.TextFormatSettings;
+import com.asakusafw.dmdl.directio.util.AttributeAnalyzer;
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.semantics.DmdlSemantics;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;

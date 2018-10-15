@@ -20,6 +20,7 @@ import static com.asakusafw.dmdl.directio.text.TextFormatConstants.*;
 import java.time.ZoneId;
 import java.util.Map;
 
+import com.asakusafw.dmdl.directio.util.AttributeAnalyzer;
 import com.asakusafw.dmdl.directio.util.ClassName;
 import com.asakusafw.dmdl.directio.util.DatePattern;
 import com.asakusafw.dmdl.directio.util.DecimalPattern;

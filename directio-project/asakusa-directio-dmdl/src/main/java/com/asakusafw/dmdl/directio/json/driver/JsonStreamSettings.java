@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.asakusafw.dmdl.directio.json.driver.JsonFormatConstants.JsonFormatKind;
-import com.asakusafw.dmdl.directio.text.AttributeAnalyzer;
+import com.asakusafw.dmdl.directio.util.AttributeAnalyzer;
 import com.asakusafw.dmdl.directio.util.ClassName;
 import com.asakusafw.dmdl.directio.util.CodecNames;
 import com.asakusafw.dmdl.directio.util.Value;

@@ -117,6 +117,7 @@ public class JsonFormatEmitterTest extends GeneratorTesterRoot {
 
         BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject(SEGMENT, "SimpleJsonFormat");
         assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
+        assertThat(support.getMinimumFragmentSize(), is(lessThan(0L)));
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -360,12 +361,15 @@ public class JsonFormatEmitterTest extends GeneratorTesterRoot {
     public void compression() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
                 "@directio.json(",
+                "  format = jsonl,",
                 "  compression = gzip,",
                 ")",
                 "simple = {",
                 "  value : TEXT;",
                 "};",
         });
+        BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject(SEGMENT, "SimpleJsonFormat");
+        assertThat(support.getMinimumFragmentSize(), is(lessThan(0L)));
 
         byte[] contents = restore(loaded,
                 loaded.newModel("Simple").setOption("value", new StringOption("Hello, world!")));
@@ -1063,7 +1067,9 @@ public class JsonFormatEmitterTest extends GeneratorTesterRoot {
     @Test
     public void field_line_number() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.json",
+                "@directio.json(",
+                "  format = jsonl,",
+                ")",
                 "simple = {",
                 "  a : TEXT;",
                 "  @directio.json.line_number",
@@ -1086,7 +1092,9 @@ public class JsonFormatEmitterTest extends GeneratorTesterRoot {
     @Test
     public void field_line_number_int() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.json",
+                "@directio.json(",
+                "  format = jsonl,",
+                ")",
                 "simple = {",
                 "  a : TEXT;",
                 "  @directio.json.line_number",
@@ -1109,7 +1117,9 @@ public class JsonFormatEmitterTest extends GeneratorTesterRoot {
     @Test
     public void field_record_number() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.json",
+                "@directio.json(",
+                "  format = jsonl,",
+                ")",
                 "simple = {",
                 "  a : TEXT;",
                 "  @directio.json.record_number",
@@ -1132,7 +1142,9 @@ public class JsonFormatEmitterTest extends GeneratorTesterRoot {
     @Test
     public void field_record_number_int() throws Exception {
         ModelLoader loaded = generateJavaFromLines(new String[] {
-                "@directio.json",
+                "@directio.json(",
+                "  format = jsonl,",
+                ")",
                 "simple = {",
                 "  a : TEXT;",
                 "  @directio.json.record_number",

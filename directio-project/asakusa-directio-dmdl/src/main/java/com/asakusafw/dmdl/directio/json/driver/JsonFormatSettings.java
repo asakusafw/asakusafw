@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
 import java.util.Map;
 
 import com.asakusafw.dmdl.directio.json.driver.JsonFormatConstants.DecimalStyle;
-import com.asakusafw.dmdl.directio.text.AttributeAnalyzer;
+import com.asakusafw.dmdl.directio.util.AttributeAnalyzer;
 import com.asakusafw.dmdl.directio.util.Value;
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;
