@@ -17,6 +17,7 @@
     <module>asakusa-simple-mapreduce</module>
     <module>asakusa-runtime-inprocess</module>
     <module>asakusa-runtime-workaround</module>
+    <module>json</module>
     <module>asakusa-runtime-all</module>
   </modules>
 
