@@ -22,19 +22,20 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -154,6 +155,18 @@ public class JsonFormatTest {
     }
 
     /**
+     * write - multiple objects.
+     * @throws Exception if failed
+     */
+    @Test
+    public void write_multiple_objects() throws Exception {
+        JsonFormat<Data> format = builder((r, d) -> d.object = r.readString(), (w, d) -> w.writeString(d.stringValue))
+                .build();
+        byte[] written = write(format, (data, v) -> data.stringValue = v, "A", "B", "C");
+        assertThat(read(format, written), contains("A", "B", "C"));
+    }
+
+    /**
      * null value.
      * @throws Exception if failed
      */
@@ -162,7 +175,7 @@ public class JsonFormatTest {
         JsonFormat<Data> format = builder((r, d) -> assertThat(r.isNull(), is(true)), (w, d) -> w.writeNull())
                 .build();
         byte[] written = write(format, (data, v) -> data.object = v, (String) null);
-        read(format, written);
+        assertThat(read(format, written), contains(nullValue()));
     }
 
     /**
@@ -875,14 +888,9 @@ public class JsonFormatTest {
         JsonFormat<Data> format = builder((r, d) -> d.object = r.readString(), (w, d) -> w.writeString(d.stringValue))
                 .withLineSeparator(LineSeparator.UNIX)
                 .build();
-        StringWriter writer = new StringWriter();
-        try (JsonOutput<Data> out = format.open("<testing>", writer, OOPTS)) {
-            Data data = new Data();
-            data.stringValue = "Hello, world!";
-            out.write(data);
-        }
-        assertThat(writer.toString(), endsWith(LineSeparator.UNIX.getSequence()));
-        assertThat(writer.toString(), not(endsWith(LineSeparator.WINDOWS.getSequence())));
+        byte[] written = write(format, (data, v) -> data.stringValue = v, "A", "B", "C");
+        String separators = new String(written, StandardCharsets.UTF_8).replaceAll("\\{.*?\\}", ";");
+        assertThat(separators, is(";\n;\n;"));
     }
 
     /**
@@ -894,13 +902,9 @@ public class JsonFormatTest {
         JsonFormat<Data> format = builder((r, d) -> d.object = r.readString(), (w, d) -> w.writeString(d.stringValue))
                 .withLineSeparator(LineSeparator.WINDOWS)
                 .build();
-        StringWriter writer = new StringWriter();
-        try (JsonOutput<Data> out = format.open("<testing>", writer, OOPTS)) {
-            Data data = new Data();
-            data.stringValue = "Hello, world!";
-            out.write(data);
-        }
-        assertThat(writer.toString(), endsWith(LineSeparator.WINDOWS.getSequence()));
+        byte[] written = write(format, (data, v) -> data.stringValue = v, "A", "B", "C");
+        String separators = new String(written, StandardCharsets.UTF_8).replaceAll("\\{.*?\\}", ";");
+        assertThat(separators, is(";\r\n;\r\n;"));
     }
 
     /**
@@ -930,13 +934,9 @@ public class JsonFormatTest {
         JsonFormat<Data> format = builder((r, d) -> d.object = r.readString(), (w, d) -> w.writeString(d.stringValue))
                 .withEscapeNoAsciiCharacter(true)
                 .build();
-        StringWriter writer = new StringWriter();
-        try (JsonOutput<Data> out = format.open("<testing>", writer, OOPTS)) {
-            Data data = new Data();
-            data.stringValue = "A=\u3042";
-            out.write(data);
-        }
-        assertThat(writer.toString(), containsString("A=\\u3042"));
+        byte[] written = write(format, (data, v) -> data.stringValue = v, "A=\u3042");
+        String lines = new String(written, StandardCharsets.UTF_8);
+        assertThat(lines, containsString("A=\\u3042"));
     }
 
     /**
@@ -948,13 +948,9 @@ public class JsonFormatTest {
         JsonFormat<Data> format = builder((r, d) -> d.object = r.readString(), (w, d) -> w.writeString(d.stringValue))
                 .withEscapeNoAsciiCharacter(false)
                 .build();
-        StringWriter writer = new StringWriter();
-        try (JsonOutput<Data> out = format.open("<testing>", writer, OOPTS)) {
-            Data data = new Data();
-            data.stringValue = "A=\u3042";
-            out.write(data);
-        }
-        assertThat(writer.toString(), containsString("A=\u3042"));
+        byte[] written = write(format, (data, v) -> data.stringValue = v, "A=\u3042");
+        String lines = new String(written, StandardCharsets.UTF_8);
+        assertThat(lines, containsString("A=\u3042"));
     }
 
     /**
@@ -966,13 +962,10 @@ public class JsonFormatTest {
         JsonFormat<Data> format = builder((r, d) -> d.object = r.readString(), (w, d) -> w.writeDecimal(d.decimalValue))
                 .withUsePlainDecimal(true)
                 .build();
-        StringWriter writer = new StringWriter();
-        try (JsonOutput<Data> out = format.open("<testing>", writer, OOPTS)) {
-            Data data = new Data();
-            data.decimalValue = new BigDecimal(BigInteger.valueOf(1), -3); // 1*10^3
-            out.write(data);
-        }
-        assertThat(writer.toString(), containsString("1000"));
+        byte[] written = write(format, (data, v) -> data.decimalValue = v,
+                new BigDecimal(BigInteger.valueOf(1), -3)); // 1*10^3
+        String lines = new String(written, StandardCharsets.UTF_8);
+        assertThat(lines, containsString("1000"));
     }
 
     /**
@@ -984,13 +977,27 @@ public class JsonFormatTest {
         JsonFormat<Data> format = builder((r, d) -> d.object = r.readString(), (w, d) -> w.writeDecimal(d.decimalValue))
                 .withUsePlainDecimal(false)
                 .build();
-        StringWriter writer = new StringWriter();
-        try (JsonOutput<Data> out = format.open("<testing>", writer, OOPTS)) {
-            Data data = new Data();
-            data.decimalValue = new BigDecimal(BigInteger.valueOf(1), -3); // 1*10^3
-            out.write(data);
-        }
-        assertThat(writer.toString(), containsString("1E+3"));
+        byte[] written = write(format, (data, v) -> data.decimalValue = v,
+                new BigDecimal(BigInteger.valueOf(1), -3)); // 1*10^3
+        String lines = new String(written, StandardCharsets.UTF_8);
+        assertThat(lines, containsString("1E+3"));
+    }
+
+    /**
+     * write w/o redundant while spaces between objects.
+     * @throws Exception if failed
+     */
+    @Test
+    public void write_no_object_separator() throws Exception {
+        JsonFormat<Data> format = builder((r, d) -> d.object = r.readString(), (w, d) -> w.writeString(d.stringValue))
+                .withLineSeparator(LineSeparator.UNIX)
+                .build();
+        byte[] written = write(format, (data, v) -> data.stringValue = v, "A", "B", "C");
+        assertThat(read(format, written), contains("A", "B", "C"));
+        List<String> lines = Arrays.stream(new String(written, StandardCharsets.UTF_8).split(LineSeparator.UNIX.getSequence()))
+                .collect(Collectors.toList());
+        assertThat(lines, everyItem(startsWith("{")));
+        assertThat(lines, everyItem(endsWith("}")));
     }
 
     private InputStream inputf(String format, Object... args) throws IOException {

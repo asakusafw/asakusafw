@@ -38,20 +38,13 @@ class OutputDriver<T> implements JsonOutput<T> {
 
     private final PropertyDriver<T, ?>[] properties;
 
-    private final SerializableString endOfLine;
-
     private final PropertyWriter adapter;
 
     @SuppressWarnings("unchecked")
-    OutputDriver(
-            String path,
-            JsonGenerator generator,
-            Collection<? extends PropertyDriver<T, ?>> properties,
-            LineSeparator endOfLine) {
+    OutputDriver(String path, JsonGenerator generator, Collection<? extends PropertyDriver<T, ?>> properties) {
         this.path = path;
         this.generator = generator;
         this.properties = (PropertyDriver<T, ?>[]) properties.toArray(new PropertyDriver<?, ?>[properties.size()]);
-        this.endOfLine = endOfLine == null ? null : new SerializedString(endOfLine.getSequence());
         this.adapter = new PropertyWriter(generator);
     }
 
@@ -68,9 +61,6 @@ class OutputDriver<T> implements JsonOutput<T> {
             driver.apply(model, adapter);
         }
         generator.writeEndObject();
-        if (endOfLine != null) {
-            generator.writeRaw(endOfLine);
-        }
     }
 
     @Override

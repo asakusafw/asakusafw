@@ -41,6 +41,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.io.SerializedString;
 
 /**
  * Provides {@link JsonInput} and {@link JsonOutput}.
@@ -236,11 +237,11 @@ public class JsonFormat<T> {
         configure(generator, JsonGenerator.Feature.QUOTE_NON_NUMERIC_NUMBERS, true);
         configure(generator, JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, usePlainDecimal);
         configure(generator, JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, false);
+        generator.setRootValueSeparator(new SerializedString(lineSeparator.getSequence()));
         return new OutputDriver<>(
                 path,
                 generator,
-                properties.stream().map(PropertyInfo::forOutput).collect(Collectors.toList()),
-                lineSeparator);
+                properties.stream().map(PropertyInfo::forOutput).collect(Collectors.toList()));
     }
 
     private static void configure(JsonGenerator generator, JsonGenerator.Feature feature, boolean enabled) {
