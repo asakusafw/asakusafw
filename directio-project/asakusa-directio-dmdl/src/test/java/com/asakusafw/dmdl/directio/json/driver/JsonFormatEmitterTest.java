@@ -404,9 +404,10 @@ public class JsonFormatEmitterTest extends GeneratorTesterRoot {
         });
 
         byte[] contents = restore(loaded,
-                loaded.newModel("Simple").setOption("value", new StringOption("Hello, world!")));
-
-        assertThat(new String(contents, StandardCharsets.UTF_8), endsWith("\r\n"));
+                loaded.newModel("Simple").setOption("value", new StringOption("A")),
+                loaded.newModel("Simple").setOption("value", new StringOption("B")));
+        String lines = new String(contents, StandardCharsets.UTF_8).replaceAll("\\{.*?\\}", "{}");
+        assertThat(lines, is("{}\r\n{}"));
     }
 
     /**
