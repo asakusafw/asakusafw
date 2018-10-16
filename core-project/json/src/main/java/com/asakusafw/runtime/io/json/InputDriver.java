@@ -44,42 +44,42 @@ class InputDriver<T> implements JsonInput<T> {
 
     private final ErrorAction onUnknownInput;
 
-    private final boolean enableLocation;
+    private final boolean enableSourcePosition;
 
     private final boolean enableRecordIndex;
 
-    private final Map<String, PropertyRef<T, ?>> propertyMap;
+    private final Map<String, Property<T, ?>> propertyMap;
 
-    private final PropertyRef<T, ?>[] properties;
+    private final Property<T, ?>[] properties;
 
     private final Predicate<? super String> excludes;
 
     private final BitSet presentSet;
 
-    private final ValueAdapter adapter;
+    private final PropertyReader adapter;
 
-    private JsonLocation lastLocation;
+    private JsonLocation lastSourcePosition;
 
     private long lastRecordIndex = 0;
 
     InputDriver(
             String path,
             JsonParser parser,
-            Collection<? extends PropertyDriver<T, ?>> properties,
+            Collection<? extends PropertyInfo<T, ?>> properties,
             Predicate<? super String> excludes,
             ErrorAction onUnknownInput,
-            boolean enableLocation,
+            boolean enableSourcePosition,
             boolean enableRecordIndex) {
         this.path = path;
         this.parser = parser;
         this.properties = convert(properties);
         this.excludes = excludes;
         this.onUnknownInput = onUnknownInput;
-        this.enableLocation = enableLocation;
+        this.enableSourcePosition = enableSourcePosition;
         this.enableRecordIndex = enableRecordIndex;
 
         this.propertyMap = new HashMap<>();
-        for (PropertyRef<T, ?> ref : this.properties) {
+        for (Property<T, ?> ref : this.properties) {
             String name = ref.definition.getName();
             if (this.propertyMap.containsKey(name)) {
                 throw new IllegalArgumentException(MessageFormat.format(
@@ -91,15 +91,15 @@ class InputDriver<T> implements JsonInput<T> {
         this.presentSet = new BitSet(properties.size());
 
 
-        this.adapter = new ValueAdapter(parser);
+        this.adapter = new PropertyReader(parser);
     }
 
-    private static <T> PropertyRef<T, ?>[] convert(Collection<? extends PropertyDriver<T, ?>> properties) {
+    private static <T> Property<T, ?>[] convert(Collection<? extends PropertyInfo<T, ?>> properties) {
         @SuppressWarnings("unchecked")
-        PropertyRef<T, ?>[] results = (PropertyRef<T, ?>[]) new PropertyRef<?, ?>[properties.size()];
+        Property<T, ?>[] results = (Property<T, ?>[]) new Property<?, ?>[properties.size()];
         int index = 0;
-        for (PropertyDriver<T, ?> property : properties) {
-            PropertyRef<T, ?> ref = new PropertyRef<>(property, index);
+        for (PropertyInfo<T, ?> property : properties) {
+            Property<T, ?> ref = new Property<>(property, index);
             results[index] = ref;
             index++;
         }
@@ -110,7 +110,7 @@ class InputDriver<T> implements JsonInput<T> {
     public boolean readTo(T model) throws IOException {
         JsonToken token = nextToken();
         if (token == null) {
-            lastLocation = null;
+            lastSourcePosition = null;
             lastRecordIndex = -1L;
             return false; // EOF
         }
@@ -119,12 +119,12 @@ class InputDriver<T> implements JsonInput<T> {
                     "reading object: path=%s, location=%s%s",
                     path,
                     parser.getCurrentLocation(),
-                    enableLocation ? "" : " (may be splitted)"));
+                    enableSourcePosition ? "" : " (may be splitted)"));
         }
         if (token == JsonToken.START_OBJECT) {
             presentSet.clear();
-            if (enableLocation) {
-                lastLocation = parser.getTokenLocation();
+            if (enableSourcePosition) {
+                lastSourcePosition = parser.getTokenLocation();
             }
             ++lastRecordIndex;
             try {
@@ -156,7 +156,7 @@ class InputDriver<T> implements JsonInput<T> {
 
             // NOTE: current-name is already copied as (interned) string object
             String name = parser.getCurrentName();
-            PropertyRef<T, ?> property = propertyMap.get(name);
+            Property<T, ?> property = propertyMap.get(name);
             if (property == null) {
                 if (excludes.test(name) == false) {
                     handle(onUnknownInput, null, MessageFormat.format(
@@ -210,7 +210,7 @@ class InputDriver<T> implements JsonInput<T> {
     private void fillAbsents(T model) throws IOException {
         BitSet presents = presentSet;
         for (int i = presents.nextClearBit(0); i >= 0 && i < properties.length; i = presents.nextClearBit(i + 1)) {
-            PropertyRef<T, ?> property = properties[i];
+            Property<T, ?> property = properties[i];
             handleMissingInput(property);
             property.absent(model);
         }
@@ -270,7 +270,7 @@ class InputDriver<T> implements JsonInput<T> {
     }
 
     private void handleMalformedInput(
-            Exception exception, PropertyRef<T, ?> property, String message) throws IOException {
+            Exception exception, Property<T, ?> property, String message) throws IOException {
         ErrorAction action = property.definition.getOnMalformedInput();
         if (action == ErrorAction.IGNORE) {
             return;
@@ -279,7 +279,7 @@ class InputDriver<T> implements JsonInput<T> {
         handle(action, exception, text);
     }
 
-    private void handleMissingInput(PropertyRef<T, ?> property) throws IOException {
+    private void handleMissingInput(Property<T, ?> property) throws IOException {
         ErrorAction action = property.definition.getOnMissingInput();
         if (action == ErrorAction.IGNORE) {
             return;
@@ -301,7 +301,7 @@ class InputDriver<T> implements JsonInput<T> {
     }
 
     private String buildErrorMessage(String message) {
-        if (enableLocation) {
+        if (enableSourcePosition) {
             JsonLocation location = parser.getCurrentLocation();
             return MessageFormat.format(
                     "{0} [at {1}:{2}:{3}]",
@@ -317,7 +317,7 @@ class InputDriver<T> implements JsonInput<T> {
         }
     }
 
-    private String buildErrorMessage(PropertyRef<T, ?> property, String message) {
+    private String buildErrorMessage(Property<T, ?> property, String message) {
         return buildErrorMessage(MessageFormat.format(
                 "{0} [on property \"{1}\"]",
                 message,
@@ -326,7 +326,7 @@ class InputDriver<T> implements JsonInput<T> {
 
     @Override
     public long getLineNumber() {
-        JsonLocation loc = lastLocation;
+        JsonLocation loc = lastSourcePosition;
         return loc != null ? loc.getLineNr() - 1 : -1L;
     }
 
@@ -340,19 +340,7 @@ class InputDriver<T> implements JsonInput<T> {
         parser.close();
     }
 
-    static class PropertyDriver<T, P> {
-
-        final Function<? super T, ? extends P> extractor;
-
-        final PropertyDefinition<? super P> definition;
-
-        PropertyDriver(Function<? super T, ? extends P> extractor, PropertyDefinition<? super P> definition) {
-            this.extractor = extractor;
-            this.definition = definition;
-        }
-    }
-
-    private static final class PropertyRef<T, P> {
+    private static final class Property<T, P> {
 
         final Function<? super T, ? extends P> extractor;
 
@@ -362,10 +350,10 @@ class InputDriver<T> implements JsonInput<T> {
 
         final int index;
 
-        PropertyRef(PropertyDriver<T, P> driver, int index) {
-            this.extractor = driver.extractor;
-            this.definition = driver.definition;
-            this.adapter = driver.definition.getAdapter();
+        Property(PropertyInfo<T, P> info, int index) {
+            this.extractor = info.extractor;
+            this.definition = info.definition;
+            this.adapter = info.definition.getAdapter();
             this.index = index;
         }
 
@@ -380,11 +368,11 @@ class InputDriver<T> implements JsonInput<T> {
         }
     }
 
-    private static final class ValueAdapter implements ValueReader {
+    private static final class PropertyReader implements ValueReader {
 
         final JsonParser parser;
 
-        ValueAdapter(JsonParser parser) {
+        PropertyReader(JsonParser parser) {
             this.parser = parser;
         }
 

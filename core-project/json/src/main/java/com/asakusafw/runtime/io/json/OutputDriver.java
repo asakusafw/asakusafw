@@ -36,16 +36,25 @@ class OutputDriver<T> implements JsonOutput<T> {
 
     private final JsonGenerator generator;
 
-    private final PropertyDriver<T, ?>[] properties;
+    private final Property<T, ?>[] properties;
 
     private final PropertyWriter adapter;
 
-    @SuppressWarnings("unchecked")
-    OutputDriver(String path, JsonGenerator generator, Collection<? extends PropertyDriver<T, ?>> properties) {
+    OutputDriver(String path, JsonGenerator generator, Collection<? extends PropertyInfo<T, ?>> properties) {
         this.path = path;
         this.generator = generator;
-        this.properties = (PropertyDriver<T, ?>[]) properties.toArray(new PropertyDriver<?, ?>[properties.size()]);
+        this.properties = convert(properties); // NOTE: cannot invoke Property(PropertyInfo) via Stream
         this.adapter = new PropertyWriter(generator);
+    }
+
+    private static <T> Property<T, ?>[] convert(Collection<? extends PropertyInfo<T, ?>> properties) {
+        @SuppressWarnings("unchecked")
+        Property<T, ?>[] results = (Property<T, ?>[]) new Property<?, ?>[properties.size()];
+        int index = 0;
+        for (PropertyInfo<T, ?> info : properties) {
+            results[index++] = new Property<>(info);
+        }
+        return results;
     }
 
     @Override
@@ -57,7 +66,7 @@ class OutputDriver<T> implements JsonOutput<T> {
                     model));
         }
         generator.writeStartObject();
-        for (PropertyDriver<T, ?> driver : properties) {
+        for (Property<T, ?> driver : properties) {
             driver.apply(model, adapter);
         }
         generator.writeEndObject();
@@ -68,7 +77,7 @@ class OutputDriver<T> implements JsonOutput<T> {
         generator.close();
     }
 
-    static class PropertyDriver<T, P> {
+    static class Property<T, P> {
 
         final Function<? super T, ? extends P> extractor;
 
@@ -78,10 +87,10 @@ class OutputDriver<T> implements JsonOutput<T> {
 
         final SerializedString name;
 
-        PropertyDriver(Function<? super T, ? extends P> extractor, PropertyDefinition<? super P> definition) {
-            this.extractor = extractor;
-            this.definition = definition;
-            this.adapter = definition.getAdapter();
+        Property(PropertyInfo<T, P> info) {
+            this.extractor = info.extractor;
+            this.definition = info.definition;
+            this.adapter = info.definition.getAdapter();
             this.name = new SerializedString(definition.getName());
         }
 

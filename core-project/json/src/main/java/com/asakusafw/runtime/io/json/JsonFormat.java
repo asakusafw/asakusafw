@@ -35,7 +35,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -215,7 +214,7 @@ public class JsonFormat<T> {
         return new InputDriver<>(
                 path,
                 parser,
-                properties.stream().map(PropertyInfo::forInput).collect(Collectors.toList()),
+                properties,
                 excludes.stream().map(Pattern::asPredicate).reduce(Predicate::or).orElse(s -> false),
                 onUnknownInput,
                 options.contains(InputOption.ENABLE_SOURCE_POSITION),
@@ -238,10 +237,7 @@ public class JsonFormat<T> {
         configure(generator, JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, usePlainDecimal);
         configure(generator, JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, false);
         generator.setRootValueSeparator(new SerializedString(lineSeparator.getSequence()));
-        return new OutputDriver<>(
-                path,
-                generator,
-                properties.stream().map(PropertyInfo::forOutput).collect(Collectors.toList()));
+        return new OutputDriver<>(path, generator, properties);
     }
 
     private static void configure(JsonGenerator generator, JsonGenerator.Feature feature, boolean enabled) {
@@ -388,27 +384,5 @@ public class JsonFormat<T> {
      */
     public enum OutputOption {
         // no special members
-    }
-
-    private static class PropertyInfo<TRecord, TProperty> {
-
-        final Function<? super TRecord, ? extends TProperty> extractor;
-
-        final PropertyDefinition<TProperty> definition;
-
-        PropertyInfo(
-                Function<? super TRecord, ? extends TProperty> extractor,
-                PropertyDefinition<TProperty> definition) {
-            this.extractor = extractor;
-            this.definition = definition;
-        }
-
-        InputDriver.PropertyDriver<TRecord, TProperty> forInput() {
-            return new InputDriver.PropertyDriver<>(extractor, definition);
-        }
-
-        OutputDriver.PropertyDriver<TRecord, TProperty> forOutput() {
-            return new OutputDriver.PropertyDriver<>(extractor, definition);
-        }
     }
 }
