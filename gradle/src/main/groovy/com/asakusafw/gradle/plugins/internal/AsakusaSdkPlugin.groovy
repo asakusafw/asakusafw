@@ -199,7 +199,10 @@ class AsakusaSdkPlugin implements Plugin<Project> {
                 if (features.core) {
                     compile "com.asakusafw:asakusa-dsl-vocabulary:${base.frameworkVersion}"
                     compile "com.asakusafw:asakusa-iterative-vocabulary:${base.frameworkVersion}"
+
+                    // FIXME: use "asakusa-runtime-all" instead of adding individual artifacts?
                     compile "com.asakusafw:asakusa-runtime:${base.frameworkVersion}"
+                    compile "com.asakusafw:asakusa-runtime-json:${base.frameworkVersion}"
 
                     compile("org.apache.hadoop:hadoop-common:${base.hadoopVersion}") {
                         exclude group: 'junit', module: 'junit'
