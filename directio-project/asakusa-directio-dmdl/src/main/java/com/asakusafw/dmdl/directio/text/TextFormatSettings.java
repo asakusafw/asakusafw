@@ -21,6 +21,7 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Optional;
 
+import com.asakusafw.dmdl.directio.util.AttributeAnalyzer;
 import com.asakusafw.dmdl.directio.util.ClassName;
 import com.asakusafw.dmdl.directio.util.CodecNames;
 import com.asakusafw.dmdl.directio.util.Value;

@@ -212,21 +212,6 @@ public final class TextFormatConstants {
      */
     public static final String DEFAULT_DATETIME_FORMAT = DateTimeOptionFieldAdapter.DEFAULT_FORMAT;
 
-    /**
-     * The value name of {@code null}.
-     */
-    public static final String VALUE_NULL = "null"; //$NON-NLS-1$
-
-    /**
-     * The value name of {@code true}.
-     */
-    public static final String VALUE_TRUE = "true"; //$NON-NLS-1$
-
-    /**
-     * The value name of {@code false}.
-     */
-    public static final String VALUE_FALSE = "false"; //$NON-NLS-1$
-
     // CSV
 
     /**

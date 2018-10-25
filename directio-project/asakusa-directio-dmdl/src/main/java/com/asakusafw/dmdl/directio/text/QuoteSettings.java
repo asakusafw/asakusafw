@@ -19,6 +19,7 @@ import static com.asakusafw.dmdl.directio.text.TextFormatConstants.*;
 
 import java.util.Map;
 
+import com.asakusafw.dmdl.directio.util.AttributeAnalyzer;
 import com.asakusafw.dmdl.directio.util.Value;
 import com.asakusafw.dmdl.model.AstAttribute;
 import com.asakusafw.dmdl.model.AstAttributeElement;

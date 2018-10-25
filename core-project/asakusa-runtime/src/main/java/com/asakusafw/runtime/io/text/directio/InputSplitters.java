@@ -15,6 +15,8 @@
  */
 package com.asakusafw.runtime.io.text.directio;
 
+import com.asakusafw.runtime.io.util.LineFeedDelimitedInputStream;
+
 /**
  * Utilities about {@link InputSplitter}.
  * @since 0.9.1

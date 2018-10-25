@@ -82,6 +82,8 @@ public class GeneratorTesterRoot {
      */
     protected final List<JavaDataModelDriver> emitDrivers = new ArrayList<>();
 
+    private boolean dump = false;
+
     /**
      * Cleans up the test.
      * @throws Exception if some errors were occurred
@@ -89,6 +91,14 @@ public class GeneratorTesterRoot {
     @After
     public void tearDown() throws Exception {
         compiler.close();
+    }
+
+    /**
+     * Sets whether or not dump generated source code is enabled.
+     * @param enabled {@code true} if enabled, otherwise {@code false}
+     */
+    public void dump(boolean enabled) {
+        this.dump = enabled;
     }
 
     /**
@@ -174,7 +184,9 @@ public class GeneratorTesterRoot {
                 for (String line : lines) {
                     String s = line.replace('\'', '"');
                     writer.println(s);
-                    System.out.println(s);
+                    if (dump) {
+                        System.out.println(s);
+                    }
                 }
             }
             return file;
@@ -217,6 +229,9 @@ public class GeneratorTesterRoot {
         }
         for (JavaFileObject java : files) {
             compiler.addSource(java);
+            if (dump) {
+                dump(java);
+            }
         }
         compiler.addArguments("-Xlint");
         List<Diagnostic<? extends JavaFileObject>> diagnostics = compiler.doCompile();
@@ -225,14 +240,7 @@ public class GeneratorTesterRoot {
             if (d.getKind() == Diagnostic.Kind.ERROR || d.getKind() == Diagnostic.Kind.WARNING) {
                 JavaFileObject java = d.getSource();
                 if (java != null) {
-                    try {
-                        System.out.println("=== " + java.getName());
-                        System.out.println(java.getCharContent(true));
-                        System.out.println();
-                        System.out.println();
-                    } catch (IOException e) {
-                        // ignored
-                    }
+                    dump(java);
                 }
                 System.out.println("--");
                 System.out.println(d.getMessage(Locale.getDefault()));
@@ -243,6 +251,17 @@ public class GeneratorTesterRoot {
             throw new AssertionError(diagnostics);
         }
         return compiler.getClassLoader();
+    }
+
+    private void dump(JavaFileObject java) {
+        try {
+            System.out.println("=== " + java.getName());
+            System.out.println(java.getCharContent(true));
+            System.out.println();
+            System.out.println();
+        } catch (IOException e) {
+            // ignored
+        }
     }
 
     private List<VolatileJavaFile> emit(DmdlSourceRepository source) throws IOException {

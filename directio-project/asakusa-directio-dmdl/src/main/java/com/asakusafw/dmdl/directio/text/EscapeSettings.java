@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.asakusafw.dmdl.directio.util.AttributeAnalyzer;
 import com.asakusafw.dmdl.directio.util.MapValue;
 import com.asakusafw.dmdl.directio.util.Value;
 import com.asakusafw.dmdl.model.AstAttribute;
@@ -141,7 +142,7 @@ public class EscapeSettings {
                     if (sawValues.contains(value)) {
                         analyzer.warn(sequences.getDeclaration(), entry.getDeclaration(),
                                 Messages.getString("EscapeSettings.diagnosticEscapeSequenceDuplicateValue"), //$NON-NLS-1$
-                                value == null ? VALUE_NULL : TextUtil.quote(String.valueOf(value)));
+                                value == null ? AttributeAnalyzer.VALUE_NULL : TextUtil.quote(String.valueOf(value)));
                     }
                     sawKeys.add(key);
                     sawValues.add(value);

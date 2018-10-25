@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io.text.directio;
+package com.asakusafw.runtime.io.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +22,6 @@ import java.io.InputStream;
  * Trims {@link InputStream} to provide only contents in the current split for line separated text.
  * This requires that each {@code 0x0d} byte in input always represents line feed (LF).
  * @since 0.9.1
- * @see InputSplitters
  */
 public final class LineFeedDelimitedInputStream extends InputStream {
 

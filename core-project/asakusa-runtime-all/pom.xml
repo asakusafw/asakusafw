@@ -27,8 +27,15 @@
                 <includes>
                   <include>${project.groupId}</include>
                   <include>org.xerial.snappy:snappy-java</include>
+                  <include>com.fasterxml.jackson.core:jackson-core</include>
                 </includes>
               </artifactSet>
+              <relocations>
+                <relocation>
+                  <pattern>com.fasterxml.jackson</pattern>
+                  <shadedPattern>com.asakusafw.runtime.fasterxml.jackson</shadedPattern>
+                </relocation>
+              </relocations>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
               </transformers>
@@ -45,6 +52,11 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>asakusa-runtime</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>asakusa-runtime-json</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
