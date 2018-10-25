@@ -313,7 +313,7 @@ public class LineFormatEmitterTest extends GeneratorTesterRoot {
                 "Hello1",
                 "Hello2",
                 "Hello3",
-        }).getBytes("UTF-8"));
+        }).getBytes("UTF-8"), -1L);
 
         ModelWrapper model = loader.newModel("Simple");
         assertThat(reader.readTo(model.unwrap()), is(true));
@@ -368,7 +368,7 @@ public class LineFormatEmitterTest extends GeneratorTesterRoot {
                 HELLO_JP + "1",
                 HELLO_JP + "2",
                 HELLO_JP + "3",
-        }).getBytes("MS932"));
+        }).getBytes("MS932"), -1L);
 
         ModelWrapper model = loader.newModel("Simple");
         assertThat(reader.readTo(model.unwrap()), is(true));
@@ -563,6 +563,13 @@ public class LineFormatEmitterTest extends GeneratorTesterRoot {
     private void check(
             ModelLoader loader, String name,
             BinaryStreamFormat<Object> format) throws IOException, InterruptedException {
+        check(loader, name, format, -1L);
+    }
+
+    private void check(
+            ModelLoader loader, String name,
+            BinaryStreamFormat<Object> format,
+            long fragmentSize) throws IOException, InterruptedException {
         ModelWrapper model = loader.newModel(name);
         assertThat(format.getSupportedType(), equalTo((Object) model.getModelClass()));
 
@@ -573,7 +580,7 @@ public class LineFormatEmitterTest extends GeneratorTesterRoot {
             writer.write(model.unwrap());
         }
         Object buffer = loader.newModel(name).unwrap();
-        try (ModelInput<Object> reader = reader(format, output.toByteArray())) {
+        try (ModelInput<Object> reader = reader(format, output.toByteArray(), fragmentSize)) {
             assertThat(reader.readTo(buffer), is(true));
             assertThat(buffer, is(model.unwrap()));
             assertThat(reader.readTo(buffer), is(false));
@@ -583,10 +590,11 @@ public class LineFormatEmitterTest extends GeneratorTesterRoot {
 
     private ModelInput<Object> reader(
             BinaryStreamFormat<Object> format,
-            byte[] contents) throws IOException, InterruptedException {
+            byte[] contents,
+            long fragmentSize) throws IOException, InterruptedException {
         return format.createInput(
                 format.getSupportedType(), "testinig", new ByteArrayInputStream(contents),
-                0, contents.length);
+                0, fragmentSize);
     }
 
     private ModelOutput<Object> writer(

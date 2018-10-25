@@ -398,7 +398,15 @@ public class LineFormatEmitter extends JavaDataModelDriver {
                         .newObject(
                                 blessInputStream(stream),
                                 Models.toLiteral(f, '\n'),
-                                fragmentSize,
+                                f.newConditionalExpression(
+                                        f.newInfixExpression(
+                                                fragmentSize,
+                                                InfixOperator.GREATER_EQUALS,
+                                                Models.toLiteral(f, 0L)),
+                                        fragmentSize,
+                                        new TypeBuilder(f, context.resolve(Long.class))
+                                            .field("MAX_VALUE") //$NON-NLS-1$
+                                            .toExpression()),
                                 isNotHead)
                         .toExpression())
                     .toStatement());
