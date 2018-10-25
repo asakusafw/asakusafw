@@ -64,7 +64,6 @@ public class LineFormatEmitterTest extends GeneratorTesterRoot {
      */
     @Test
     public void simple() throws Exception {
-        dump(true);
         ModelLoader loader = generateJavaFromLines(new String[] {
                 "@directio.line",
                 "simple = { value : TEXT; };",
