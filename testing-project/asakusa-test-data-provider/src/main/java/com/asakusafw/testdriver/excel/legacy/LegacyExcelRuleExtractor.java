@@ -34,7 +34,6 @@ import com.asakusafw.testdriver.rule.DataModelCondition;
  * Legacy fashioned (0.1.x) {@link ExcelRuleExtractor}.
  * @since 0.2.0
  */
-@SuppressWarnings("deprecation") // FIXME POI API is currently transitive
 public class LegacyExcelRuleExtractor implements ExcelRuleExtractor {
 
     @Override

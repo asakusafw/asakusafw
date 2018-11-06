@@ -36,7 +36,6 @@ import com.asakusafw.testdriver.core.PropertyName;
  * Extracts a model object from a row on Excel sheet.
  * @since 0.2.0
  */
-@SuppressWarnings("deprecation") // FIXME POI API is currently transitive
 class ExcelDataDriver {
 
     static final Logger LOG = LoggerFactory.getLogger(ExcelDataDriver.class);
@@ -274,7 +273,12 @@ class ExcelDataDriver {
                         context.getRowIndex() + 1,
                         context.getColumnIndex() + 1));
             }
-            builder.add(name, context.getStringCellValue());
+            String value = context.getStringCellValue();
+            if (value.isEmpty() && context.getCellStyle().getQuotePrefixed() == false) {
+                // skip empty string cells
+                return;
+            }
+            builder.add(name, value);
         }
 
         @Override

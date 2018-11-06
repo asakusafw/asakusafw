@@ -32,7 +32,6 @@ import com.asakusafw.testdriver.rule.DataModelCondition;
  * Default implementation of {@link ExcelRuleExtractor}.
  * @since 0.6.0
  */
-@SuppressWarnings("deprecation") // FIXME POI API is currently transitive
 public class DefaultExcelRuleExtractor implements ExcelRuleExtractor {
 
     /**

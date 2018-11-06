@@ -211,6 +211,7 @@ public class ExcelSheetSink implements DataModelSink {
             String value = (String) context.getValue(name);
             if (value != null) {
                 cell.setCellValue(value);
+                cell.getCellStyle().setQuotePrefixed(true);
             }
         }
 
@@ -250,6 +251,7 @@ public class ExcelSheetSink implements DataModelSink {
             Object value = context.getValue(name);
             if (value != null) {
                 cell.setCellValue(value.toString());
+                cell.getCellStyle().setQuotePrefixed(true);
             }
         }
     }

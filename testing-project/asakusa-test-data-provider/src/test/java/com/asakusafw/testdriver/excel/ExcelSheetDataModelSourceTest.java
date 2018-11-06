@@ -25,6 +25,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -33,6 +35,8 @@ import org.junit.Test;
 
 import com.asakusafw.testdriver.core.DataModelDefinition;
 import com.asakusafw.testdriver.core.DataModelReflection;
+import com.asakusafw.testdriver.core.PropertyName;
+import com.asakusafw.testdriver.core.PropertyType;
 import com.asakusafw.testdriver.model.SimpleDataModelDefinition;
 
 /**
@@ -615,7 +619,45 @@ public class ExcelSheetDataModelSourceTest {
         source.next();
     }
 
+    /**
+     * simple.
+     * @throws Exception if occur
+     */
+    @Test
+    public void empty_string_test() throws Exception {
+        Map<PropertyName, PropertyType> props = new LinkedHashMap<>();
+        PropertyName c1 = PropertyName.parse("Column1");
+        PropertyName c2 = PropertyName.parse("Column2");
+        PropertyName c3 = PropertyName.parse("Column3");
+        props.put(c1, PropertyType.STRING);
+        props.put(c2, PropertyType.STRING);
+        props.put(c3, PropertyType.STRING);
+        ArrayModelDefinition def = new ArrayModelDefinition(props);
+        try (ExcelSheetDataModelSource source = open("fake_empty.xlsx", def)) {
+            DataModelReflection sa = source.next();
+            assertThat(sa.getValue(c1), is("a1"));
+            assertThat(sa.getValue(c2), is("a2"));
+            assertThat(sa.getValue(c3), is("a3"));
+
+            DataModelReflection sb = source.next();
+            assertThat(sb.getValue(c1), is("b1"));
+            assertThat("empty cell must be resolved as null", sb.getValue(c2), is(nullValue()));
+            assertThat(sb.getValue(c3), is("b3"));
+
+            DataModelReflection sc = source.next();
+            assertThat(sc.getValue(c1), is("c1"));
+            assertThat(sc.getValue(c2), is("c2"));
+            assertThat(sc.getValue(c3), is("c3"));
+
+            assertThat(source.next(), is(nullValue()));
+        }
+    }
+
     private ExcelSheetDataModelSource open(String file) throws IOException {
+        return open(file, SIMPLE);
+    }
+
+    private ExcelSheetDataModelSource open(String file, DataModelDefinition<?> def) throws IOException {
         URL resource = getClass().getResource("data/" + file);
         assertThat(file, resource, not(nullValue()));
         URI uri;
@@ -627,7 +669,7 @@ public class ExcelSheetDataModelSourceTest {
         try (InputStream in = resource.openStream()) {
             Workbook book = resources.bless(Util.openWorkbookFor(file, in));
             Sheet sheet = book.getSheetAt(0);
-            return new ExcelSheetDataModelSource(SIMPLE, uri, sheet);
+            return new ExcelSheetDataModelSource(def, uri, sheet);
         }
     }
 
