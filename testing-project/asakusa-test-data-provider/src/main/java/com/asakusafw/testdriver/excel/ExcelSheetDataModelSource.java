@@ -41,7 +41,6 @@ import com.asakusafw.testdriver.core.PropertyName;
  * {@link DataModelSource} from Excel Sheet.
  * @since 0.2.0
  */
-@SuppressWarnings("deprecation") // FIXME POI API is currently transitive
 public class ExcelSheetDataModelSource implements DataModelSource {
 
     static final Logger LOG = LoggerFactory.getLogger(ExcelSheetDataModelSource.class);
