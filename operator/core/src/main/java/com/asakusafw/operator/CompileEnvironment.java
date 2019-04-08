@@ -47,7 +47,7 @@ import com.asakusafw.utils.java.model.util.Models;
 /**
  * Represents operator compiler environment.
  * @since 0.9.0
- * @version 0.10.2
+ * @version 0.10.3
  */
 public class CompileEnvironment {
 
@@ -77,7 +77,7 @@ public class CompileEnvironment {
 
     private volatile boolean enumConstantParameter = false;
 
-    private volatile boolean unboundProjection = false;
+    private volatile boolean unboundProjection = true;
 
     /**
      * Creates a new instance.
