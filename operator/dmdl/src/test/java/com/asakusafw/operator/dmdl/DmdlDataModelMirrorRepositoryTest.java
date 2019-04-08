@@ -49,6 +49,8 @@ public class DmdlDataModelMirrorRepositoryTest {
             runner.add("TOther", String.format("public abstract class TOther<T extends %s> extends %s {}",
                     MockFloatProjection.class.getName(),
                     Constants.TYPE_FLOW_DESCRIPTION.getClassName()));
+            runner.add("TBare", String.format("public abstract class TBare<T> extends %s {}",
+                    Constants.TYPE_FLOW_DESCRIPTION.getClassName()));
         }
     };
 
@@ -88,6 +90,18 @@ public class DmdlDataModelMirrorRepositoryTest {
         PropertyMirror pInt = mirror.findProperty("int");
         assertThat(pInt, is(notNullValue()));
         assertThat(pInt.getType(), is(apt.sameType(apt.getType(IntOption.class))));
+    }
+
+    /**
+     * Loads a partial DMDL data model.
+     */
+    @Test
+    public void load_bare() {
+        apt.env.withUnboundProjection(true);
+        DataModelMirror mirror = apt.env.findDataModel(apt.getTypeVariable("TBare", "T"));
+        assertThat(mirror, is(notNullValue()));
+
+        assertThat(mirror.getKind(), is(DataModelMirror.Kind.PARTIAL));
     }
 
     /**

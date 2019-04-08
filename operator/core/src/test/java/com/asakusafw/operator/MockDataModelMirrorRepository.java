@@ -21,6 +21,7 @@ import java.util.Set;
 
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
@@ -28,7 +29,9 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 
+import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.ConcreteDataModelMirror;
 import com.asakusafw.operator.model.DataModelMirror;
 import com.asakusafw.operator.model.PartialDataModelMirror;
@@ -81,6 +84,23 @@ public class MockDataModelMirrorRepository implements DataModelMirrorRepository,
     }
 
     private boolean isTargetType(CompileEnvironment environment, TypeMirror type) {
+        if (environment.isUnboundProjection()) {
+            if (type.getKind() == TypeKind.TYPEVAR) {
+                TypeVariable tvar = (TypeVariable) type;
+                TypeParameterElement parameter = (TypeParameterElement) tvar.asElement();
+                if (parameter.getBounds().isEmpty()) {
+                    return true;
+                }
+                if (parameter.getBounds().size() == 1) {
+                    TypeMirror bound = parameter.getBounds().get(0);
+                    DeclaredType object = environment.findDeclaredType(Descriptions.classOf(Object.class));
+                    Types types = environment.getProcessingEnvironment().getTypeUtils();
+                    if (types.isSameType(bound, object)) {
+                        return true;
+                    }
+                }
+            }
+        }
         TypeMirror target = environment.getErasure(type);
         if (target.getKind() != TypeKind.DECLARED) {
             return false;
