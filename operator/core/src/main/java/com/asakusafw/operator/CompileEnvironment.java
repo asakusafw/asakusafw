@@ -77,6 +77,8 @@ public class CompileEnvironment {
 
     private volatile boolean enumConstantParameter = false;
 
+    private volatile boolean unboundProjection = false;
+
     /**
      * Creates a new instance.
      * @param processingEnvironment current annotation processing environment
@@ -487,6 +489,26 @@ public class CompileEnvironment {
     }
 
     /**
+     * Returns whether or not the operators can accept unbound projective models.
+     * @return {@code true} if operators can accept unbound projective models, otherwise {@code false}
+     * @since 0.10.3
+     */
+    public boolean isUnboundProjection() {
+        return unboundProjection;
+    }
+
+    /**
+     * Sets whether or not the operators can accept unbound projective models.
+     * @param newValue {@code true} to accept unbound projective models, otherwise {@code false}
+     * @return this
+     * @since 0.10.3
+     */
+    public CompileEnvironment withUnboundProjection(boolean newValue) {
+        this.unboundProjection = newValue;
+        return this;
+    }
+
+    /**
      * Represents kind of supported features in {@link CompileEnvironment}.
      */
     public enum Support {
@@ -532,6 +554,12 @@ public class CompileEnvironment {
          * @since 0.10.2
          */
         ENUM_CONSTANT_PARAMETER(CompileEnvironment::withEnumConstantParameter),
+
+        /**
+         * Accepts unbound projective models.
+         * @since 0.10.3
+         */
+        UNBOUND_PROJECTION(CompileEnvironment::withUnboundProjection),
 
         /**
          * Supports external I/O ports in flow parts.

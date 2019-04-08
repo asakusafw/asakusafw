@@ -18,11 +18,13 @@ package com.asakusafw.operator.builtin;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeVariable;
 
 import org.junit.Test;
 
+import com.asakusafw.operator.CompileEnvironment;
 import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.OperatorDescription;
 import com.asakusafw.operator.model.OperatorDescription.Node;
@@ -120,6 +122,37 @@ public class LoggingOperatorDriverTest extends OperatorDriverTestRoot {
                 Node output = description.getOutputs().get(0);
                 assertThat(output.getName(), is("out"));
                 assertThat(output.getType(), is(sameType(t)));
+            }
+        });
+    }
+
+    /**
+     * type parameter w/o bound.
+     */
+    @Test
+    public void unbound_projection() {
+        compile(new Action("com.example.UnboundProjection") {
+            @Override
+            protected void perform(OperatorElement target) {
+                OperatorDescription description = target.getDescription();
+                assertThat(description.getInputs().size(), is(1));
+                assertThat(description.getOutputs().size(), is(1));
+                assertThat(description.getArguments().size(), is(0));
+
+                TypeVariable t = getTypeVariable(target.getDeclaration(), "T");
+
+                Node input = description.getInputs().get(0);
+                assertThat(input.getName(), is("in"));
+                assertThat(input.getType(), is(sameType(t)));
+
+                Node output = description.getOutputs().get(0);
+                assertThat(output.getName(), is("out"));
+                assertThat(output.getType(), is(sameType(t)));
+            }
+            @Override
+            protected CompileEnvironment createCompileEnvironment(ProcessingEnvironment processingEnv) {
+                return super.createCompileEnvironment(processingEnv)
+                        .withUnboundProjection(true);
             }
         });
     }

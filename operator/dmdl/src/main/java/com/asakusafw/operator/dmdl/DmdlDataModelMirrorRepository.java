@@ -39,6 +39,7 @@ import com.asakusafw.operator.CompileEnvironment;
 import com.asakusafw.operator.Constants;
 import com.asakusafw.operator.DataModelMirrorRepository;
 import com.asakusafw.operator.description.ClassDescription;
+import com.asakusafw.operator.description.Descriptions;
 import com.asakusafw.operator.model.ConcreteDataModelMirror;
 import com.asakusafw.operator.model.DataModelMirror;
 import com.asakusafw.operator.model.JavaName;
@@ -95,6 +96,9 @@ public class DmdlDataModelMirrorRepository implements DataModelMirrorRepository,
         }
         TypeVariable var = (TypeVariable) type;
         TypeParameterElement parameter = (TypeParameterElement) var.asElement();
+        if (environment.isUnboundProjection() && isUnbound(environment, parameter)) {
+            return true;
+        }
         if (hasKindMatched(environment, parameter) == false) {
             return false;
         }
@@ -117,6 +121,21 @@ public class DmdlDataModelMirrorRepository implements DataModelMirrorRepository,
         }
         AnnotationValue value = AnnotationHelper.getValue(environment, mirror, MEMBER_DATA_MODEL_KIND);
         return value.getValue().equals(SYMBOL_KIND);
+    }
+
+    private boolean isUnbound(CompileEnvironment environment, TypeParameterElement parameter) {
+        if (parameter.getBounds().isEmpty()) {
+            return true;
+        }
+        if (parameter.getBounds().size() == 1) {
+            TypeMirror bound = parameter.getBounds().get(0);
+            DeclaredType object = environment.findDeclaredType(Descriptions.classOf(Object.class));
+            Types types = environment.getProcessingEnvironment().getTypeUtils();
+            if (types.isSameType(bound, object)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean hasKindMatched(CompileEnvironment environment, TypeParameterElement parameter) {
