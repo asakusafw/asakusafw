@@ -221,6 +221,6 @@ public abstract class AbstractOrcFileFormat<T> extends HadoopFileFormat<T>
             options.stripeSize(stripeSize);
         }
 
-        return new OrcFileOutput<>(getDataModelDescriptor(), path, options, counter);
+        return new OrcFileOutput<>(getDataModelDescriptor(), path, fileSystem, options, counter);
     }
 }

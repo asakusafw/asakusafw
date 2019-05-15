@@ -20,6 +20,7 @@ import java.text.MessageFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile.WriterOptions;
@@ -33,6 +34,7 @@ import com.asakusafw.runtime.io.ModelOutput;
  * An implementation of {@link ModelOutput} for creating ORCFile.
  * @param <T> the data model type
  * @since 0.7.0
+ * @version 0.10.3
  */
 public class OrcFileOutput<T> implements ModelOutput<T> {
 
@@ -41,6 +43,8 @@ public class OrcFileOutput<T> implements ModelOutput<T> {
     private final DataModelDescriptor descriptor;
 
     private final Path path;
+
+    private final FileSystem fileSystem;
 
     private final OrcFile.WriterOptions options;
 
@@ -60,8 +64,27 @@ public class OrcFileOutput<T> implements ModelOutput<T> {
             Path path,
             WriterOptions options,
             Counter counter) {
+        this(descriptor, path, null, options, counter);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param descriptor the target data model descriptor
+     * @param path the path to the target file
+     * @param fileSystem the target file system
+     * @param options the ORCFile writer options
+     * @param counter the current counter
+     * @since 0.10.3
+     */
+    public OrcFileOutput(
+            DataModelDescriptor descriptor,
+            Path path,
+            FileSystem fileSystem,
+            WriterOptions options,
+            Counter counter) {
         this.descriptor = descriptor;
         this.path = path;
+        this.fileSystem = fileSystem;
         this.options = options;
         this.counter = counter;
     }
@@ -71,8 +94,8 @@ public class OrcFileOutput<T> implements ModelOutput<T> {
         Writer writer = prepare();
         writer.addRow(model);
 
-        // not sure
-        counter.add(1);
+        // NOTE: only tell this is alive
+        counter.add(0);
     }
 
     private Writer prepare() throws IOException {
@@ -94,6 +117,8 @@ public class OrcFileOutput<T> implements ModelOutput<T> {
     public void close() throws IOException {
         if (currentWriter != null) {
             currentWriter.close();
+            currentWriter = null;
+            counter.add(Util.getFileSize(path, fileSystem));
         }
     }
 }

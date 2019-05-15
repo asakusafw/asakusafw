@@ -89,8 +89,8 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
         ParquetWriter<T> writer = prepareWriter();
         writer.write(model);
 
-        // not sure
-        counter.add(1);
+        // NOTE: only tell this is alive
+        counter.add(0);
     }
 
     @SuppressWarnings("unchecked")
@@ -118,6 +118,8 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
     public void close() throws IOException {
         if (currentWriter != null) {
             currentWriter.close();
+            currentWriter = null;
+            counter.add(Util.getFileSize(path, configuration));
         }
     }
 
