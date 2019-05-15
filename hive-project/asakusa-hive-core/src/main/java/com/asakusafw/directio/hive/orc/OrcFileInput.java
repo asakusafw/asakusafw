@@ -66,8 +66,6 @@ public class OrcFileInput<T> implements ModelInput<T> {
 
     private Object structBuffer;
 
-    private long lastCount;
-
     /**
      * Creates a new instance.
      * @param descriptor the target data model descriptor
@@ -120,7 +118,8 @@ public class OrcFileInput<T> implements ModelInput<T> {
         driver.set(model, buf);
         structBuffer = buf;
 
-        advanceCounter((long) (fragmentSize * reader.getProgress()));
+        // NOTE: only tell this is alive
+        counter.add(0);
         return true;
     }
 
@@ -173,18 +172,12 @@ public class OrcFileInput<T> implements ModelInput<T> {
         return availables;
     }
 
-    private void advanceCounter(long nextCount) {
-        long deltaCount = nextCount - lastCount;
-        if (deltaCount > 0) {
-            counter.add(deltaCount);
-            lastCount = nextCount;
-        }
-    }
-
     @Override
     public void close() throws IOException {
         if (currentReader != null) {
             currentReader.close();
+            currentReader = null;
+            counter.add(Util.getFileSize(path, fileSystem));
         }
     }
 }
