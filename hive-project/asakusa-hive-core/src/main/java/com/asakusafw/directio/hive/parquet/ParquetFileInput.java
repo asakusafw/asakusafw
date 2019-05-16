@@ -139,9 +139,7 @@ public class ParquetFileInput<T> implements ModelInput<T> {
         double last = lastBytes;
         double next = last + averageBytesPerRecord;
         long delta = (long) (next - last);
-        if (delta >= 0L) {
-            counter.add(delta);
-        }
+        counter.add(delta);
         lastBytes = next;
     }
 
@@ -219,7 +217,7 @@ public class ParquetFileInput<T> implements ModelInput<T> {
     private static long computeTotalRecords(List<BlockMetaData> blocks) {
         long result = 0L;
         for (BlockMetaData block : blocks) {
-            result += block.getTotalByteSize();
+            result += block.getRowCount();
         }
         return result;
     }
