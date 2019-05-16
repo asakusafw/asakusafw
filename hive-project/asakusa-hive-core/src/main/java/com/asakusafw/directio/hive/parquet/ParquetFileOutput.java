@@ -15,6 +15,7 @@
  */
 package com.asakusafw.directio.hive.parquet;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -24,6 +25,8 @@ import java.util.Arrays;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
@@ -119,8 +122,25 @@ public class ParquetFileOutput<T> implements ModelOutput<T> {
         if (currentWriter != null) {
             currentWriter.close();
             currentWriter = null;
-            counter.add(Util.getFileSize(path, configuration));
+            counter.add(getFileSize());
         }
+    }
+
+    private long getFileSize() {
+        try {
+            FileSystem fs = path.getFileSystem(configuration);
+            FileStatus status = fs.getFileStatus(path);
+            return status.getLen();
+        } catch (FileNotFoundException e) {
+            LOG.debug(MessageFormat.format(
+                    "cannot obtain the Parquet file size: {0}",
+                    path), e);
+        } catch (IOException e) {
+            LOG.warn(MessageFormat.format(
+                    "cannot obtain the Parquet file size: {0}",
+                    path), e);
+        }
+        return 0;
     }
 
     // CHECKSTYLE:OFF RedundantModifierCheck

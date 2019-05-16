@@ -94,6 +94,10 @@ public class ParquetFileInput<T> implements ModelInput<T> {
 
     private MessageColumnIO columnIo;
 
+    private double averageBytesPerRecord;
+
+    private double lastBytes;
+
     /**
      * Creates a new instance.
      * @param descriptor the target data model descriptor
@@ -127,10 +131,16 @@ public class ParquetFileInput<T> implements ModelInput<T> {
         }
         rowRest--;
         reader.read();
-
-        // NOTE: only tell this is alive
-        counter.add(0);
+        advanceCounter();
         return true;
+    }
+
+    private void advanceCounter() {
+        double last = lastBytes;
+        double next = last + averageBytesPerRecord;
+        long delta = (long) (next - last);
+        counter.add(delta);
+        lastBytes = next;
     }
 
     private RecordReader<Object> prepareReader(T model) throws IOException {
@@ -161,6 +171,8 @@ public class ParquetFileInput<T> implements ModelInput<T> {
             if (blocks.isEmpty()) {
                 return null;
             }
+            long totalRecords = computeTotalRecords(blocks);
+            this.averageBytesPerRecord = (double) fragmentSize / totalRecords;
             if (LOG.isInfoEnabled()) {
                 LOG.info(MessageFormat.format(
                         Messages.getString("ParquetFileInput.infoLoadContents"), //$NON-NLS-1$
@@ -200,6 +212,14 @@ public class ParquetFileInput<T> implements ModelInput<T> {
                 path,
                 blocks,
                 fileMetaData.getSchema().getColumns());
+    }
+
+    private static long computeTotalRecords(List<BlockMetaData> blocks) {
+        long result = 0L;
+        for (BlockMetaData block : blocks) {
+            result += block.getRowCount();
+        }
+        return result;
     }
 
     private List<BlockMetaData> filterBlocks(List<BlockMetaData> blocks) {
@@ -262,8 +282,6 @@ public class ParquetFileInput<T> implements ModelInput<T> {
     public void close() throws IOException {
         if (fileReader != null) {
             fileReader.close();
-            fileReader = null;
-            counter.add(Util.getFileSize(path, hadoopConfiguration));
         }
     }
 }

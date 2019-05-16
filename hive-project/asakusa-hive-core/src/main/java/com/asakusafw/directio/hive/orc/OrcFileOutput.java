@@ -15,11 +15,13 @@
  */
 package com.asakusafw.directio.hive.orc;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.io.orc.OrcFile;
@@ -118,7 +120,27 @@ public class OrcFileOutput<T> implements ModelOutput<T> {
         if (currentWriter != null) {
             currentWriter.close();
             currentWriter = null;
-            counter.add(Util.getFileSize(path, fileSystem));
+            counter.add(getFileSize());
         }
+    }
+
+    private long getFileSize() {
+        if (fileSystem == null) {
+            // for backward compatibility
+            return 0;
+        }
+        try {
+            FileStatus status = fileSystem.getFileStatus(path);
+            return status.getLen();
+        } catch (FileNotFoundException e) {
+            LOG.debug(MessageFormat.format(
+                    "cannot obtain the ORC file size: {0}",
+                    path), e);
+        } catch (IOException e) {
+            LOG.warn(MessageFormat.format(
+                    "cannot obtain the ORC file size: {0}",
+                    path), e);
+        }
+        return 0;
     }
 }
