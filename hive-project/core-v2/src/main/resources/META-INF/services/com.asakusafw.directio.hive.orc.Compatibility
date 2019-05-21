@@ -1,0 +1,2 @@
+# for Hive 2.3.x
+com.asakusafw.directio.hive.orc.v2.CompatibilityV2

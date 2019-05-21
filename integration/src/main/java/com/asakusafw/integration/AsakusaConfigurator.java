@@ -111,6 +111,7 @@ public final class AsakusaConfigurator {
     /**
      * Represents action type.
      * @since 0.9.2
+     * @version 0.10.3
      */
     public enum Action {
 
@@ -133,6 +134,12 @@ public final class AsakusaConfigurator {
          * Error if it is not defined.
          */
         ERROR_IF_UNDEFINED,
+
+        /**
+         * Don't care even if it is not defined.
+         * @since 0.10.3
+         */
+        DONT_CARE_IF_UNDEFINED,
     }
 
     private static final class CommandConfigureAction implements Consumer<BaseProject<?>> {
@@ -154,8 +161,12 @@ public final class AsakusaConfigurator {
             Path path = Optional.ofNullable(source(project))
                     .filter(it -> it.isEmpty() == false)
                     .map(Paths::get)
-                    .orElseGet(this::missing);
-            project.with(EnvironmentConfigurator.of(environment, path));
+                    .orElse(null);
+            if(path != null) {
+                project.with(EnvironmentConfigurator.of(environment, path));
+            } else if (unsetOnMissing()) {
+                project.with(EnvironmentConfigurator.of(environment, (String) null));
+            }
         }
 
         private String source(BaseProject<?> project) {
@@ -165,17 +176,20 @@ public final class AsakusaConfigurator {
             case UNSET_IF_UNDEFINED:
             case SKIP_IF_UNDEFINED:
             case ERROR_IF_UNDEFINED:
+            case DONT_CARE_IF_UNDEFINED:
                 return project.property(property);
             default:
                 throw new AssertionError(actionType);
             }
         }
 
-        private Path missing() {
+        private boolean unsetOnMissing() {
             switch (actionType) {
             case UNSET_ALWAYS:
             case UNSET_IF_UNDEFINED:
-                return null;
+                return true;
+            case DONT_CARE_IF_UNDEFINED:
+                return false;
             case SKIP_IF_UNDEFINED:
                 throw new AssumptionViolatedException(MessageFormat.format(
                         "system property \"{0}\" should be defined",

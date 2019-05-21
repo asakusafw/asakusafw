@@ -12,7 +12,10 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>asakusa-hive-core</module>
+    <module>core-stub</module>
+    <module>core-v1</module>
+    <module>core-v2</module>
+    <module>core</module>
     <module>asakusa-hive-dmdl</module>
     <module>asakusa-hive-cli</module>
   </modules>

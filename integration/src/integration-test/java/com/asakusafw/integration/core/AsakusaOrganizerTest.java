@@ -41,8 +41,8 @@ public class AsakusaOrganizerTest {
      */
     @Rule
     public final AsakusaProjectProvider provider = new AsakusaProjectProvider()
-        .withProject(ContentsConfigurator.copy(data("organizer-simple")))
-        .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.UNSET_ALWAYS));
+            .withProject(ContentsConfigurator.copy(data("organizer-simple")))
+            .withProject(AsakusaConfigurator.hadoop(AsakusaConfigurator.Action.UNSET_ALWAYS));
 
     /**
      * help.

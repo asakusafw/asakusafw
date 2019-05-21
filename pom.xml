@@ -80,7 +80,8 @@
     <!-- artifact id/versions -->
     <hadoop.version>2.7.3</hadoop.version>
     <hadoop.artifact.id>hadoop-client</hadoop.artifact.id>
-    <hive.version>1.2.2</hive.version>
+    <hive1.version>1.2.2</hive1.version>
+    <hive2.version>2.3.4</hive2.version>
     <sdk.hive.version>1.2.2</sdk.hive.version>
     <snappy.version>1.1.2.6</snappy.version>
     <slf4j.version>1.7.25</slf4j.version>
@@ -623,7 +624,7 @@ encoding/<project>=UTF-8
       <dependency>
         <groupId>org.apache.hive</groupId>
         <artifactId>hive-exec</artifactId>
-        <version>${hive.version}</version>
+        <version>${hive1.version}</version>
         <exclusions>
           <exclusion>
             <groupId>log4j</groupId>

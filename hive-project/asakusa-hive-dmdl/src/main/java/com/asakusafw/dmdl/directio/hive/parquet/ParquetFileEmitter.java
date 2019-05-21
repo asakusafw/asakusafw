@@ -49,9 +49,6 @@ import com.asakusafw.utils.java.model.util.JavadocBuilder;
 import com.asakusafw.utils.java.model.util.Models;
 import com.asakusafw.utils.java.model.util.TypeBuilder;
 
-import parquet.column.ParquetProperties.WriterVersion;
-import parquet.hadoop.metadata.CompressionCodecName;
-
 /**
  * Emits a {@link DataFormat} class for parquet files.
  * @since 0.7.0
@@ -240,9 +237,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
             if (conf.getCompressionCodecName() != null) {
                 statements.add(new ExpressionBuilder(f, result)
                     .method("withCompressionCodecName", //$NON-NLS-1$
-                            new TypeBuilder(f, context.resolve(CompressionCodecName.class))
-                                .field(conf.getCompressionCodecName().name())
-                                .toExpression())
+                            Models.toLiteral(f, conf.getCompressionCodecName()))
                     .toStatement());
             }
             if (conf.getBlockSize() != null) {
@@ -273,9 +268,7 @@ public class ParquetFileEmitter extends JavaDataModelDriver {
             if (conf.getWriterVersion() != null) {
                 statements.add(new ExpressionBuilder(f, result)
                     .method("withWriterVersion", //$NON-NLS-1$
-                            new TypeBuilder(f, context.resolve(WriterVersion.class))
-                                .field(conf.getWriterVersion().name())
-                                .toExpression())
+                            Models.toLiteral(f, conf.getWriterVersion()))
                     .toStatement());
             }
             statements.add(new ExpressionBuilder(f, result).toReturnStatement());
