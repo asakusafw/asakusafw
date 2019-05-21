@@ -26,9 +26,6 @@ import com.asakusafw.dmdl.directio.hive.common.GeneratorTesterRoot;
 import com.asakusafw.dmdl.directio.hive.common.HiveDataModelTrait;
 import com.asakusafw.dmdl.semantics.ModelDeclaration;
 
-import parquet.column.ParquetProperties.WriterVersion;
-import parquet.hadoop.metadata.CompressionCodecName;
-
 /**
  * Test for {@link ParquetFileDriver}.
  */
@@ -94,13 +91,13 @@ public class ParquetFileDriverTest extends GeneratorTesterRoot {
         assertThat(trait.configuration().getOnMissingSource(), is(ExceptionHandlingStrategy.IGNORE));
         assertThat(trait.configuration().getOnMissingTarget(), is(ExceptionHandlingStrategy.FAIL));
         assertThat(trait.configuration().getOnIncompatibleType(), is(ExceptionHandlingStrategy.LOGGING));
-        assertThat(trait.configuration().getCompressionCodecName(), is(CompressionCodecName.UNCOMPRESSED));
+        assertThat(trait.configuration().getCompressionCodecName(), is("UNCOMPRESSED"));
         assertThat(trait.configuration().getBlockSize(), is(100000000));
         assertThat(trait.configuration().getDataPageSize(), is(1000001));
         assertThat(trait.configuration().getDictionaryPageSize(), is(1000002));
         assertThat(trait.configuration().getEnableDictionary(), is(false));
         assertThat(trait.configuration().getEnableValidation(), is(true));
-        assertThat(trait.configuration().getWriterVersion(), is(WriterVersion.PARQUET_2_0));
+        assertThat(trait.configuration().getWriterVersion(), is("PARQUET_2_0"));
     }
 
     /**

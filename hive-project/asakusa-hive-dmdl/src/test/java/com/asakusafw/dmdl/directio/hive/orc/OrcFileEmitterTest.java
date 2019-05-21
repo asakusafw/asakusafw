@@ -53,7 +53,7 @@ public class OrcFileEmitterTest extends GeneratorTesterRoot {
 
         OrcFormatConfiguration conf = format.getFormatConfiguration();
         assertThat(conf.getFormatVersion(), is(nullValue()));
-        assertThat(conf.getCompressionKind(), is(CompressionKind.SNAPPY));
+        assertThat(conf.getCompressionKind(CompressionKind.class), is(CompressionKind.SNAPPY));
         assertThat(conf.getStripeSize(), is(64L * 1024 * 1024));
 
         assertThat(loader.exists(OrcFileEmitter.CATEGORY, "AbstractModelOrcFileInputDescription"), is(true));
@@ -104,8 +104,8 @@ public class OrcFileEmitterTest extends GeneratorTesterRoot {
         assertThat(conf.getOnMissingSource(), is(ExceptionHandlingStrategy.IGNORE));
         assertThat(conf.getOnMissingTarget(), is(ExceptionHandlingStrategy.FAIL));
         assertThat(conf.getOnIncompatibleType(), is(ExceptionHandlingStrategy.LOGGING));
-        assertThat(conf.getFormatVersion(), is(OrcFile.Version.V_0_11));
-        assertThat(conf.getCompressionKind(), is(CompressionKind.ZLIB));
+        assertThat(conf.getFormatVersion(OrcFile.Version.class), is(OrcFile.Version.V_0_11));
+        assertThat(conf.getCompressionKind(CompressionKind.class), is(CompressionKind.ZLIB));
         assertThat(conf.getStripeSize(), is(123456789L));
     }
 

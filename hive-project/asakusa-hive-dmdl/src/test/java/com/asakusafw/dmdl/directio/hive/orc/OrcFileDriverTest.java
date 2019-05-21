@@ -86,8 +86,8 @@ public class OrcFileDriverTest extends GeneratorTesterRoot {
         assertThat(trait.configuration().getOnMissingSource(), is(ExceptionHandlingStrategy.IGNORE));
         assertThat(trait.configuration().getOnMissingTarget(), is(ExceptionHandlingStrategy.FAIL));
         assertThat(trait.configuration().getOnIncompatibleType(), is(ExceptionHandlingStrategy.LOGGING));
-        assertThat(trait.configuration().getFormatVersion(), is(OrcFile.Version.V_0_11));
-        assertThat(trait.configuration().getCompressionKind(), is(CompressionKind.ZLIB));
+        assertThat(trait.configuration().getFormatVersion(OrcFile.Version.class), is(OrcFile.Version.V_0_11));
+        assertThat(trait.configuration().getCompressionKind(CompressionKind.class), is(CompressionKind.ZLIB));
         assertThat(trait.configuration().getStripeSize(), is(123456789L));
     }
 

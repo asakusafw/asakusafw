@@ -27,9 +27,6 @@ import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
 import com.asakusafw.dmdl.directio.hive.common.GeneratorTesterRoot;
 import com.asakusafw.dmdl.directio.hive.common.HiveDataModelEmitter;
 
-import parquet.column.ParquetProperties.WriterVersion;
-import parquet.hadoop.metadata.CompressionCodecName;
-
 /**
  * Test for {@link ParquetFileEmitter}.
  */
@@ -113,13 +110,13 @@ public class ParquetFileEmitterTest extends GeneratorTesterRoot {
         assertThat(conf.getOnMissingSource(), is(ExceptionHandlingStrategy.IGNORE));
         assertThat(conf.getOnMissingTarget(), is(ExceptionHandlingStrategy.FAIL));
         assertThat(conf.getOnIncompatibleType(), is(ExceptionHandlingStrategy.LOGGING));
-        assertThat(conf.getCompressionCodecName(), is(CompressionCodecName.UNCOMPRESSED));
+        assertThat(conf.getCompressionCodecName(), is("UNCOMPRESSED"));
         assertThat(conf.getBlockSize(), is(100000000));
         assertThat(conf.getDataPageSize(), is(1000001));
         assertThat(conf.getDictionaryPageSize(), is(1000002));
         assertThat(conf.getEnableDictionary(), is(false));
         assertThat(conf.getEnableValidation(), is(true));
-        assertThat(conf.getWriterVersion(), is(WriterVersion.PARQUET_2_0));
+        assertThat(conf.getWriterVersion(), is("PARQUET_2_0"));
     }
 
     private AbstractParquetFileFormat<?> load(ModelLoader loader, String simpleName) {

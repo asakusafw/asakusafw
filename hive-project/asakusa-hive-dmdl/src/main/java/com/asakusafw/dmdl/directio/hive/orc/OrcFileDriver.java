@@ -18,11 +18,10 @@ package com.asakusafw.dmdl.directio.hive.orc;
 import java.math.BigInteger;
 import java.util.Map;
 
-import org.apache.hadoop.hive.ql.io.orc.CompressionKind;
-import org.apache.hadoop.hive.ql.io.orc.OrcFile;
 import org.apache.hadoop.hive.serde2.typeinfo.PrimitiveTypeInfo;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 
+import com.asakusafw.directio.hive.orc.Compatibility;
 import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
 import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
 import com.asakusafw.dmdl.Diagnostic;
@@ -54,8 +53,11 @@ The attributed declaration can have:
 <li> with {@code incompatible_type=[string-literal]}  (default: {@code "fail"}) </li>
 </ul>
  * @since 0.7.0
+ * @version 0.10.3
  */
 public class OrcFileDriver extends ModelAttributeDriver {
+
+    private static final Compatibility COMPAT = Compatibility.getInstance();
 
     /**
      * The attribute name.
@@ -179,10 +181,12 @@ public class OrcFileDriver extends ModelAttributeDriver {
         AstLiteral formatVersion = take(environment, attribute, elements, ELEMENT_FORMAT_VERSION, LiteralKind.STRING);
         if (formatVersion != null) {
             String symbol = formatVersion.toStringValue();
-            try {
-                OrcFile.Version value = OrcFile.Version.byName(symbol);
-                result.configuration().withFormatVersion(value);
-            } catch (IllegalArgumentException e) {
+            String versionName = COMPAT.findVersionId(symbol)
+                    .map(Enum::name)
+                    .orElse(null);
+            if (versionName != null) {
+                result.configuration().withFormatVersion(versionName);
+            } else {
                 environment.report(new Diagnostic(
                         Level.ERROR,
                         formatVersion,
@@ -198,12 +202,12 @@ public class OrcFileDriver extends ModelAttributeDriver {
     private void consumeCompressionKind(
             DmdlSemantics environment, AstAttribute attribute,
             Map<String, AstAttributeElement> elements, OrcFileTrait result) {
-        CompressionKind option = consumeOption(
+        Enum<?> option = consumeOption(
                 environment, attribute, elements,
                 ELEMENT_COMPRESSION_KIND, Messages.getString("OrcFileDriver.labelCompression"), //$NON-NLS-1$
-                CompressionKind.values());
+                COMPAT.getCompressionKindClass().getEnumConstants());
         if (option != null) {
-            result.configuration().withCompressionKind(option);
+            result.configuration().withCompressionKind(option.name());
         }
     }
 

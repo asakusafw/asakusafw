@@ -21,9 +21,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.hadoop.hive.ql.io.orc.CompressionKind;
-import org.apache.hadoop.hive.ql.io.orc.OrcFile;
-
 import com.asakusafw.directio.hive.orc.AbstractOrcFileFormat;
 import com.asakusafw.directio.hive.orc.OrcFormatConfiguration;
 import com.asakusafw.directio.hive.serde.DataModelDescriptor;
@@ -239,17 +236,13 @@ public class OrcFileEmitter extends JavaDataModelDriver {
             if (conf.getFormatVersion() != null) {
                 statements.add(new ExpressionBuilder(f, result)
                         .method("withFormatVersion", //$NON-NLS-1$
-                                new TypeBuilder(f, context.resolve(OrcFile.Version.class))
-                                    .field(conf.getFormatVersion().name())
-                                    .toExpression())
+                                Models.toLiteral(f, conf.getFormatVersion()))
                         .toStatement());
             }
             if (conf.getCompressionKind() != null) {
                 statements.add(new ExpressionBuilder(f, result)
                     .method("withCompressionKind", //$NON-NLS-1$
-                            new TypeBuilder(f, context.resolve(CompressionKind.class))
-                                .field(conf.getCompressionKind().name())
-                                .toExpression())
+                            Models.toLiteral(f, conf.getCompressionKind()))
                     .toStatement());
             }
             if (conf.getStripeSize() != null) {

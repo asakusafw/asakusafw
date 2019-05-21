@@ -1,0 +1,2 @@
+# for Hive 1.2.x
+com.asakusafw.directio.hive.parquet.v1.Compatibility

@@ -17,11 +17,11 @@ package com.asakusafw.dmdl.directio.hive.parquet;
 
 import java.math.BigInteger;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 
-import com.asakusafw.directio.hive.parquet.ParquetValueDriver;
-import com.asakusafw.directio.hive.parquet.ParquetValueDrivers;
+import com.asakusafw.directio.hive.parquet.Compatibility;
 import com.asakusafw.directio.hive.serde.DataModelMapping.ExceptionHandlingStrategy;
 import com.asakusafw.directio.hive.serde.DataModelMapping.FieldMappingStrategy;
 import com.asakusafw.dmdl.Diagnostic;
@@ -38,9 +38,6 @@ import com.asakusafw.dmdl.semantics.ModelDeclaration;
 import com.asakusafw.dmdl.semantics.PropertyDeclaration;
 import com.asakusafw.dmdl.spi.ModelAttributeDriver;
 import com.asakusafw.dmdl.util.AttributeUtil;
-
-import parquet.column.ParquetProperties;
-import parquet.hadoop.metadata.CompressionCodecName;
 
 /**
  * Processes <code>&#64;directio.hive.parquet</code> attributes.
@@ -64,6 +61,8 @@ The attributed declaration can have:
  * @since 0.7.0
  */
 public class ParquetFileDriver extends ModelAttributeDriver {
+
+    private static final Compatibility COMPAT = Compatibility.getInstance();
 
     /**
      * The attribute name.
@@ -160,8 +159,8 @@ public class ParquetFileDriver extends ModelAttributeDriver {
             }
             Class<?> valueClass = EmitContext.getFieldTypeAsClass(property);
             TypeInfo typeInfo = HiveFieldTrait.getTypeInfo(property);
-            ParquetValueDriver driver = ParquetValueDrivers.find(typeInfo, valueClass);
-            if (driver == null) {
+            Optional<?> driver = COMPAT.findValueDriver(typeInfo, valueClass);
+            if (!driver.isPresent()) {
                 environment.report(new Diagnostic(Diagnostic.Level.ERROR,
                         property.getOriginalAst(),
                         Messages.getString("ParquetFileDriver.diagnosticUnsupportedPropertyType"), //$NON-NLS-1$
@@ -218,10 +217,12 @@ public class ParquetFileDriver extends ModelAttributeDriver {
         AstLiteral formatVersion = take(environment, attribute, elements, ELEMENT_FORMAT_VERSION, LiteralKind.STRING);
         if (formatVersion != null) {
             String symbol = formatVersion.toStringValue();
-            try {
-                ParquetProperties.WriterVersion value = ParquetProperties.WriterVersion.fromString(symbol);
-                result.configuration().withWriterVersion(value);
-            } catch (IllegalArgumentException e) {
+            String verionName = COMPAT.findVersionId(symbol)
+                    .map(Enum::name)
+                    .orElse(null);
+            if (verionName != null) {
+                result.configuration().withWriterVersion(verionName);
+            } else {
                 environment.report(new Diagnostic(
                         Level.ERROR,
                         formatVersion,
@@ -237,12 +238,12 @@ public class ParquetFileDriver extends ModelAttributeDriver {
     private void consumeCompression(
             DmdlSemantics environment, AstAttribute attribute,
             Map<String, AstAttributeElement> elements, ParquetFileTrait result) {
-        CompressionCodecName option = consumeOption(
+        Enum<?> option = consumeOption(
                 environment, attribute, elements,
                 ELEMENT_COMPRESSION, Messages.getString("ParquetFileDriver.labelCompression"), //$NON-NLS-1$
-                CompressionCodecName.values());
+                COMPAT.getCompressionCodecNameClass().getEnumConstants());
         if (option != null) {
-            result.configuration().withCompressionCodecName(option);
+            result.configuration().withCompressionCodecName(option.name());
         }
     }
 
