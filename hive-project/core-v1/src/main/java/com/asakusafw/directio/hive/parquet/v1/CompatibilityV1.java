@@ -31,6 +31,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.serde2.typeinfo.TypeInfo;
 
 import com.asakusafw.directio.hive.parquet.AbstractParquetFileFormat;
+import com.asakusafw.directio.hive.parquet.Compatibility;
 import com.asakusafw.directio.hive.parquet.ParquetFormatConfiguration;
 import com.asakusafw.directio.hive.serde.DataModelMapping;
 import com.asakusafw.runtime.directio.Counter;
@@ -51,9 +52,9 @@ import parquet.hadoop.metadata.CompressionCodecName;
  * compatibility layer for Direct I/O Parquet support.
  * @since 0.10.3
  */
-public class Compatibility extends com.asakusafw.directio.hive.parquet.Compatibility {
+public class CompatibilityV1 extends Compatibility {
 
-    static final Log LOG = LogFactory.getLog(Compatibility.class);
+    static final Log LOG = LogFactory.getLog(CompatibilityV1.class);
 
     @Override
     protected int getPriority() {

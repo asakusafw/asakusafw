@@ -35,6 +35,7 @@ import org.apache.orc.OrcConf;
 import org.apache.orc.StripeInformation;
 
 import com.asakusafw.directio.hive.orc.AbstractOrcFileFormat;
+import com.asakusafw.directio.hive.orc.Compatibility;
 import com.asakusafw.directio.hive.orc.OrcFileInput;
 import com.asakusafw.directio.hive.orc.OrcFileOutput;
 import com.asakusafw.directio.hive.orc.OrcFormatConfiguration;
@@ -51,9 +52,9 @@ import com.asakusafw.runtime.io.ModelOutput;
  * compatibility layer for Direct I/O ORC File support.
  * @since 0.10.3
  */
-public class Compatibility extends com.asakusafw.directio.hive.orc.Compatibility {
+public class CompatibilityV2 extends Compatibility {
 
-    static final Log LOG = LogFactory.getLog(Compatibility.class);
+    static final Log LOG = LogFactory.getLog(CompatibilityV2.class);
 
     @Override
     protected int getPriority() {
