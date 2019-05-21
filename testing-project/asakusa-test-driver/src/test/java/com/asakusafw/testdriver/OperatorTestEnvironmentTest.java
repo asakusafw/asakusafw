@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Assume;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -37,6 +38,7 @@ import com.asakusafw.runtime.core.Report;
 import com.asakusafw.runtime.core.Report.Level;
 import com.asakusafw.runtime.core.ResourceConfiguration;
 import com.asakusafw.runtime.flow.RuntimeResourceManager;
+import com.asakusafw.runtime.windows.WindowsSupport;
 import com.asakusafw.testdriver.testing.dsl.SimpleOperator;
 import com.asakusafw.testdriver.testing.dsl.SimpleOperatorImpl;
 import com.asakusafw.testdriver.testing.dsl.SimpleStreamFormat;
@@ -46,6 +48,12 @@ import com.asakusafw.testdriver.testing.model.Simple;
  * Test for {@link OperatorTestEnvironment}.
  */
 public class OperatorTestEnvironmentTest {
+
+    /**
+     * Windows platform support.
+     */
+    @ClassRule
+    public static final WindowsSupport WINDOWS_SUPPORT = new WindowsSupport();
 
     /**
      * Resets all Hadoop file systems.
