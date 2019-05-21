@@ -234,8 +234,20 @@ class AsakusaSdkPlugin implements Plugin<Project> {
                         compile("com.asakusafw:asakusa-hive-core:${base.frameworkVersion}") {
                             exclude group: 'org.apache.hive', module: 'hive-exec'
                         }
-                        compile("org.apache.hive:hive-exec:${base.hiveVersion}@jar") {
-                            transitive false
+                        if (features.hive instanceof Collection || features.hive instanceof Object[]) {
+                            for (String s : features.hive) {
+                                compile(features.hive) {
+                                    transitive false
+                                }
+                            }
+                        } else if (features.hive instanceof String || features.hive instanceof GString) {
+                            compile(features.hive) {
+                                transitive false
+                            }
+                        } else {
+                            compile("org.apache.hive:hive-exec:${base.hiveVersion}@jar") {
+                                transitive false
+                            }
                         }
                     }
                 }
