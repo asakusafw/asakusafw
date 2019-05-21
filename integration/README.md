@@ -13,7 +13,7 @@ This integration test is designed for modern Linux platform, which must have `/b
 * `PATH`
   * no `hadoop` command on the path
 * `JAVA_HOME`
-  * refer to Java SDK `>= 1.8`
+  * refer to Java SDK `= 1.8`
 
 ## How to run tests
 
