@@ -79,6 +79,17 @@ public class CsvFieldTrait implements Trait<CsvFieldTrait> {
      * Returns the CSV field kind of the property.
      * If the field kind is not declared explicitly in the property, this returns the default kind.
      * @param property target property
+     * @return the field kind
+     * @throws IllegalArgumentException if some parameters were {@code null}
+     */
+    public static Kind getKind(PropertyDeclaration property) {
+        return getKind(property, Kind.VALUE);
+    }
+
+    /**
+     * Returns the CSV field kind of the property.
+     * If the field kind is not declared explicitly in the property, this returns the default kind.
+     * @param property target property
      * @param defaultKind default kind
      * @return the field kind
      * @throws IllegalArgumentException if some parameters were {@code null}

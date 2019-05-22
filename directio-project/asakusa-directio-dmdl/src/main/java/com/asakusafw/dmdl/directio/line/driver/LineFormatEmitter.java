@@ -24,6 +24,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asakusafw.dmdl.directio.line.driver.LineFormatTrait.Configuration;
 import com.asakusafw.dmdl.directio.util.DirectFileInputDescriptionGenerator;
 import com.asakusafw.dmdl.directio.util.DirectFileOutputDescriptionGenerator;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
@@ -124,7 +125,8 @@ public class LineFormatEmitter extends JavaDataModelDriver {
                 "{0}LineFormat"); //$NON-NLS-1$
         LOG.debug("Generating line format for {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString());
-        new LineStreamFormatGenerator(next, model, model.getTrait(LineFormatTrait.class).getConfiguration()).emit();
+        Configuration conf = model.getTrait(LineFormatTrait.class).getConfiguration();
+        new LineStreamFormatGenerator(next, model, conf).emit();
         LOG.debug("Generated line format for {}: {}", //$NON-NLS-1$
                 context.getQualifiedTypeName().toNameString(),
                 next.getQualifiedTypeName().toNameString());

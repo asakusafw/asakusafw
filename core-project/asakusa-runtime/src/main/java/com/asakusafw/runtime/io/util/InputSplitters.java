@@ -42,6 +42,6 @@ public final class InputSplitters {
     }
 
     static boolean isWhole(long offset, long splitSize) {
-        return offset == 0 && (splitSize <= 0 || splitSize == Long.MAX_VALUE);
+        return offset == 0 && (splitSize < 0 || splitSize == Long.MAX_VALUE);
     }
 }
