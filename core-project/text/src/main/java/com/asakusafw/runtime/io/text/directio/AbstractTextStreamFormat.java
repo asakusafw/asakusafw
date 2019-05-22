@@ -36,6 +36,7 @@ import com.asakusafw.runtime.io.text.TextOutput;
 import com.asakusafw.runtime.io.text.driver.InputOption;
 import com.asakusafw.runtime.io.text.driver.OutputOption;
 import com.asakusafw.runtime.io.text.driver.RecordDefinition;
+import com.asakusafw.runtime.io.util.InputSplitter;
 import com.asakusafw.runtime.value.StringOption;
 
 /**
@@ -178,7 +179,7 @@ public abstract class AbstractTextStreamFormat<T> extends ConfigurableBinaryStre
         InputSplitter splitter = getInputSplitter();
         if (splitter != null) {
             assert getCompressionCodecClass() == null;
-            return splitter.trim(stream, offset, splitSize != -1L ? splitSize : Long.MAX_VALUE);
+            return splitter.trim(stream, offset, splitSize);
         }
         Class<? extends CompressionCodec> codecClass = getCompressionCodecClass();
         if (codecClass != null) {

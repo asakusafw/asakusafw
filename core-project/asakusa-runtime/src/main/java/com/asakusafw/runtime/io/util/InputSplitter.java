@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io.text.directio;
+package com.asakusafw.runtime.io.util;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
  * Splits {@link InputStream}.
- * @since 0.9.1
+ * @since 0.10.3
  */
 @FunctionalInterface
 public interface InputSplitter {
@@ -45,9 +45,10 @@ public interface InputSplitter {
 
     /**
      * Returns the lower limit of split size.
+     * The each fragment must have size greater than or equal to the returned value.
      * @return the lower limit of split size in bytes
      */
     default long getLowerLimitSize() {
-        return Long.MAX_VALUE;
+        return 1L;
     }
 }

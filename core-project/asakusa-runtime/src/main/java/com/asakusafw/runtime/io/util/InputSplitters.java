@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io.text.directio;
+package com.asakusafw.runtime.io.util;
 
 import com.asakusafw.runtime.io.util.LineFeedDelimitedInputStream;
 
 /**
  * Utilities about {@link InputSplitter}.
- * @since 0.9.1
+ * @since 0.10.3
  */
 public final class InputSplitters {
 
@@ -42,6 +42,6 @@ public final class InputSplitters {
     }
 
     static boolean isWhole(long offset, long splitSize) {
-        return offset == 0 && splitSize == Long.MAX_VALUE;
+        return offset == 0 && (splitSize <= 0 || splitSize == Long.MAX_VALUE);
     }
 }

@@ -35,6 +35,7 @@ import com.asakusafw.runtime.io.json.JsonFormat.InputOption;
 import com.asakusafw.runtime.io.json.JsonFormat.OutputOption;
 import com.asakusafw.runtime.io.json.JsonInput;
 import com.asakusafw.runtime.io.json.JsonOutput;
+import com.asakusafw.runtime.io.util.InputSplitter;
 import com.asakusafw.runtime.value.StringOption;
 
 /**
@@ -164,7 +165,7 @@ public abstract class AbstractJsonStreamFormat<T> extends ConfigurableBinaryStre
         InputSplitter splitter = getInputSplitter();
         if (splitter != null) {
             assert getCompressionCodecClass() == null;
-            return splitter.trim(stream, offset, splitSize != -1L ? splitSize : Long.MAX_VALUE);
+            return splitter.trim(stream, offset, splitSize);
         }
         Class<? extends CompressionCodec> codecClass = getCompressionCodecClass();
         if (codecClass != null) {

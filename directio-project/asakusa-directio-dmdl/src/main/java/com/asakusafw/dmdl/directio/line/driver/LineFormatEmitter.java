@@ -328,9 +328,7 @@ public class LineFormatEmitter extends JavaDataModelDriver {
 
         private MethodDeclaration createGetMinimumFragmentSize() {
             boolean fastMode = isFastMode();
-            Expression value = fastMode
-                ? new TypeBuilder(f, context.resolve(Long.class)).field("MAX_VALUE").toExpression() //$NON-NLS-1$
-                : Models.toLiteral(f, -1L);
+            Expression value = fastMode ? Models.toLiteral(f, 1) : Models.toLiteral(f, -1);
             return f.newMethodDeclaration(
                     null,
                     new AttributeBuilder(f)

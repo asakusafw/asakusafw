@@ -996,7 +996,7 @@ public class JsonFormatEmitterTest extends GeneratorTesterRoot {
                 "};",
         });
         BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject(SEGMENT, "SimpleJsonFormat");
-        assertThat(support.getMinimumFragmentSize(), is(not(-1L)));
+        assertThat(support.getMinimumFragmentSize(), is(greaterThan(0L)));
 
         byte[] contents = write(loaded, loaded.newModel("Simple")
                 .setOption("a", new StringOption("A")));
@@ -1022,7 +1022,7 @@ public class JsonFormatEmitterTest extends GeneratorTesterRoot {
                 "};",
         });
         BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject(SEGMENT, "SimpleJsonFormat");
-        assertThat(support.getMinimumFragmentSize(), is(not(-1L)));
+        assertThat(support.getMinimumFragmentSize(), is(greaterThan(0L)));
 
         byte[] contents = write(loaded, loaded.newModel("Simple")
                 .setOption("a", new StringOption("A"))
@@ -1050,7 +1050,7 @@ public class JsonFormatEmitterTest extends GeneratorTesterRoot {
                 "};",
         });
         BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject(SEGMENT, "SimpleJsonFormat");
-        assertThat(support.getMinimumFragmentSize(), is(not(-1L)));
+        assertThat(support.getMinimumFragmentSize(), is(greaterThan(0L)));
 
         byte[] contents = write(loaded, loaded.newModel("Simple")
                 .setOption("a", new StringOption("A"))

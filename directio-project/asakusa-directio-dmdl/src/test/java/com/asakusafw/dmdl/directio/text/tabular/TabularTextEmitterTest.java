@@ -105,7 +105,7 @@ public class TabularTextEmitterTest extends GeneratorTesterRoot {
 
         BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleTabularTextFormat");
         assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
-        assertThat(support.getMinimumFragmentSize(), is(not(-1L)));
+        assertThat(support.getMinimumFragmentSize(), is(greaterThan(0L)));
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -1378,7 +1378,7 @@ public class TabularTextEmitterTest extends GeneratorTesterRoot {
                 "};",
         });
         BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleTabularTextFormat");
-        assertThat(support.getMinimumFragmentSize(), is(not(-1L)));
+        assertThat(support.getMinimumFragmentSize(), is(greaterThan(0L)));
 
         byte[] contents = write(loaded, loaded.newModel("Simple")
                 .setOption("a", new StringOption("A")));
@@ -1402,7 +1402,7 @@ public class TabularTextEmitterTest extends GeneratorTesterRoot {
                 "};",
         });
         BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleTabularTextFormat");
-        assertThat(support.getMinimumFragmentSize(), is(not(-1L)));
+        assertThat(support.getMinimumFragmentSize(), is(greaterThan(0L)));
 
         byte[] contents = write(loaded, loaded.newModel("Simple")
                 .setOption("a", new StringOption("A"))
@@ -1428,7 +1428,7 @@ public class TabularTextEmitterTest extends GeneratorTesterRoot {
                 "};",
         });
         BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("text", "SimpleTabularTextFormat");
-        assertThat(support.getMinimumFragmentSize(), is(not(-1L)));
+        assertThat(support.getMinimumFragmentSize(), is(greaterThan(0L)));
 
         byte[] contents = write(loaded, loaded.newModel("Simple")
                 .setOption("a", new StringOption("A"))

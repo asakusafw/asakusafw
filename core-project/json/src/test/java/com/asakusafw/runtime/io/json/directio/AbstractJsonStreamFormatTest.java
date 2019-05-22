@@ -44,6 +44,8 @@ import com.asakusafw.runtime.io.json.PropertyAdapter;
 import com.asakusafw.runtime.io.json.PropertyDefinition;
 import com.asakusafw.runtime.io.json.ValueReader;
 import com.asakusafw.runtime.io.json.ValueWriter;
+import com.asakusafw.runtime.io.util.InputSplitter;
+import com.asakusafw.runtime.io.util.InputSplitters;
 
 /**
  * Test for {@link AbstractJsonStreamFormat}.
@@ -96,7 +98,7 @@ public class AbstractJsonStreamFormatTest {
         MockFormat format = format(3)
                 .withInputSplitter(InputSplitters.byLineFeed());
         assertThat(format.getPreferredFragmentSize(), is(-1L));
-        assertThat(format.getMinimumFragmentSize(), is(greaterThan(0L)));
+        assertThat(format.getMinimumFragmentSize(), is(greaterThanOrEqualTo(0L)));
 
         int[][] data = {
                 { 11, 12, 13, },

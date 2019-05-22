@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io.text.directio;
+package com.asakusafw.runtime.io.util;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;

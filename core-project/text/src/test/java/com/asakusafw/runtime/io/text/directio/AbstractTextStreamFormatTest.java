@@ -52,6 +52,8 @@ import com.asakusafw.runtime.io.text.driver.RecordDefinition;
 import com.asakusafw.runtime.io.text.mock.MockFieldAdapter;
 import com.asakusafw.runtime.io.text.mock.MockFieldReader;
 import com.asakusafw.runtime.io.text.mock.MockFieldWriter;
+import com.asakusafw.runtime.io.util.InputSplitter;
+import com.asakusafw.runtime.io.util.InputSplitters;
 
 /**
  * Test for {@link AbstractTextStreamFormat}.
@@ -104,7 +106,7 @@ public class AbstractTextStreamFormatTest {
         MockFormat format = format(3)
                 .withInputSplitter(InputSplitters.byLineFeed());
         assertThat(format.getPreferredFragmentSize(), is(-1L));
-        assertThat(format.getMinimumFragmentSize(), is(greaterThan(0L)));
+        assertThat(format.getMinimumFragmentSize(), is(greaterThanOrEqualTo(0L)));
 
         String[][] data = {
                 { "A", "B", "C", },
