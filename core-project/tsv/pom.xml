@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <name>Extended DMDL Plug-ins for WindGate</name>
-  <artifactId>asakusa-windgate-dmdl-ext</artifactId>
+  <name>Legacy TSV Format Support for Asakusa Runtime</name>
+  <artifactId>asakusa-runtime-tsv</artifactId>
   <parent>
-    <artifactId>asakusa-sandbox-project</artifactId>
-    <groupId>com.asakusafw.sandbox</groupId>
+    <artifactId>asakusa-core-project</artifactId>
+    <groupId>com.asakusafw</groupId>
     <version>0.10.3-SNAPSHOT</version>
   </parent>
 
   <packaging>jar</packaging>
+
   <dependencies>
     <dependency>
-      <groupId>com.asakusafw</groupId>
-      <artifactId>asakusa-runtime-tsv</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.asakusafw</groupId>
-      <artifactId>asakusa-windgate-dmdl</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>asakusa-runtime</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -28,23 +24,14 @@
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.asakusafw</groupId>
-      <artifactId>asakusa-windgate-vocabulary</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>asakusa-runtime</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.asakusafw</groupId>
-      <artifactId>jsr199-testing</artifactId>
-      <version>${project.version}</version>
+      <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>

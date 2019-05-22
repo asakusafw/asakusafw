@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io;
+package com.asakusafw.runtime.io.tsv;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -26,6 +26,9 @@ import java.math.BigDecimal;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.asakusafw.runtime.io.RecordParser;
+import com.asakusafw.runtime.io.tsv.TsvEmitter;
+import com.asakusafw.runtime.io.tsv.TsvParser;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.Date;

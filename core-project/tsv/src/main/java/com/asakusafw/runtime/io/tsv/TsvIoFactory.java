@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io;
+package com.asakusafw.runtime.io.tsv;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +22,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+
+import com.asakusafw.runtime.io.ModelIoFactory;
+import com.asakusafw.runtime.io.RecordEmitter;
+import com.asakusafw.runtime.io.RecordParser;
 
 /**
  * An implementation of {@link ModelIoFactory} for using TSV files.

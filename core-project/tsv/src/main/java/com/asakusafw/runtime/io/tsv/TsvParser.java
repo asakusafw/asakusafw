@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io;
+package com.asakusafw.runtime.io.tsv;
 
-import static com.asakusafw.runtime.io.TsvConstants.*;
+import static com.asakusafw.runtime.io.tsv.TsvConstants.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,6 +32,8 @@ import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.asakusafw.runtime.io.RecordFormatException;
+import com.asakusafw.runtime.io.RecordParser;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.DateOption;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io;
+package com.asakusafw.runtime.io.tsv;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -26,7 +26,10 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 
+import com.asakusafw.runtime.io.ModelInput;
+import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.testing.model.MockModel;
+import com.asakusafw.runtime.io.tsv.TsvIoFactory;
 
 /**
  * Test for {@link TsvIoFactory}.

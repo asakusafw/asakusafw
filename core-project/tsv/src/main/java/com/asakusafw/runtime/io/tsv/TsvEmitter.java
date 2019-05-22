@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io;
+package com.asakusafw.runtime.io.tsv;
 
-import static com.asakusafw.runtime.io.TsvConstants.*;
+import static com.asakusafw.runtime.io.tsv.TsvConstants.*;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -30,6 +30,8 @@ import java.text.MessageFormat;
 
 import org.apache.hadoop.io.Text;
 
+import com.asakusafw.runtime.io.RecordEmitter;
+import com.asakusafw.runtime.io.RecordFormatException;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.DateOption;

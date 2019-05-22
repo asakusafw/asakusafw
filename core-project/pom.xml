@@ -19,6 +19,7 @@
     <module>asakusa-runtime-workaround</module>
     <module>text</module>
     <module>json</module>
+    <module>tsv</module>
     <module>asakusa-runtime-all</module>
   </modules>
 

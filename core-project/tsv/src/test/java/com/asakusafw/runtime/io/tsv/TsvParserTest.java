@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.asakusafw.runtime.io;
+package com.asakusafw.runtime.io.tsv;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import org.junit.After;
 import org.junit.Test;
 
+import com.asakusafw.runtime.io.tsv.TsvParser;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.Date;
@@ -49,7 +50,7 @@ public class TsvParserTest {
     private TsvParser parser;
 
     private void create(String fileName) throws IOException {
-        InputStream in = TsvParserTest.class.getResourceAsStream("tsv/" + fileName);
+        InputStream in = TsvParserTest.class.getResourceAsStream(fileName);
         assertThat(fileName, in, is(not(nullValue())));
         parser = new TsvParser(new InputStreamReader(in, "UTF-8"));
     }
