@@ -32,7 +32,6 @@ import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.asakusafw.runtime.io.text.value.StringOptionFieldAdapter;
 import com.asakusafw.runtime.value.BooleanOption;
 import com.asakusafw.runtime.value.ByteOption;
 import com.asakusafw.runtime.value.DateOption;
@@ -45,6 +44,7 @@ import com.asakusafw.runtime.value.IntOption;
 import com.asakusafw.runtime.value.LongOption;
 import com.asakusafw.runtime.value.ShortOption;
 import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.runtime.value.StringOptionUtil;
 import com.asakusafw.runtime.value.ValueOption;
 
 /**
@@ -450,7 +450,7 @@ public final class TsvParser implements RecordParser {
 
     private void append(CharBuffer source, StringOption target) throws RecordFormatException {
         try {
-            StringOptionFieldAdapter.append(source, target, encoder, encodeBuffer);
+            StringOptionUtil.append(source, target, encoder, encodeBuffer);
         } catch (CharacterCodingException e) {
             throw new RecordFormatException(MessageFormat.format(
                     "Cannot process a character string (\"{0}\")",

@@ -19,21 +19,19 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CharsetEncoder;
-import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 
-import org.apache.hadoop.io.Text;
-
 import com.asakusafw.runtime.io.text.TextUtil;
 import com.asakusafw.runtime.io.text.driver.FieldAdapter;
 import com.asakusafw.runtime.value.StringOption;
+import com.asakusafw.runtime.value.StringOptionUtil;
 
 /**
  * An implementation of {@link FieldAdapter} which accepts {@link StringOption}.
  * @since 0.9.1
- * @version 0.10.2
+ * @version 0.10.3
  */
 public final class StringOptionFieldAdapter extends ValueOptionFieldAdapter<StringOption> {
 
@@ -62,59 +60,11 @@ public final class StringOptionFieldAdapter extends ValueOptionFieldAdapter<Stri
             return;
         }
         try {
-            append(CharBuffer.wrap(contents), property, encoder, encodeBuffer);
+            StringOptionUtil.append(CharBuffer.wrap(contents), property, encoder, encodeBuffer);
         } catch (CharacterCodingException e) {
             throw new IllegalArgumentException(MessageFormat.format(
                     "cannot map input string to UTF-8: {0}",
                     TextUtil.quote(contents)), e);
-        }
-    }
-
-    /**
-     * Appends source contents into the destination string.
-     * @param source the source buffer
-     * @param destination the target StringOption
-     * @param encoder the encoder
-     * @param buffer the working buffer
-     * @throws CharacterCodingException if error occurred while encoding source input
-     */
-    public static void append(
-            CharBuffer source, StringOption destination,
-            CharsetEncoder encoder, ByteBuffer buffer) throws CharacterCodingException {
-        if (source.hasRemaining() == false) {
-            return;
-        }
-        Text text = destination.get();
-        encoder.reset();
-        while (source.hasRemaining()) {
-            buffer.clear();
-            CoderResult r1 = encoder.encode(source, buffer, false);
-            if (r1.isError()) {
-                r1.throwException();
-            }
-            append0(buffer, text);
-            if (r1.isUnderflow()) {
-                buffer.clear();
-                CoderResult r2 = encoder.encode(source, buffer, true);
-                if (r2.isError()) {
-                    r2.throwException();
-                }
-                append0(buffer, text);
-                break;
-            }
-        }
-        buffer.clear();
-        CoderResult r3 = encoder.flush(buffer);
-        if (r3.isError()) {
-            r3.throwException();
-        }
-        append0(buffer, text);
-    }
-
-    private static void append0(ByteBuffer buffer, Text text) {
-        buffer.flip();
-        if (buffer.hasRemaining()) {
-            text.append(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.remaining());
         }
     }
 
