@@ -23,6 +23,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
@@ -33,7 +34,7 @@ import org.apache.hadoop.io.Text;
 /**
  * Utilities for {@link StringOption}.
  * @since 0.8.0
- * @version 0.9.1
+ * @version 0.10.3
  */
 public final class StringOptionUtil {
 
@@ -331,6 +332,55 @@ public final class StringOptionUtil {
             CHAR_ARRAY_BUFFERS.set(cs);
         }
         return cs;
+    }
+
+    /**
+     * Appends source contents into the destination string.
+     * @param source the source buffer
+     * @param destination the target StringOption
+     * @param encoder the encoder
+     * @param buffer the working buffer
+     * @throws CharacterCodingException if error occurred while encoding source input
+     * @since 0.10.3
+     */
+    public static void append(
+            CharBuffer source, StringOption destination,
+            CharsetEncoder encoder, ByteBuffer buffer) throws CharacterCodingException {
+        if (source.hasRemaining() == false) {
+            return;
+        }
+        Text text = destination.get();
+        encoder.reset();
+        while (source.hasRemaining()) {
+            buffer.clear();
+            CoderResult r1 = encoder.encode(source, buffer, false);
+            if (r1.isError()) {
+                r1.throwException();
+            }
+            append0(buffer, text);
+            if (r1.isUnderflow()) {
+                buffer.clear();
+                CoderResult r2 = encoder.encode(source, buffer, true);
+                if (r2.isError()) {
+                    r2.throwException();
+                }
+                append0(buffer, text);
+                break;
+            }
+        }
+        buffer.clear();
+        CoderResult r3 = encoder.flush(buffer);
+        if (r3.isError()) {
+            r3.throwException();
+        }
+        append0(buffer, text);
+    }
+
+    private static void append0(ByteBuffer buffer, Text text) {
+        buffer.flip();
+        if (buffer.hasRemaining()) {
+            text.append(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.remaining());
+        }
     }
 
     private static final class DecoderBuffer {

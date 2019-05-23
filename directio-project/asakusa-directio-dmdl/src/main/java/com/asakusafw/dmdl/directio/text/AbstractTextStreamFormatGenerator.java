@@ -16,7 +16,6 @@
 package com.asakusafw.dmdl.directio.text;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,14 +23,12 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.hadoop.io.compress.CompressionCodec;
 
+import com.asakusafw.dmdl.directio.util.CharsetUtil;
 import com.asakusafw.dmdl.directio.util.ClassName;
 import com.asakusafw.dmdl.directio.util.Value;
 import com.asakusafw.dmdl.java.emitter.EmitContext;
@@ -44,8 +41,6 @@ import com.asakusafw.dmdl.util.AttributeUtil;
 import com.asakusafw.runtime.io.text.TextFormat;
 import com.asakusafw.runtime.io.text.TextInput;
 import com.asakusafw.runtime.io.text.directio.AbstractTextStreamFormat;
-import com.asakusafw.runtime.io.text.directio.InputSplitter;
-import com.asakusafw.runtime.io.text.directio.InputSplitters;
 import com.asakusafw.runtime.io.text.driver.FieldDefinition;
 import com.asakusafw.runtime.io.text.driver.RecordDefinition;
 import com.asakusafw.runtime.io.text.value.BooleanOptionFieldAdapter;
@@ -60,6 +55,8 @@ import com.asakusafw.runtime.io.text.value.LongOptionFieldAdapter;
 import com.asakusafw.runtime.io.text.value.ShortOptionFieldAdapter;
 import com.asakusafw.runtime.io.text.value.StringOptionFieldAdapter;
 import com.asakusafw.runtime.io.text.value.ValueOptionFieldAdapter;
+import com.asakusafw.runtime.io.util.InputSplitter;
+import com.asakusafw.runtime.io.util.InputSplitters;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -98,12 +95,6 @@ public abstract class AbstractTextStreamFormatGenerator {
         map.put(BasicTypeKind.DATETIME, DateTimeOptionFieldAdapter.class);
         ADAPTER_TYPES = map;
     }
-
-    private static final Pattern PATTERN_ASCII_NOT_COMPAT = Pattern.compile("\\bUTF-(16|32)(BE|LE)?\\b"); //$NON-NLS-1$
-
-    private static final Set<Charset> KNOWN_ASCII_NOT_COMPAT = Charset.availableCharsets().values().stream()
-            .filter(s -> PATTERN_ASCII_NOT_COMPAT.matcher(s.name()).find())
-            .collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
 
     /**
      * The current context.
@@ -421,7 +412,7 @@ public abstract class AbstractTextStreamFormatGenerator {
 
     private boolean isSplittable() {
         if (formatSettings.getCharset().isPresent()) {
-            if (KNOWN_ASCII_NOT_COMPAT.contains(formatSettings.getCharset().getEntity())) {
+            if (!CharsetUtil.isAsciiCompatible(formatSettings.getCharset().getEntity())) {
                 return false;
             }
         }

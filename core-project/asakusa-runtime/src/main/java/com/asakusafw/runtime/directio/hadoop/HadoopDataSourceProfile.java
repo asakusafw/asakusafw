@@ -228,11 +228,10 @@ public class HadoopDataSourceProfile {
             throw new IllegalArgumentException("format must not be null"); //$NON-NLS-1$
         }
         long formatMin = format.getMinimumFragmentSize();
-        long totalMin = Math.min(formatMin, minimumFragmentSize);
-        if (totalMin <= 0) {
+        if (formatMin < 0 || minimumFragmentSize < 0) {
             return -1;
         }
-        return totalMin;
+        return Math.max(formatMin, minimumFragmentSize);
     }
 
     /**
@@ -240,7 +239,7 @@ public class HadoopDataSourceProfile {
      * @return the minimum fragment size, or {@code < 0} if fragmentation is restricted
      */
     public long getMinimumFragmentSize() {
-        return minimumFragmentSize <= 0 ? -1 : minimumFragmentSize;
+        return minimumFragmentSize < 0 ? -1 : minimumFragmentSize;
     }
 
     /**
@@ -267,7 +266,7 @@ public class HadoopDataSourceProfile {
             throw new IllegalArgumentException("format must not be null"); //$NON-NLS-1$
         }
         long min = getMinimumFragmentSize(format);
-        if (min <= 0) {
+        if (min < 0) {
             return -1;
         }
         long formatPref = format.getPreferredFragmentSize();
@@ -283,7 +282,7 @@ public class HadoopDataSourceProfile {
      */
     public long getPreferredFragmentSize() {
         long min = getMinimumFragmentSize();
-        if (min <= 0) {
+        if (min < 0) {
             return -1;
         }
         return preferredFragmentSize <= 0 ? -1 : preferredFragmentSize;

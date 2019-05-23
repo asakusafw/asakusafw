@@ -13,6 +13,11 @@
   <dependencies>
     <dependency>
       <groupId>com.asakusafw</groupId>
+      <artifactId>asakusa-runtime-tsv</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.asakusafw</groupId>
       <artifactId>asakusa-windgate-dmdl</artifactId>
       <version>${project.version}</version>
     </dependency>

@@ -202,7 +202,7 @@ class AsakusaSdkPlugin implements Plugin<Project> {
 
                     // FIXME: use "asakusa-runtime-all" instead of adding individual artifacts?
                     compile "com.asakusafw:asakusa-runtime:${base.frameworkVersion}"
-                    compile "com.asakusafw:asakusa-runtime-json:${base.frameworkVersion}"
+                    compile "com.asakusafw:asakusa-runtime-tsv:${base.frameworkVersion}"
 
                     compile("org.apache.hadoop:hadoop-common:${base.hadoopVersion}") {
                         exclude group: 'junit', module: 'junit'
@@ -226,6 +226,8 @@ class AsakusaSdkPlugin implements Plugin<Project> {
                     }
                     if (features.directio) {
                         compile "com.asakusafw:asakusa-directio-vocabulary:${base.frameworkVersion}"
+                        compile "com.asakusafw:asakusa-runtime-text:${base.frameworkVersion}"
+                        compile "com.asakusafw:asakusa-runtime-json:${base.frameworkVersion}"
                     }
                     if (features.windgate) {
                         compile "com.asakusafw:asakusa-windgate-vocabulary:${base.frameworkVersion}"

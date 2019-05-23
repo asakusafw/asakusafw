@@ -42,11 +42,11 @@ import com.asakusafw.dmdl.semantics.Type;
 import com.asakusafw.dmdl.semantics.type.BasicType;
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
 import com.asakusafw.runtime.directio.hadoop.ConfigurableBinaryStreamFormat;
-import com.asakusafw.runtime.directio.util.DelimiterRangeInputStream;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
-import com.asakusafw.runtime.io.TsvEmitter;
-import com.asakusafw.runtime.io.TsvParser;
+import com.asakusafw.runtime.io.tsv.DelimiterRangeInputStream;
+import com.asakusafw.runtime.io.tsv.TsvEmitter;
+import com.asakusafw.runtime.io.tsv.TsvParser;
 import com.asakusafw.runtime.value.StringOption;
 import com.asakusafw.utils.java.model.syntax.ClassDeclaration;
 import com.asakusafw.utils.java.model.syntax.Expression;
@@ -273,9 +273,7 @@ public class TsvFormatEmitter extends JavaDataModelDriver {
 
         private MethodDeclaration createGetMinimumFragmentSize() {
             boolean fastMode = isFastMode();
-            Expression value = fastMode
-                ? new TypeBuilder(f, context.resolve(Long.class)).field("MAX_VALUE").toExpression() //$NON-NLS-1$
-                : Models.toLiteral(f, -1L);
+            Expression value = fastMode ? Models.toLiteral(f, 1L) : Models.toLiteral(f, -1L);
             return f.newMethodDeclaration(
                     null,
                     new AttributeBuilder(f)

@@ -116,7 +116,7 @@ public interface StripedDataFormat<T> extends DataFormat<T> {
          * @return the minimum fragment size, or {@code < 0} if fragmentation is restricted
          */
         public long getMinimumFragmentSize() {
-            return minimumFragmentSize <= 0 ? -1 : minimumFragmentSize;
+            return minimumFragmentSize < 0 ? -1 : minimumFragmentSize;
         }
 
         /**
@@ -125,7 +125,7 @@ public interface StripedDataFormat<T> extends DataFormat<T> {
          */
         public long getPreferredFragmentSize() {
             long min = getMinimumFragmentSize();
-            if (min <= 0) {
+            if (min < 0) {
                 return -1;
             }
             return preferredFragmentSize <= 0 ? -1 : preferredFragmentSize;

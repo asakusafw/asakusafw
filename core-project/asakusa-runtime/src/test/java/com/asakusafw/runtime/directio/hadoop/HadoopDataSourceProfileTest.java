@@ -161,12 +161,12 @@ public class HadoopDataSourceProfileTest {
                 new File(result.getTemporaryFileSystemPath().toUri()).getCanonicalFile(),
                 is(temp.getCanonicalFile()));
 
-        assertThat(result.getMinimumFragmentSize(new MockFormat(9999, -1)), is(123L));
-        assertThat(result.getMinimumFragmentSize(new MockFormat(100, -1)), is(100L));
+        assertThat(result.getMinimumFragmentSize(new MockFormat(200, -1)), is(200L));
+        assertThat(result.getMinimumFragmentSize(new MockFormat(100, -1)), is(123L));
         assertThat(result.getMinimumFragmentSize(new MockFormat(-1, -1)), is(lessThan(0L)));
 
-        assertThat(result.getPreferredFragmentSize(new MockFormat(9999, -1)), is(1234L));
-        assertThat(result.getPreferredFragmentSize(new MockFormat(9999, 234)), is(234L));
+        assertThat(result.getPreferredFragmentSize(new MockFormat(1, -1)), is(1234L));
+        assertThat(result.getPreferredFragmentSize(new MockFormat(1, 234)), is(234L));
         assertThat(result.getPreferredFragmentSize(new MockFormat(-1, -1)), is(lessThan(0L)));
 
         assertThat(result.isOutputStaging(), is(false));

@@ -33,7 +33,6 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.io.Text;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,12 +40,12 @@ import org.junit.Test;
 import com.asakusafw.dmdl.directio.common.driver.GeneratorTesterRoot;
 import com.asakusafw.dmdl.java.emitter.driver.ObjectDriver;
 import com.asakusafw.runtime.directio.BinaryStreamFormat;
-import com.asakusafw.runtime.directio.util.DelimiterRangeInputStream;
 import com.asakusafw.runtime.io.ModelInput;
 import com.asakusafw.runtime.io.ModelOutput;
 import com.asakusafw.runtime.io.csv.CsvConfiguration;
 import com.asakusafw.runtime.io.csv.CsvFormatException;
 import com.asakusafw.runtime.io.csv.CsvParser;
+import com.asakusafw.runtime.io.util.LineFeedDelimitedInputStream;
 import com.asakusafw.runtime.value.Date;
 import com.asakusafw.runtime.value.DateTime;
 import com.asakusafw.runtime.value.IntOption;
@@ -76,6 +75,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
      */
     @Test
     public void simple() throws Exception {
+        dump(true);
         ModelLoader loaded = generateJava("simple");
         ModelWrapper model = loaded.newModel("Simple");
         BinaryStreamFormat<?> support = (BinaryStreamFormat<?>) loaded.newObject("csv", "SimpleCsvFormat");
@@ -83,7 +83,6 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
-        assertThat(unsafe, is(not(instanceOf(Configurable.class))));
 
         model.set("value", new Text("hello-world"));
 
@@ -208,8 +207,6 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
-        assertThat(unsafe, is(instanceOf(Configurable.class)));
-
         model.set("value", new Text("hello"));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -419,7 +416,7 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
     public void fragmentation() throws Exception {
         ModelLoader loaded = generateJava("fragmentation");
         Random random = new Random(12345);
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             fragmentation_attempt(loaded, random);
         }
     }
@@ -431,8 +428,8 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
     @Test
     public void fragmentation_header() throws Exception {
         ModelLoader loaded = generateJava("fragmentation_header");
-        Random random = new Random(12345);
-        for (int i = 0; i < 5; i++) {
+        Random random = new Random(123456);
+        for (int i = 0; i < 10; i++) {
             fragmentation_attempt(loaded, random);
         }
     }
@@ -471,6 +468,9 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
             for (int i = 0; i < fragment.length; i++) {
                 int offset = start;
                 int length = fragment[i] - offset;
+                if (length == 0) {
+                    continue;
+                }
                 InputStream in = new ByteArrayInputStream(bytes, offset, bytes.length - offset);
                 in.mark(bytes.length - offset);
                 try (ModelInput<Object> reader = unsafe.createInput(model.unwrap().getClass(), "hello", in,
@@ -483,8 +483,8 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
                         actual.add(buffer);
                     }
                 } catch (CsvFormatException e) {
-                    try (InputStream reIn = new ByteArrayInputStream(bytes, offset, bytes.length - offset);
-                            InputStream copy = new DelimiterRangeInputStream(reIn, '\n', length, offset > 0)) {
+                    try (InputStream reIn = new ByteArrayInputStream(bytes);
+                            InputStream copy = new LineFeedDelimitedInputStream(reIn, offset, length)) {
                         System.out.println(copy.read());
                     }
                     throw new IOException(MessageFormat.format(
@@ -497,7 +497,13 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
                 }
                 start = fragment[i];
             }
-            assertThat(actual, is(expected));
+            assertThat(
+                    String.format("attempt:%d", attempt),
+                    actual,
+                    hasSize(expected.size()));
+            for (int i = 0, n = actual.size(); i < n; i++) {
+                assertThat(actual.get(i), is(expected.get(i)));
+            }
         }
     }
 
@@ -541,7 +547,6 @@ public class CsvFormatEmitterTest extends GeneratorTesterRoot {
         assertThat(support.getSupportedType(), is((Object) model.unwrap().getClass()));
 
         BinaryStreamFormat<Object> unsafe = unsafe(support);
-        assertThat(unsafe, is(not(instanceOf(Configurable.class))));
 
         model.set("value", new Text("hello-world"));
 

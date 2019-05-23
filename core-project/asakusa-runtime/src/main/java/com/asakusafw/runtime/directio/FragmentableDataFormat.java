@@ -39,7 +39,7 @@ public interface FragmentableDataFormat<T> extends DataFormat<T> {
     /**
      * Returns the lower limit of fragment size (in bytes).
      * Each fragment must not smaller than this size.
-     * @return the lower limit of fragment size, or {@code -1} as infinite
+     * @return the lower limit of fragment size, or {@code -1} as infinite (never split into fragments)
      * @throws IOException if failed to compute bytes count
      * @throws InterruptedException if interrupted
      */

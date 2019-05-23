@@ -34,6 +34,11 @@
     </dependency>
     <dependency>
       <groupId>com.asakusafw</groupId>
+      <artifactId>asakusa-runtime-text</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.asakusafw</groupId>
       <artifactId>asakusa-runtime-json</artifactId>
       <version>${project.version}</version>
     </dependency>
