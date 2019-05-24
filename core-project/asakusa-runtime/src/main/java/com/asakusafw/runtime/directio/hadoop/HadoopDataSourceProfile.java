@@ -144,6 +144,18 @@ public class HadoopDataSourceProfile {
     private final LocalFileSystem localFileSystem;
 
     /**
+     * the Hadoop configuration key of whether or not use the <em>minimum</em> value between
+     * {@link #getMinimumFragmentSize()} and {@link FragmentableDataFormat#getMinimumFragmentSize()}.
+     * After the <a href="https://github.com/asakusafw/asakusafw/pull/835"> issue </a> was fixed,
+     * we use the <em>maximum</em> value of them.
+     * @since 0.10.3
+     * @see <a href="https://github.com/asakusafw/asakusafw/pull/835"> GitHub issue page </a>
+     */
+    public static final String KEY_LEGACY_FRAGMENT_MIN = HadoopDataSourceUtil.PREFIX + "COMPAT835"; //$NON-NLS-1$
+
+    private final boolean legacyFragmentMin;
+
+    /**
      * Creates a new instance.
      * @param conf the current configuration
      * @param id the ID of this datasource
@@ -165,6 +177,7 @@ public class HadoopDataSourceProfile {
         this.temporaryPath = temporaryPath;
         this.fileSystem = fileSystemPath.getFileSystem(conf);
         this.localFileSystem = FileSystem.getLocal(conf);
+        this.legacyFragmentMin = conf.getBoolean(KEY_LEGACY_FRAGMENT_MIN, false);
     }
 
     /**
@@ -231,7 +244,11 @@ public class HadoopDataSourceProfile {
         if (formatMin < 0 || minimumFragmentSize < 0) {
             return -1;
         }
-        return Math.max(formatMin, minimumFragmentSize);
+        if (!legacyFragmentMin) {
+            return Math.max(formatMin, minimumFragmentSize);
+        } else {
+            return Math.min(formatMin, minimumFragmentSize);
+        }
     }
 
     /**
