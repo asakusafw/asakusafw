@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,6 +35,7 @@ import com.asakusafw.directio.hive.parquet.AbstractParquetFileFormat;
 import com.asakusafw.directio.hive.parquet.Compatibility;
 import com.asakusafw.directio.hive.parquet.ParquetFormatConfiguration;
 import com.asakusafw.directio.hive.serde.DataModelMapping;
+import com.asakusafw.directio.hive.util.CompatibilityUtil;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.hadoop.BlockMap;
@@ -58,6 +60,11 @@ public class CompatibilityV1 extends Compatibility {
 
     @Override
     protected int getPriority() {
+        OptionalInt version = CompatibilityUtil.getHiveMajorVersion();
+        if (version.isPresent()) {
+            int v = version.getAsInt();
+            return v == 0 || v == 1 ? 1 : -1;
+        }
         try {
             Class.forName("parquet.column.ParquetProperties"); //$NON-NLS-1$
             return 1;

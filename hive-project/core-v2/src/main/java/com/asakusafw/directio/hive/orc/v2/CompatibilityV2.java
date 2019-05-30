@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,6 +42,7 @@ import com.asakusafw.directio.hive.orc.OrcFileOutput;
 import com.asakusafw.directio.hive.orc.OrcFormatConfiguration;
 import com.asakusafw.directio.hive.serde.DataModelInspector;
 import com.asakusafw.directio.hive.serde.DataModelMapping;
+import com.asakusafw.directio.hive.util.CompatibilityUtil;
 import com.asakusafw.runtime.directio.Counter;
 import com.asakusafw.runtime.directio.DirectInputFragment;
 import com.asakusafw.runtime.directio.hadoop.BlockMap;
@@ -58,6 +60,11 @@ public class CompatibilityV2 extends Compatibility {
 
     @Override
     protected int getPriority() {
+        OptionalInt version = CompatibilityUtil.getHiveMajorVersion();
+        if (version.isPresent()) {
+            int v = version.getAsInt();
+            return v == 2 ? 2 : -1;
+        }
         try {
             Class.forName("org.apache.orc.OrcConf"); //$NON-NLS-1$
             return 2;
