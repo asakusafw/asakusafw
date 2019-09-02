@@ -424,12 +424,13 @@ class AsakusaCompileTask extends DefaultTask {
             project.mkdir getOutputDirectory()
         }
 
+        String javaMaxHeapSize = getMaxHeapSize()
         project.javaexec { JavaExecSpec spec ->
             spec.main = javaMain
             spec.classpath = javaClasspath
             spec.jvmArgs = getResolvedJvmArgs()
-            if (getMaxHeapSize() != null) {
-                spec.maxHeapSize = getMaxHeapSize()
+            if (javaMaxHeapSize != null) {
+                spec.maxHeapSize = javaMaxHeapSize
             }
             spec.systemProperties getResolvedSystemProperties()
             spec.systemProperties getExtraSystemProperties()
