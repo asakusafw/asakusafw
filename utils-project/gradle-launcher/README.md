@@ -27,8 +27,8 @@ This artifact provides an easy way of Gradle access to your program.
 ```gradle
 repositories {
     mavenCentral()
-    maven { url 'http://asakusafw.s3.amazonaws.com/maven/releases' }
-    maven { url 'http://asakusafw.s3.amazonaws.com/maven/snapshots' }
+    maven { url 'https://asakusafw.s3.amazonaws.com/maven/releases' }
+    maven { url 'https://asakusafw.s3.amazonaws.com/maven/snapshots' }
     maven { url 'https://repo.gradle.org/gradle/libs-releases' }
 }
 

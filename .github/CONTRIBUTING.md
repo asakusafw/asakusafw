@@ -1,6 +1,6 @@
 ## Bug reports, Patch contribution
 * Please report any issues to [repository for issue tracking](https://github.com/asakusafw/asakusafw-issues/issues)
-* Please contribute with patches according to our [contribution guide (Japanese only, English version to be added)](http://docs.asakusafw.com/latest/release/ja/html/contribution.html)
+* Please contribute with patches according to our [contribution guide (Japanese only, English version to be added)](https://docs.asakusafw.com/latest/release/ja/html/contribution.html)
 
 ## Template of Issues or Pull Requests
 
