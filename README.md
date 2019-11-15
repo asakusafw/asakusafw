@@ -1,6 +1,6 @@
 # Asakusa Framework
 
-Asakusa is a full stack framework for distributed/parallel computing, which provides with a development platform and runtime libraries supporting various distributed/parallel computing environments such as [Hadoop](http://hadoop.apache.org), [Spark](http://spark.apache.org), [M<sup>3</sup> for Batch Processing](https://github.com/fixstars/m3bp), and so on. Users can enjoy the best performance on distributed/parallel computing transparently changing execution engines among MapReduce, SparkRDD, and C++ native based on their data size.
+Asakusa is a full stack framework for distributed/parallel computing, which provides with a development platform and runtime libraries supporting various distributed/parallel computing environments such as [Hadoop](https://hadoop.apache.org), [Spark](https://spark.apache.org), [M<sup>3</sup> for Batch Processing](https://github.com/fixstars/m3bp), and so on. Users can enjoy the best performance on distributed/parallel computing transparently changing execution engines among MapReduce, SparkRDD, and C++ native based on their data size.
 
 Other than query-based languages, Asakusa helps to develop more complicated data flow programs more easily, efficiently, and comprehensively due to following components.
 
@@ -91,12 +91,12 @@ And then import existing projects from Eclipse.
 * [Shafu](https://github.com/asakusafw/asakusafw-shafu)
 
 ## Resources
-* [Asakusa Framework Documentation (ja)](http://docs.asakusafw.com/)
-* [Asakusa Framework Community Site (ja)](http://asakusafw.com)
+* [Asakusa Framework Documentation (ja)](https://docs.asakusafw.com/)
+* [Asakusa Framework Community Site (ja)](https://asakusafw.com)
 
 ## Bug reports, Patch contribution
 * Please report any issues to [repository for issue tracking](https://github.com/asakusafw/asakusafw-issues/issues)
-* Please contribute with patches according to our [contribution guide (Japanese only, English version to be added)](http://docs.asakusafw.com/latest/release/ja/html/contribution.html)
+* Please contribute with patches according to our [contribution guide (Japanese only, English version to be added)](https://docs.asakusafw.com/latest/release/ja/html/contribution.html)
 
 ## License
 * [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
