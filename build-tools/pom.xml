@@ -7,7 +7,7 @@
   <version>0.10.4-SNAPSHOT</version>
 
   <description>Asakusa Framework Build Tools</description>
-  <url>http://asakusafw.com</url>
+  <url>https://asakusafw.com</url>
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -23,7 +23,7 @@
   <inceptionYear>2011</inceptionYear>
   <organization>
     <name>Asakusa Framework Team</name>
-    <url>http://asakusafw.com</url>
+    <url>https://asakusafw.com</url>
   </organization>
 
   <distributionManagement>
