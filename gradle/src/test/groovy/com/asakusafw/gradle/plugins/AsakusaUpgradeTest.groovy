@@ -118,14 +118,6 @@ class AsakusaUpgradeTest {
         doUpgradeFromTestName()
     }
 
-    /**
-     * Test for {@code 1.12} (Asakusa {@code 0.6.0}).
-     */
-    @Test
-    void 'v1.12'() {
-        doUpgradeFromTestName()
-    }
-
     private void doUpgradeFromTestName() {
         doUpgrade(testName.methodName.replaceFirst('v', ''))
     }
