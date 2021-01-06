@@ -2,8 +2,3 @@
 /target
 /.classpath
 /.project
-.DS_Store
-*.swp
-*.iml
-.idea
-/.vscode
