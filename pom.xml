@@ -96,7 +96,7 @@
     <jcommander.version>1.72</jcommander.version>
     <gradle.version>4.7</gradle.version>
     <javacc.version>7.0.2</javacc.version>
-    <checkstyle.version>8.1</checkstyle.version>
+    <checkstyle.version>8.29</checkstyle.version>
 
     <!-- fragile artifacts -->
     <httpclient.version>4.2.6</httpclient.version>
