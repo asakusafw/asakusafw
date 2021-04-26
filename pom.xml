@@ -102,7 +102,7 @@
     <httpclient.version>4.2.6</httpclient.version>
     <httpcore.version>4.2.5</httpcore.version>
     <commons.cli.version>1.2</commons.cli.version>
-    <commons.io.version>2.4</commons.io.version>
+    <commons.io.version>2.7</commons.io.version>
     <commons.lang.version>2.6</commons.lang.version>
     <commons.logging.version>1.2</commons.logging.version>
     <commons.codec.version>1.10</commons.codec.version>
